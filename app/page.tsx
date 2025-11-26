@@ -45,7 +45,7 @@ export default async function Home({
         {(selectedCategory || selectedTag) && (
           <div className="mb-8 flex flex-wrap items-center gap-3">
             <span className={`font-medium ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary}`}>
-              필터:
+              {themeConfig.text.filter}
             </span>
             {selectedCategory && (
               <div className="flex items-center gap-2">
@@ -86,7 +86,7 @@ export default async function Home({
             {allCategories.length > 0 && (
               <div className="mb-6 last:mb-0">
                 <h3 className={`text-sm font-bold uppercase tracking-wider ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} mb-3`}>
-                  카테고리
+                  {themeConfig.text.categories}
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {allCategories.map((cat, index) => (
@@ -98,7 +98,7 @@ export default async function Home({
             {allTags.length > 0 && (
               <div>
                 <h3 className={`text-sm font-bold uppercase tracking-wider ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} mb-3`}>
-                  태그
+                  {themeConfig.text.tags}
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {allTags.map((tag) => (
@@ -117,13 +117,13 @@ export default async function Home({
                 {selectedCategory || selectedTag ? (
                   <>
                     <p className={`${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} mb-6 ${themeConfig.typography.fontSize.body}`}>
-                      선택한 필터에 해당하는 게시글이 없습니다.
+                      {themeConfig.text.noPostsFound}
                     </p>
                     <Link 
                       href="/"
                       className={`inline-flex items-center px-6 py-3 ${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary} ${themeConfig.borderRadius.button} font-bold ${themeConfig.animations.scale} ${themeConfig.animations.transition} ${themeConfig.shadows.button}`}
                     >
-                      전체 게시글 보기
+                      {themeConfig.text.viewAllPosts}
                     </Link>
                   </>
                 ) : (

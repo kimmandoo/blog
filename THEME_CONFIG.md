@@ -40,6 +40,10 @@ Separate color schemes for light and dark modes:
 - Enable/disable comments
 - Giscus settings for GitHub Discussions-based comments
 
+### UI Text
+- All user-facing text strings (categories, tags, filter labels, messages)
+- Easy to change for different languages or customize wording
+
 ## How to Customize
 
 1. Open `config/theme.config.ts`
@@ -69,6 +73,20 @@ typography: {
     title: 'text-7xl', // Make title larger
     body: 'text-base', // Make body text smaller
   },
+}
+```
+
+### Example: Changing Language
+
+```typescript
+text: {
+  categories: 'Categories',
+  tags: 'Tags',
+  filter: 'Filter:',
+  noPostsFound: 'No posts found for the selected filter.',
+  viewAllPosts: 'View All Posts',
+  comments: 'Comments',
+  // ... other text strings
 }
 ```
 

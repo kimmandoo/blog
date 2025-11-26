@@ -51,7 +51,7 @@ export function Comments() {
     return (
       <div className="mt-12 p-8 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
         <p className="text-center text-gray-600 dark:text-gray-400">
-          댓글 기능을 사용하려면 <code className="px-2 py-1 bg-gray-200 dark:bg-gray-800 rounded">config/theme.config.ts</code>에서 Giscus 설정을 완료해주세요.
+          {themeConfig.text.commentsSetupRequired} <code className="px-2 py-1 bg-gray-200 dark:bg-gray-800 rounded">config/theme.config.ts</code>{themeConfig.text.commentsSetupInConfig}
         </p>
         <p className="text-center text-sm text-gray-500 dark:text-gray-500 mt-2">
           <a 
@@ -60,7 +60,7 @@ export function Comments() {
             rel="noopener noreferrer"
             className="underline hover:text-gray-700 dark:hover:text-gray-300"
           >
-            Giscus 설정 가이드 보기
+            {themeConfig.text.commentsSetupGuide}
           </a>
         </p>
       </div>
@@ -71,10 +71,10 @@ export function Comments() {
     return (
       <div className="mt-12 p-8 bg-yellow-50 dark:bg-yellow-900/20 rounded-2xl border border-yellow-200 dark:border-yellow-800">
         <p className="text-center text-yellow-800 dark:text-yellow-200">
-          ⚠️ Giscus 저장소 정보가 설정되지 않았습니다.
+          {themeConfig.text.giscusNotConfigured}
         </p>
         <p className="text-center text-sm text-yellow-700 dark:text-yellow-300 mt-2">
-          <code className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 rounded">config/theme.config.ts</code>에서 repo, repoId, categoryId를 설정해주세요.
+          <code className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 rounded">config/theme.config.ts</code>{themeConfig.text.giscusConfigInstructions}
         </p>
       </div>
     );
@@ -83,7 +83,7 @@ export function Comments() {
   return (
     <div className="mt-12">
       <div className="mb-6">
-        <h3 className="text-2xl font-bold text-black dark:text-white">댓글</h3>
+        <h3 className="text-2xl font-bold text-black dark:text-white">{themeConfig.text.comments}</h3>
         <div className="h-0.5 w-16 bg-black dark:bg-white mt-2"></div>
       </div>
       <div ref={commentsRef} className="giscus"></div>
