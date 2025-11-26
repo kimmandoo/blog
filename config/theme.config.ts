@@ -33,6 +33,10 @@ export const themeConfig = {
         primary: 'bg-black text-white',
         gradient: 'from-black via-gray-700 to-black',
       },
+      code: {
+        background: 'bg-gray-100',
+        text: 'text-gray-800',
+      },
     },
     // Dark mode colors
     dark: {
@@ -53,6 +57,10 @@ export const themeConfig = {
       accent: {
         primary: 'dark:bg-white dark:text-black',
         gradient: 'dark:from-white dark:via-gray-300 dark:to-white',
+      },
+      code: {
+        background: 'dark:bg-gray-800',
+        text: 'dark:text-gray-200',
       },
     },
   },

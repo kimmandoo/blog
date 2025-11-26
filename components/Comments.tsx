@@ -51,7 +51,7 @@ export function Comments() {
     return (
       <div className="mt-12 p-8 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
         <p className="text-center text-gray-600 dark:text-gray-400">
-          {themeConfig.text.commentsSetupRequired} <code className="px-2 py-1 bg-gray-200 dark:bg-gray-800 rounded">config/theme.config.ts</code>{themeConfig.text.commentsSetupInConfig}
+          {themeConfig.text.commentsSetupRequired} <code className="px-2 py-1 bg-gray-200 dark:bg-gray-800 rounded">config/theme.config.ts</code> {themeConfig.text.commentsSetupInConfig}
         </p>
         <p className="text-center text-sm text-gray-500 dark:text-gray-500 mt-2">
           <a 
@@ -74,7 +74,7 @@ export function Comments() {
           {themeConfig.text.giscusNotConfigured}
         </p>
         <p className="text-center text-sm text-yellow-700 dark:text-yellow-300 mt-2">
-          <code className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 rounded">config/theme.config.ts</code>{themeConfig.text.giscusConfigInstructions}
+          <code className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 rounded">config/theme.config.ts</code> {themeConfig.text.giscusConfigInstructions}
         </p>
       </div>
     );

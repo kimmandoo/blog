@@ -46,7 +46,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
       <main className={`${themeConfig.spacing.container} mx-auto px-6 py-16`}>
         <Link 
           href="/"
-          className={`inline-flex items-center ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:${themeConfig.colors.light.text.primary} dark:hover:${themeConfig.colors.dark.text.primary} ${themeConfig.animations.transition} mb-12 group`}
+          className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all mb-12 group"
         >
           <svg 
             className={`w-5 h-5 mr-2 group-hover:-translate-x-1 ${themeConfig.animations.transition}`} 

@@ -129,10 +129,10 @@ export default async function Home({
                 ) : (
                   <>
                     <p className={`${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} mb-6 ${themeConfig.typography.fontSize.body}`}>
-                      No posts yet. Add markdown files to the <code className={`px-3 py-1 ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} rounded-lg font-mono text-sm`}>posts/</code> directory.
+                      No posts yet. Add markdown files to the <code className={`px-3 py-1 ${themeConfig.colors.light.code.background} ${themeConfig.colors.dark.code.background} ${themeConfig.colors.light.code.text} ${themeConfig.colors.dark.code.text} rounded-lg font-mono text-sm`}>posts/</code> directory.
                     </p>
                     <p className={`text-sm ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
-                      Example: <code className={`px-3 py-1 ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} rounded-lg font-mono text-xs`}>posts/my-first-post.md</code>
+                      Example: <code className={`px-3 py-1 ${themeConfig.colors.light.code.background} ${themeConfig.colors.dark.code.background} ${themeConfig.colors.light.code.text} ${themeConfig.colors.dark.code.text} rounded-lg font-mono text-xs`}>posts/my-first-post.md</code>
                     </p>
                   </>
                 )}
