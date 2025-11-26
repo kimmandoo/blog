@@ -111,6 +111,8 @@ export async function getPostData(slug: string): Promise<PostData> {
   const toc = extractTOC(matterResult.content);
 
   // Use remark to convert markdown into HTML string
+  // Note: rehype-sanitize is not used here as all markdown content comes from 
+  // trusted sources (repository files) controlled by the site owner, not user input.
   const processedContent = await remark()
     .use(remarkRehype)
     .use(rehypeSlug)
