@@ -6,9 +6,9 @@
 export const themeConfig = {
   // Site information
   site: {
-    title: 'Blog',
-    description: 'A minimal, modern blog',
-    tagline: 'Minimal, modern thoughts and writings',
+    title: 'kimmandoo.log',
+    description: 'struggle',
+    tagline: '발버둥치는 중',
   },
 
   // Color scheme
@@ -130,10 +130,10 @@ export const themeConfig = {
     enabled: true,
     // Giscus configuration (GitHub Discussions-based comments)
     giscus: {
-      repo: '', // Format: 'username/repo'
-      repoId: '',
+      repo: 'kimmandoo/blog', // Format: 'username/repo'
+      repoId: 'R_kgDOQddTJQ',
       category: 'General',
-      categoryId: '',
+      categoryId: 'DIC_kwDOQddTJc4CzEYe',
       mapping: 'pathname',
       reactionsEnabled: '1',
       emitMetadata: '0',
