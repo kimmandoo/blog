@@ -51,6 +51,31 @@ Write your post content using Markdown...
 - `title` (required): The post title
 - `date` (required): Publication date in YYYY-MM-DD format
 - `excerpt` (optional): Short description shown on the homepage
+- `category` (optional): Post category
+- `tags` (optional): Array of tags
+
+### Adding Images to Posts
+
+You can easily add images to your blog posts:
+
+1. **Save images** in the `public/images/` directory
+2. **Reference in markdown**:
+   ```markdown
+   ![Image description](/images/your-image.jpg)
+   ```
+
+**Example:**
+```markdown
+# My Post with Images
+
+Here's an image:
+
+![Beautiful landscape](/images/posts/landscape.jpg)
+
+Images automatically get rounded corners and shadow effects!
+```
+
+For a complete guide on using images (including external URLs, sizing, and best practices), see [IMAGE_GUIDE.md](IMAGE_GUIDE.md).
 
 ## 📦 Deploy to Vercel
 
