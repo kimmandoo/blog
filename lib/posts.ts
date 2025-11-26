@@ -6,8 +6,15 @@ import remarkRehype from 'remark-rehype';
 import rehypeSanitize from 'rehype-sanitize';
 import rehypeStringify from 'rehype-stringify';
 import rehypeHighlight from 'rehype-highlight';
+import rehypeSlug from 'rehype-slug';
 
 const postsDirectory = path.join(process.cwd(), 'posts');
+
+export interface TOCItem {
+  id: string;
+  text: string;
+  level: number;
+}
 
 export interface PostData {
   slug: string;
@@ -17,19 +24,39 @@ export interface PostData {
   content?: string;
   category?: string;
   tags?: string[];
+  toc?: TOCItem[];
+}
+
+// Helper function to recursively find all markdown files
+function getAllMarkdownFiles(dir: string, baseDir: string = dir): string[] {
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  const files: string[] = [];
+
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      // Recursively get files from subdirectories
+      files.push(...getAllMarkdownFiles(fullPath, baseDir));
+    } else if (entry.name.endsWith('.md')) {
+      // Get relative path from base posts directory
+      const relativePath = path.relative(baseDir, fullPath);
+      files.push(relativePath);
+    }
+  }
+
+  return files;
 }
 
 export function getSortedPostsData(): PostData[] {
-  // Get file names under /posts
+  // Get all markdown files recursively
   const fileNames = fs.existsSync(postsDirectory) 
-    ? fs.readdirSync(postsDirectory)
+    ? getAllMarkdownFiles(postsDirectory)
     : [];
   
   const allPostsData = fileNames
-    .filter(fileName => fileName.endsWith('.md'))
     .map(fileName => {
-      // Remove ".md" from file name to get slug
-      const slug = fileName.replace(/\.md$/, '');
+      // Remove ".md" from file name to get slug (keep folder structure)
+      const slug = fileName.replace(/\.md$/, '').replace(/\\/g, '/');
 
       // Read markdown file as string
       const fullPath = path.join(postsDirectory, fileName);
@@ -62,29 +89,33 @@ export function getSortedPostsData(): PostData[] {
 
 export function getAllPostSlugs() {
   const fileNames = fs.existsSync(postsDirectory)
-    ? fs.readdirSync(postsDirectory)
+    ? getAllMarkdownFiles(postsDirectory)
     : [];
   
   return fileNames
-    .filter(fileName => fileName.endsWith('.md'))
     .map(fileName => {
       return {
-        slug: fileName.replace(/\.md$/, ''),
+        slug: fileName.replace(/\.md$/, '').replace(/\\/g, '/'),
       };
     });
 }
 
 export async function getPostData(slug: string): Promise<PostData> {
+  // Handle nested slugs (e.g., "folder/post" or just "post")
   const fullPath = path.join(postsDirectory, `${slug}.md`);
   const fileContents = fs.readFileSync(fullPath, 'utf8');
 
   // Use gray-matter to parse the post metadata section
   const matterResult = matter(fileContents);
 
+  // Extract TOC items from markdown content
+  const toc = extractTOC(matterResult.content);
+
   // Use remark to convert markdown into HTML string
   const processedContent = await remark()
     .use(remarkRehype)
     .use(rehypeSanitize)
+    .use(rehypeSlug)
     .use(rehypeHighlight)
     .use(rehypeStringify)
     .process(matterResult.content);
@@ -99,8 +130,34 @@ export async function getPostData(slug: string): Promise<PostData> {
     excerpt: matterResult.data.excerpt || '',
     category: matterResult.data.category || '',
     tags: matterResult.data.tags || [],
-    ...(matterResult.data as Omit<PostData, 'slug' | 'title' | 'date' | 'content' | 'excerpt' | 'category' | 'tags'>),
+    toc,
+    ...(matterResult.data as Omit<PostData, 'slug' | 'title' | 'date' | 'content' | 'excerpt' | 'category' | 'tags' | 'toc'>),
   };
+}
+
+// Helper function to extract TOC from markdown content
+function extractTOC(content: string): TOCItem[] {
+  const toc: TOCItem[] = [];
+  const lines = content.split('\n');
+  
+  for (const line of lines) {
+    const match = line.match(/^(#{1,6})\s+(.+)$/);
+    if (match) {
+      const level = match[1].length;
+      const text = match[2].trim();
+      // Create a slug from the heading text
+      const id = text
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim();
+      
+      toc.push({ id, text, level });
+    }
+  }
+  
+  return toc;
 }
 
 export function getAllCategories(): string[] {
