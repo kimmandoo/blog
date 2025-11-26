@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { CategoryBadge } from '@/components/CategoryBadge';
 import { TagBadge } from '@/components/TagBadge';
 import { Comments } from '@/components/Comments';
+import { CodeBlockEnhancer } from '@/components/CodeBlock';
 import { themeConfig } from '@/config/theme.config';
 
 export async function generateStaticParams() {
@@ -92,6 +93,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
           </header>
 
           <div className="px-8 md:px-12 py-12">
+            <CodeBlockEnhancer />
             <div 
               className="prose prose-lg dark:prose-invert max-w-none
                 prose-headings:font-bold prose-headings:text-black dark:prose-headings:text-white prose-headings:scroll-mt-16
