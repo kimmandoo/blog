@@ -72,7 +72,7 @@ export const themeConfig = {
       mono: '"Courier New", Courier, monospace',
     },
     fontSize: {
-      title: 'text-6xl',
+      title: 'text-5xl',
       heading: 'text-3xl',
       subheading: 'text-xl',
       body: 'text-lg',
@@ -145,17 +145,17 @@ export const themeConfig = {
 
   // UI Text (easily change language here)
   text: {
-    categories: '카테고리',
-    tags: '태그',
-    filter: '필터:',
-    noPostsFound: '선택한 필터에 해당하는 게시글이 없습니다.',
-    viewAllPosts: '전체 게시글 보기',
-    comments: '댓글',
-    commentsSetupRequired: '댓글 기능을 사용하려면',
-    commentsSetupInConfig: '에서 Giscus 설정을 완료해주세요.',
-    commentsSetupGuide: 'Giscus 설정 가이드 보기',
-    giscusNotConfigured: '⚠️ Giscus 저장소 정보가 설정되지 않았습니다.',
-    giscusConfigInstructions: '에서 repo, repoId, categoryId를 설정해주세요.',
+    categories: 'Categories',
+    tags: 'Tags',
+    filter: 'Filter:',
+    noPostsFound: 'No posts found for the selected filter.',
+    viewAllPosts: 'View all posts',
+    comments: 'Comments',
+    commentsSetupRequired: 'To enable comments, please',
+    commentsSetupInConfig: 'complete the Giscus setup in',
+    commentsSetupGuide: 'View Giscus setup guide',
+    giscusNotConfigured: '⚠️ Giscus repository information is not configured.',
+    giscusConfigInstructions: 'Please set repo, repoId, and categoryId in the configuration.',
   },
 };
 
