@@ -27,6 +27,201 @@ code, pre {
   font-family: 'Courier New', Courier, monospace;
 }
 
+/* Syntax Highlighting Theme */
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+  color: #e6e6e6;
+  border-radius: 1rem;
+  line-height: 1.6;
+  position: relative;
+}
+
+/* Language badge - will be added via JavaScript */
+pre code[class*="language-"]::before {
+  content: attr(data-language);
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #a0a0a0;
+  letter-spacing: 0.05em;
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+/* Copy button styling */
+.code-block-wrapper {
+  position: relative;
+}
+
+.copy-button {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.375rem;
+  color: #e6e6e6;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+.code-block-wrapper:hover .copy-button {
+  opacity: 1;
+}
+
+.copy-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.copy-button:active {
+  transform: scale(0.95);
+}
+
+.copy-button.copied {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #10b981;
+}
+
+/* Syntax highlighting colors */
+.hljs-comment,
+.hljs-quote {
+  color: #6a9955;
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-type {
+  color: #569cd6;
+  font-weight: 600;
+}
+
+.hljs-string,
+.hljs-title,
+.hljs-name,
+.hljs-attr {
+  color: #ce9178;
+}
+
+.hljs-number,
+.hljs-symbol,
+.hljs-bullet {
+  color: #b5cea8;
+}
+
+.hljs-function,
+.hljs-params {
+  color: #dcdcaa;
+}
+
+.hljs-variable,
+.hljs-template-variable {
+  color: #9cdcfe;
+}
+
+.hljs-tag,
+.hljs-section {
+  color: #569cd6;
+}
+
+.hljs-attribute {
+  color: #9cdcfe;
+}
+
+.hljs-regexp,
+.hljs-link {
+  color: #d16969;
+}
+
+.hljs-meta {
+  color: #d7ba7d;
+}
+
+.hljs-built_in,
+.hljs-class .hljs-title {
+  color: #4ec9b0;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+.hljs-deletion {
+  color: #d16969;
+  background: rgba(209, 105, 105, 0.1);
+}
+
+.hljs-addition {
+  color: #6a9955;
+  background: rgba(106, 153, 85, 0.1);
+}
+
+/* Enhanced pre tag styling */
+pre {
+  position: relative;
+  margin: 2rem 0;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+pre:hover {
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  transition: box-shadow 0.3s ease;
+}
+
+/* Code block header effect */
+pre::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  border-radius: 1rem 1rem 0 0;
+}
+
+/* Scrollbar styling for code blocks */
+pre::-webkit-scrollbar {
+  height: 8px;
+}
+
+pre::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 0 0 1rem 1rem;
+}
+
+pre::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+pre::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;

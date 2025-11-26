@@ -5,6 +5,7 @@ import { remark } from 'remark';
 import remarkRehype from 'remark-rehype';
 import rehypeSanitize from 'rehype-sanitize';
 import rehypeStringify from 'rehype-stringify';
+import rehypeHighlight from 'rehype-highlight';
 
 const postsDirectory = path.join(process.cwd(), 'posts');
 
@@ -83,6 +84,7 @@ export async function getPostData(slug: string): Promise<PostData> {
   // Use remark to convert markdown into HTML string
   const processedContent = await remark()
     .use(remarkRehype)
+    .use(rehypeHighlight)
     .use(rehypeSanitize)
     .use(rehypeStringify)
     .process(matterResult.content);
