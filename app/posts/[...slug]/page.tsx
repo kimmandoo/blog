@@ -6,19 +6,21 @@ import { CategoryBadge } from '@/components/CategoryBadge';
 import { TagBadge } from '@/components/TagBadge';
 import { Comments } from '@/components/Comments';
 import { CodeBlockEnhancer } from '@/components/CodeBlock';
+import { TableOfContents } from '@/components/TableOfContents';
 import { themeConfig } from '@/config/theme.config';
 
 export async function generateStaticParams() {
   const posts = getAllPostSlugs();
   return posts.map((post) => ({
-    slug: post.slug,
+    slug: post.slug.split('/'),
   }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string[] }> }) {
   const { slug } = await params;
+  const slugString = slug.join('/');
   try {
-    const post = await getPostData(slug);
+    const post = await getPostData(slugString);
     return {
       title: post.title,
       description: post.excerpt || post.title,
@@ -30,12 +32,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
-export default async function Post({ params }: { params: Promise<{ slug: string }> }) {
+export default async function Post({ params }: { params: Promise<{ slug: string[] }> }) {
   const { slug } = await params;
+  const slugString = slug.join('/');
   
   let post;
   try {
-    post = await getPostData(slug);
+    post = await getPostData(slugString);
   } catch {
     notFound();
   }
@@ -44,24 +47,30 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
 
   return (
     <div className={`min-h-screen bg-gradient-to-br ${themeConfig.colors.light.background.primary} ${themeConfig.colors.dark.background.primary}`}>
-      <main className={`${themeConfig.spacing.container} mx-auto px-6 py-16`}>
-        <Link 
-          href="/"
-          className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all mb-12 group"
-        >
-          <svg 
-            className={`w-5 h-5 mr-2 group-hover:-translate-x-1 ${themeConfig.animations.transition}`} 
-            fill="none" 
-            strokeWidth="2" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
+      <main className="mx-auto px-6 py-16">
+        <div className={`${themeConfig.spacing.container} mx-auto mb-12`}>
+          <Link 
+            href="/"
+            className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all group"
           >
-            <path d="M19 12H5M5 12l7 7M5 12l7-7" />
-          </svg>
-          <span className="font-medium">Back to all posts</span>
-        </Link>
+            <svg 
+              className={`w-5 h-5 mr-2 group-hover:-translate-x-1 ${themeConfig.animations.transition}`} 
+              fill="none" 
+              strokeWidth="2" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path d="M19 12H5M5 12l7 7M5 12l7-7" />
+            </svg>
+            <span className="font-medium">Back to all posts</span>
+          </Link>
+        </div>
 
-        <article className={`${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} rounded-3xl shadow-xl ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border overflow-hidden`}>
+        {/* Two column layout: content + sidebar */}
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Main content area */}
+            <article className={`flex-1 min-w-0 ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} rounded-3xl shadow-xl ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border overflow-hidden`}>
           <header className={`px-8 md:px-12 pt-12 pb-8 ${themeConfig.colors.light.border.secondary} ${themeConfig.colors.dark.border.secondary} border-b`}>
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <time className={`${themeConfig.typography.fontSize.small} font-medium ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} uppercase tracking-wider`}>
@@ -94,9 +103,10 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
 
           <div className="px-8 md:px-12 py-12">
             <CodeBlockEnhancer />
+            
             <div 
               className="prose prose-lg dark:prose-invert max-w-none
-                prose-headings:font-bold prose-headings:text-black dark:prose-headings:text-white prose-headings:scroll-mt-16
+                prose-headings:font-bold prose-headings:text-black dark:prose-headings:text-white prose-headings:scroll-mt-20
                 prose-h1:text-4xl prose-h1:mb-6 prose-h1:mt-12
                 prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-10 prose-h2:pb-2 prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-gray-800
                 prose-h3:text-2xl prose-h3:mb-3 prose-h3:mt-8
@@ -121,24 +131,33 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
           </div>
         </article>
 
-        <div className="mt-12 text-center">
-          <Link 
-            href="/"
-            className={`inline-flex items-center px-8 py-4 ${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary} ${themeConfig.borderRadius.button} font-bold ${themeConfig.animations.scale} ${themeConfig.animations.transition} ${themeConfig.shadows.button}`}
-          >
-            <svg 
-              className="w-5 h-5 mr-2" 
-              fill="none" 
-              strokeWidth="2" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path d="M19 12H5M5 12l7 7M5 12l7-7" />
-            </svg>
-            Back to Home
-          </Link>
-        </div>
-      </main>
+        {/* Table of Contents Sidebar - Separate from article */}
+        {post.toc && post.toc.length > 0 && (
+          <aside className="hidden lg:block w-80 flex-shrink-0">
+            <TableOfContents items={post.toc} />
+          </aside>
+        )}
+      </div>
     </div>
+
+    <div className={`${themeConfig.spacing.container} mx-auto px-6 mt-12 text-center`}>
+      <Link 
+        href="/"
+        className={`inline-flex items-center px-8 py-4 ${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary} ${themeConfig.borderRadius.button} font-bold ${themeConfig.animations.scale} ${themeConfig.animations.transition} ${themeConfig.shadows.button}`}
+      >
+        <svg 
+          className="w-5 h-5 mr-2" 
+          fill="none" 
+          strokeWidth="2" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path d="M19 12H5M5 12l7 7M5 12l7-7" />
+        </svg>
+        Back to Home
+      </Link>
+    </div>
+  </main>
+</div>
   );
 }
