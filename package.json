@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "date-fns": "^4.1.0",
+    "github-slugger": "^2.0.0",
     "gray-matter": "^4.0.3",
     "next": "16.0.4",
     "react": "19.2.0",
@@ -20,8 +21,7 @@
     "rehype-stringify": "^10.0.1",
     "remark": "^15.0.1",
     "remark-html": "^16.0.1",
-    "remark-rehype": "^11.1.2",
-    "remark-slug": "^7.0.1"
+    "remark-rehype": "^11.1.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

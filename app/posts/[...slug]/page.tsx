@@ -47,24 +47,30 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
 
   return (
     <div className={`min-h-screen bg-gradient-to-br ${themeConfig.colors.light.background.primary} ${themeConfig.colors.dark.background.primary}`}>
-      <main className={`${themeConfig.spacing.container} mx-auto px-6 py-16`}>
-        <Link 
-          href="/"
-          className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all mb-12 group"
-        >
-          <svg 
-            className={`w-5 h-5 mr-2 group-hover:-translate-x-1 ${themeConfig.animations.transition}`} 
-            fill="none" 
-            strokeWidth="2" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
+      <main className="mx-auto px-6 py-16">
+        <div className={`${themeConfig.spacing.container} mx-auto mb-12`}>
+          <Link 
+            href="/"
+            className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all group"
           >
-            <path d="M19 12H5M5 12l7 7M5 12l7-7" />
-          </svg>
-          <span className="font-medium">Back to all posts</span>
-        </Link>
+            <svg 
+              className={`w-5 h-5 mr-2 group-hover:-translate-x-1 ${themeConfig.animations.transition}`} 
+              fill="none" 
+              strokeWidth="2" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path d="M19 12H5M5 12l7 7M5 12l7-7" />
+            </svg>
+            <span className="font-medium">Back to all posts</span>
+          </Link>
+        </div>
 
-        <article className={`${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} rounded-3xl shadow-xl ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border overflow-hidden`}>
+        {/* Two column layout: content + sidebar */}
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Main content area */}
+            <article className={`flex-1 min-w-0 ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} rounded-3xl shadow-xl ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border overflow-hidden`}>
           <header className={`px-8 md:px-12 pt-12 pb-8 ${themeConfig.colors.light.border.secondary} ${themeConfig.colors.dark.border.secondary} border-b`}>
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <time className={`${themeConfig.typography.fontSize.small} font-medium ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} uppercase tracking-wider`}>
@@ -98,37 +104,25 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
           <div className="px-8 md:px-12 py-12">
             <CodeBlockEnhancer />
             
-            {/* Desktop Layout: TOC on side, content in main area */}
-            <div className="flex gap-8 relative">
-              <div className="flex-1 min-w-0">
-                <div 
-                  className="prose prose-lg dark:prose-invert max-w-none
-                    prose-headings:font-bold prose-headings:text-black dark:prose-headings:text-white prose-headings:scroll-mt-20
-                    prose-h1:text-4xl prose-h1:mb-6 prose-h1:mt-12
-                    prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-10 prose-h2:pb-2 prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-gray-800
-                    prose-h3:text-2xl prose-h3:mb-3 prose-h3:mt-8
-                    prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-6
-                    prose-a:text-black dark:prose-a:text-white prose-a:font-medium prose-a:no-underline prose-a:border-b-2 prose-a:border-black dark:prose-a:border-white hover:prose-a:border-gray-400 dark:hover:prose-a:border-gray-600 prose-a:transition-colors
-                    prose-strong:text-black dark:prose-strong:text-white prose-strong:font-bold
-                    prose-code:text-black dark:prose-code:text-white prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-2 prose-code:py-1 prose-code:rounded-lg prose-code:before:content-none prose-code:after:content-none prose-code:font-mono prose-code:text-sm
-                    prose-pre:bg-gradient-to-br prose-pre:from-gray-900 prose-pre:to-black dark:prose-pre:from-gray-950 dark:prose-pre:to-black prose-pre:border prose-pre:border-gray-800 dark:prose-pre:border-gray-700 prose-pre:rounded-2xl prose-pre:shadow-lg prose-pre:p-6
-                    prose-blockquote:border-l-4 prose-blockquote:border-black dark:prose-blockquote:border-white prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300 prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-gray-900 prose-blockquote:py-4 prose-blockquote:rounded-r-xl
-                    prose-hr:border-gray-200 dark:prose-hr:border-gray-800 prose-hr:my-12
-                    prose-ul:text-gray-700 dark:prose-ul:text-gray-300 prose-ul:list-disc prose-ul:pl-6
-                    prose-ol:text-gray-700 dark:prose-ol:text-gray-300 prose-ol:list-decimal prose-ol:pl-6
-                    prose-li:text-gray-700 dark:prose-li:text-gray-300 prose-li:mb-2
-                    prose-img:rounded-2xl prose-img:shadow-lg"
-                  dangerouslySetInnerHTML={{ __html: post.content || '' }}
-                />
-              </div>
-              
-              {/* Table of Contents - Hidden on mobile, visible on lg screens */}
-              {post.toc && post.toc.length > 0 && (
-                <aside className="hidden lg:block w-64 flex-shrink-0">
-                  <TableOfContents items={post.toc} />
-                </aside>
-              )}
-            </div>
+            <div 
+              className="prose prose-lg dark:prose-invert max-w-none
+                prose-headings:font-bold prose-headings:text-black dark:prose-headings:text-white prose-headings:scroll-mt-20
+                prose-h1:text-4xl prose-h1:mb-6 prose-h1:mt-12
+                prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-10 prose-h2:pb-2 prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-gray-800
+                prose-h3:text-2xl prose-h3:mb-3 prose-h3:mt-8
+                prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-6
+                prose-a:text-black dark:prose-a:text-white prose-a:font-medium prose-a:no-underline prose-a:border-b-2 prose-a:border-black dark:prose-a:border-white hover:prose-a:border-gray-400 dark:hover:prose-a:border-gray-600 prose-a:transition-colors
+                prose-strong:text-black dark:prose-strong:text-white prose-strong:font-bold
+                prose-code:text-black dark:prose-code:text-white prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-2 prose-code:py-1 prose-code:rounded-lg prose-code:before:content-none prose-code:after:content-none prose-code:font-mono prose-code:text-sm
+                prose-pre:bg-gradient-to-br prose-pre:from-gray-900 prose-pre:to-black dark:prose-pre:from-gray-950 dark:prose-pre:to-black prose-pre:border prose-pre:border-gray-800 dark:prose-pre:border-gray-700 prose-pre:rounded-2xl prose-pre:shadow-lg prose-pre:p-6
+                prose-blockquote:border-l-4 prose-blockquote:border-black dark:prose-blockquote:border-white prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300 prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-gray-900 prose-blockquote:py-4 prose-blockquote:rounded-r-xl
+                prose-hr:border-gray-200 dark:prose-hr:border-gray-800 prose-hr:my-12
+                prose-ul:text-gray-700 dark:prose-ul:text-gray-300 prose-ul:list-disc prose-ul:pl-6
+                prose-ol:text-gray-700 dark:prose-ol:text-gray-300 prose-ol:list-decimal prose-ol:pl-6
+                prose-li:text-gray-700 dark:prose-li:text-gray-300 prose-li:mb-2
+                prose-img:rounded-2xl prose-img:shadow-lg"
+              dangerouslySetInnerHTML={{ __html: post.content || '' }}
+            />
           </div>
 
           {/* Comments Section */}
@@ -137,24 +131,33 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
           </div>
         </article>
 
-        <div className="mt-12 text-center">
-          <Link 
-            href="/"
-            className={`inline-flex items-center px-8 py-4 ${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary} ${themeConfig.borderRadius.button} font-bold ${themeConfig.animations.scale} ${themeConfig.animations.transition} ${themeConfig.shadows.button}`}
-          >
-            <svg 
-              className="w-5 h-5 mr-2" 
-              fill="none" 
-              strokeWidth="2" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path d="M19 12H5M5 12l7 7M5 12l7-7" />
-            </svg>
-            Back to Home
-          </Link>
-        </div>
-      </main>
+        {/* Table of Contents Sidebar - Separate from article */}
+        {post.toc && post.toc.length > 0 && (
+          <aside className="hidden lg:block w-80 flex-shrink-0">
+            <TableOfContents items={post.toc} />
+          </aside>
+        )}
+      </div>
     </div>
+
+    <div className={`${themeConfig.spacing.container} mx-auto px-6 mt-12 text-center`}>
+      <Link 
+        href="/"
+        className={`inline-flex items-center px-8 py-4 ${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary} ${themeConfig.borderRadius.button} font-bold ${themeConfig.animations.scale} ${themeConfig.animations.transition} ${themeConfig.shadows.button}`}
+      >
+        <svg 
+          className="w-5 h-5 mr-2" 
+          fill="none" 
+          strokeWidth="2" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path d="M19 12H5M5 12l7 7M5 12l7-7" />
+        </svg>
+        Back to Home
+      </Link>
+    </div>
+  </main>
+</div>
   );
 }

@@ -3,7 +3,6 @@ import path from 'path';
 import matter from 'gray-matter';
 import { remark } from 'remark';
 import remarkRehype from 'remark-rehype';
-import rehypeSanitize from 'rehype-sanitize';
 import rehypeStringify from 'rehype-stringify';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeSlug from 'rehype-slug';
@@ -114,7 +113,6 @@ export async function getPostData(slug: string): Promise<PostData> {
   // Use remark to convert markdown into HTML string
   const processedContent = await remark()
     .use(remarkRehype)
-    .use(rehypeSanitize)
     .use(rehypeSlug)
     .use(rehypeHighlight)
     .use(rehypeStringify)
@@ -145,12 +143,13 @@ function extractTOC(content: string): TOCItem[] {
     if (match) {
       const level = match[1].length;
       const text = match[2].trim();
-      // Create a slug from the heading text
+      // Use same slugging algorithm as rehype-slug
       const id = text
         .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
+        .replace(/[^\w\s-]/g, '') // Remove special characters except word chars, spaces, hyphens
+        .replace(/\s+/g, '-')      // Replace spaces with hyphens
+        .replace(/-+/g, '-')       // Replace multiple hyphens with single hyphen
+        .replace(/^-|-$/g, '')     // Remove leading/trailing hyphens
         .trim();
       
       toc.push({ id, text, level });
