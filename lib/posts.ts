@@ -13,6 +13,8 @@ export interface PostData {
   date: string;
   excerpt?: string;
   content?: string;
+  category?: string;
+  tags?: string[];
 }
 
 export function getSortedPostsData(): PostData[] {
@@ -40,7 +42,9 @@ export function getSortedPostsData(): PostData[] {
         title: matterResult.data.title || slug,
         date: matterResult.data.date || new Date().toISOString(),
         excerpt: matterResult.data.excerpt || '',
-        ...(matterResult.data as Omit<PostData, 'slug' | 'title' | 'date'>),
+        category: matterResult.data.category || '',
+        tags: matterResult.data.tags || [],
+        ...(matterResult.data as Omit<PostData, 'slug' | 'title' | 'date' | 'excerpt' | 'category' | 'tags'>),
       };
     });
 
@@ -89,6 +93,44 @@ export async function getPostData(slug: string): Promise<PostData> {
     title: matterResult.data.title || slug,
     date: matterResult.data.date || new Date().toISOString(),
     excerpt: matterResult.data.excerpt || '',
-    ...(matterResult.data as Omit<PostData, 'slug' | 'title' | 'date' | 'content'>),
+    category: matterResult.data.category || '',
+    tags: matterResult.data.tags || [],
+    ...(matterResult.data as Omit<PostData, 'slug' | 'title' | 'date' | 'content' | 'excerpt' | 'category' | 'tags'>),
   };
+}
+
+export function getAllCategories(): string[] {
+  const posts = getSortedPostsData();
+  const categories = new Set<string>();
+  
+  posts.forEach(post => {
+    if (post.category) {
+      categories.add(post.category);
+    }
+  });
+  
+  return Array.from(categories).sort();
+}
+
+export function getAllTags(): string[] {
+  const posts = getSortedPostsData();
+  const tags = new Set<string>();
+  
+  posts.forEach(post => {
+    if (post.tags) {
+      post.tags.forEach(tag => tags.add(tag));
+    }
+  });
+  
+  return Array.from(tags).sort();
+}
+
+export function getPostsByCategory(category: string): PostData[] {
+  const posts = getSortedPostsData();
+  return posts.filter(post => post.category === category);
+}
+
+export function getPostsByTag(tag: string): PostData[] {
+  const posts = getSortedPostsData();
+  return posts.filter(post => post.tags && post.tags.includes(tag));
 }

@@ -1,54 +1,177 @@
 import Link from 'next/link';
-import { getSortedPostsData } from '@/lib/posts';
+import { getSortedPostsData, getAllCategories, getAllTags } from '@/lib/posts';
 import { format } from 'date-fns';
+import { CategoryBadge } from '@/components/CategoryBadge';
+import { TagBadge } from '@/components/TagBadge';
+import { themeConfig } from '@/config/theme.config';
 
-export default function Home() {
-  const posts = getSortedPostsData();
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string; tag?: string }>;
+}) {
+  const { category: selectedCategory, tag: selectedTag } = await searchParams;
+  const allPosts = getSortedPostsData();
+  const allCategories = getAllCategories();
+  const allTags = getAllTags();
+  
+  // Filter posts based on category or tag
+  const posts = allPosts.filter(post => {
+    if (selectedCategory && post.category !== selectedCategory) {
+      return false;
+    }
+    if (selectedTag && (!post.tags || !post.tags.includes(selectedTag))) {
+      return false;
+    }
+    return true;
+  });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-black dark:via-gray-900 dark:to-black">
-      <main className="max-w-4xl mx-auto px-6 py-20">
+    <div className={`min-h-screen bg-gradient-to-br ${themeConfig.colors.light.background.primary} ${themeConfig.colors.dark.background.primary}`}>
+      <main className={`${themeConfig.spacing.container} mx-auto px-6 ${themeConfig.spacing.section}`}>
         <header className="mb-20 text-center">
           <div className="inline-block mb-6">
-            <h1 className="text-6xl font-black mb-2 bg-gradient-to-r from-black via-gray-700 to-black dark:from-white dark:via-gray-300 dark:to-white bg-clip-text text-transparent">
-              Blog
+            <h1 className={`${themeConfig.typography.fontSize.title} font-black mb-2 bg-gradient-to-r ${themeConfig.colors.light.accent.gradient} ${themeConfig.colors.dark.accent.gradient} bg-clip-text text-transparent`}>
+              {themeConfig.site.title}
             </h1>
-            <div className="h-1 bg-gradient-to-r from-transparent via-black to-transparent dark:via-white"></div>
+            <div className={`h-1 bg-gradient-to-r from-transparent via-black to-transparent dark:via-white`}></div>
           </div>
-          <p className="text-lg text-gray-600 dark:text-gray-400 font-light">
-            Minimal, modern thoughts and writings
+          <p className={`${themeConfig.typography.fontSize.body} ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} font-light`}>
+            {themeConfig.site.tagline}
           </p>
         </header>
 
+        {/* Filter Tags */}
+        {(selectedCategory || selectedTag) && (
+          <div className="mb-8 flex flex-wrap items-center gap-3">
+            <span className={`font-medium ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary}`}>
+              필터:
+            </span>
+            {selectedCategory && (
+              <div className="flex items-center gap-2">
+                <CategoryBadge 
+                  category={selectedCategory} 
+                  index={allCategories.indexOf(selectedCategory)} 
+                  clickable={false}
+                />
+                <Link 
+                  href="/"
+                  className={`text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 ${themeConfig.animations.transition}`}
+                >
+                  <svg className="w-5 h-5" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </Link>
+              </div>
+            )}
+            {selectedTag && (
+              <div className="flex items-center gap-2">
+                <TagBadge tag={selectedTag} clickable={false} />
+                <Link 
+                  href="/"
+                  className={`text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 ${themeConfig.animations.transition}`}
+                >
+                  <svg className="w-5 h-5" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </Link>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Categories and Tags Filter */}
+        {(allCategories.length > 0 || allTags.length > 0) && (
+          <div className={`mb-12 ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} ${themeConfig.borderRadius.card} ${themeConfig.spacing.card} shadow-md ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border`}>
+            {allCategories.length > 0 && (
+              <div className="mb-6 last:mb-0">
+                <h3 className={`text-sm font-bold uppercase tracking-wider ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} mb-3`}>
+                  카테고리
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {allCategories.map((cat, index) => (
+                    <CategoryBadge key={cat} category={cat} index={index} />
+                  ))}
+                </div>
+              </div>
+            )}
+            {allTags.length > 0 && (
+              <div>
+                <h3 className={`text-sm font-bold uppercase tracking-wider ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} mb-3`}>
+                  태그
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {allTags.map((tag) => (
+                    <TagBadge key={tag} tag={tag} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="space-y-8">
           {posts.length === 0 ? (
-            <div className="text-center py-20 bg-white dark:bg-gray-900 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-800">
+            <div className={`text-center py-20 ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} rounded-3xl shadow-lg ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border`}>
               <div className="max-w-md mx-auto px-6">
-                <p className="text-gray-600 dark:text-gray-400 mb-6 text-lg">
-                  No posts yet. Add markdown files to the <code className="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-lg font-mono text-sm">posts/</code> directory.
-                </p>
-                <p className="text-sm text-gray-500 dark:text-gray-500">
-                  Example: <code className="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-lg font-mono text-xs">posts/my-first-post.md</code>
-                </p>
+                {selectedCategory || selectedTag ? (
+                  <>
+                    <p className={`${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} mb-6 ${themeConfig.typography.fontSize.body}`}>
+                      선택한 필터에 해당하는 게시글이 없습니다.
+                    </p>
+                    <Link 
+                      href="/"
+                      className={`inline-flex items-center px-6 py-3 ${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary} ${themeConfig.borderRadius.button} font-bold ${themeConfig.animations.scale} ${themeConfig.animations.transition} ${themeConfig.shadows.button}`}
+                    >
+                      전체 게시글 보기
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <p className={`${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} mb-6 ${themeConfig.typography.fontSize.body}`}>
+                      No posts yet. Add markdown files to the <code className={`px-3 py-1 ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} rounded-lg font-mono text-sm`}>posts/</code> directory.
+                    </p>
+                    <p className={`text-sm ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
+                      Example: <code className={`px-3 py-1 ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} rounded-lg font-mono text-xs`}>posts/my-first-post.md</code>
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           ) : (
             posts.map((post) => (
               <article key={post.slug} className="group">
                 <Link href={`/posts/${post.slug}`}>
-                  <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 hover:-translate-y-1">
-                    <time className="text-sm font-medium text-gray-500 dark:text-gray-500 mb-3 block uppercase tracking-wider">
-                      {format(new Date(post.date), 'MMMM dd, yyyy')}
-                    </time>
-                    <h2 className="text-3xl font-bold mb-4 text-black dark:text-white group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors">
+                  <div className={`${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} ${themeConfig.borderRadius.card} ${themeConfig.spacing.card} ${themeConfig.shadows.card} ${themeConfig.animations.transition} ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border ${themeConfig.colors.light.background.cardHover} ${themeConfig.colors.dark.background.cardHover} ${themeConfig.animations.hover}`}>
+                    <div className="flex items-center gap-3 mb-4">
+                      <time className={`${themeConfig.typography.fontSize.small} font-medium ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} uppercase tracking-wider`}>
+                        {format(new Date(post.date), 'MMMM dd, yyyy')}
+                      </time>
+                      {post.category && (
+                        <CategoryBadge 
+                          category={post.category} 
+                          index={allCategories.indexOf(post.category)} 
+                          size="sm"
+                          clickable={false}
+                        />
+                      )}
+                    </div>
+                    <h2 className={`${themeConfig.typography.fontSize.heading} font-bold mb-4 ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} group-hover:text-gray-700 dark:group-hover:text-gray-300 ${themeConfig.animations.transition}`}>
                       {post.title}
                     </h2>
                     {post.excerpt && (
-                      <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-lg">
+                      <p className={`${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} leading-relaxed ${themeConfig.typography.fontSize.body} mb-4`}>
                         {post.excerpt}
                       </p>
                     )}
-                    <div className="mt-6 flex items-center text-black dark:text-white font-medium group-hover:translate-x-2 transition-transform duration-300">
+                    {post.tags && post.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-6">
+                        {post.tags.map((tag) => (
+                          <TagBadge key={tag} tag={tag} clickable={false} />
+                        ))}
+                      </div>
+                    )}
+                    <div className={`mt-6 flex items-center ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} font-medium group-hover:translate-x-2 ${themeConfig.animations.transition}`}>
                       <span>Read more</span>
                       <svg className="w-5 h-5 ml-2" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
                         <path d="M13 7l5 5m0 0l-5 5m5-5H6" />
