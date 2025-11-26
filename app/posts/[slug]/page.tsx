@@ -1,7 +1,11 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getPostData, getAllPostSlugs } from '@/lib/posts';
+import { getPostData, getAllPostSlugs, getAllCategories } from '@/lib/posts';
 import { format } from 'date-fns';
+import { CategoryBadge } from '@/components/CategoryBadge';
+import { TagBadge } from '@/components/TagBadge';
+import { Comments } from '@/components/Comments';
+import { themeConfig } from '@/config/theme.config';
 
 export async function generateStaticParams() {
   const posts = getAllPostSlugs();
@@ -35,15 +39,17 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
     notFound();
   }
 
+  const allCategories = getAllCategories();
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-black dark:via-gray-900 dark:to-black">
-      <main className="max-w-4xl mx-auto px-6 py-16">
+    <div className={`min-h-screen bg-gradient-to-br ${themeConfig.colors.light.background.primary} ${themeConfig.colors.dark.background.primary}`}>
+      <main className={`${themeConfig.spacing.container} mx-auto px-6 py-16`}>
         <Link 
           href="/"
           className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all mb-12 group"
         >
           <svg 
-            className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" 
+            className={`w-5 h-5 mr-2 group-hover:-translate-x-1 ${themeConfig.animations.transition}`} 
             fill="none" 
             strokeWidth="2" 
             stroke="currentColor" 
@@ -54,18 +60,34 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
           <span className="font-medium">Back to all posts</span>
         </Link>
 
-        <article className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
-          <header className="px-8 md:px-12 pt-12 pb-8 border-b border-gray-100 dark:border-gray-800">
-            <time className="text-sm font-medium text-gray-500 dark:text-gray-500 mb-4 block uppercase tracking-wider">
-              {format(new Date(post.date), 'MMMM dd, yyyy')}
-            </time>
-            <h1 className="text-5xl md:text-6xl font-black text-black dark:text-white mb-4 leading-tight">
+        <article className={`${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} rounded-3xl shadow-xl ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border overflow-hidden`}>
+          <header className={`px-8 md:px-12 pt-12 pb-8 ${themeConfig.colors.light.border.secondary} ${themeConfig.colors.dark.border.secondary} border-b`}>
+            <div className="flex flex-wrap items-center gap-3 mb-4">
+              <time className={`${themeConfig.typography.fontSize.small} font-medium ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} uppercase tracking-wider`}>
+                {format(new Date(post.date), 'MMMM dd, yyyy')}
+              </time>
+              {post.category && (
+                <CategoryBadge 
+                  category={post.category} 
+                  index={allCategories.indexOf(post.category)}
+                  size="md"
+                />
+              )}
+            </div>
+            <h1 className={`text-5xl md:text-6xl font-black ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} mb-4 leading-tight`}>
               {post.title}
             </h1>
             {post.excerpt && (
-              <p className="text-xl text-gray-600 dark:text-gray-400 leading-relaxed">
+              <p className={`${themeConfig.typography.fontSize.subheading} ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} leading-relaxed`}>
                 {post.excerpt}
               </p>
+            )}
+            {post.tags && post.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-6">
+                {post.tags.map((tag) => (
+                  <TagBadge key={tag} tag={tag} size="md" />
+                ))}
+              </div>
             )}
           </header>
 
@@ -90,12 +112,17 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
               dangerouslySetInnerHTML={{ __html: post.content || '' }}
             />
           </div>
+
+          {/* Comments Section */}
+          <div className={`px-8 md:px-12 pb-12 pt-8 ${themeConfig.colors.light.border.secondary} ${themeConfig.colors.dark.border.secondary} border-t`}>
+            <Comments />
+          </div>
         </article>
 
         <div className="mt-12 text-center">
           <Link 
             href="/"
-            className="inline-flex items-center px-8 py-4 bg-black dark:bg-white text-white dark:text-black rounded-full font-bold hover:scale-105 transition-transform shadow-lg hover:shadow-2xl"
+            className={`inline-flex items-center px-8 py-4 ${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary} ${themeConfig.borderRadius.button} font-bold ${themeConfig.animations.scale} ${themeConfig.animations.transition} ${themeConfig.shadows.button}`}
           >
             <svg 
               className="w-5 h-5 mr-2" 
