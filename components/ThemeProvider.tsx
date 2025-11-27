@@ -31,8 +31,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
   // Initialize theme from localStorage on mount
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- Initial mount setup
-    setMounted(true);
+    setMounted(true); // eslint-disable-line react-hooks/set-state-in-effect
     const savedTheme = localStorage.getItem('theme') as Theme | null;
     if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
       setThemeState(savedTheme);
@@ -40,6 +39,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   }, []);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
     const updateResolvedTheme = () => {

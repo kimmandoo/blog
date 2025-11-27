@@ -57,7 +57,7 @@ export function ThemeToggle() {
       )}
       {/* System indicator - shows a small badge */}
       {theme === 'system' && (
-        <span className="absolute -bottom-1 -right-1 text-[8px] bg-gray-500 text-white px-1 rounded">
+        <span className="absolute -bottom-1 -right-1 text-[10px] bg-gray-500 text-white px-1 rounded">
           auto
         </span>
       )}
