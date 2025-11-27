@@ -66,11 +66,10 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
           </Link>
         </div>
 
-        {/* Two column layout: content + sidebar */}
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col lg:flex-row gap-8 justify-center">
-            {/* Main content area - centered */}
-            <article className={`flex-1 min-w-0 max-w-4xl ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} rounded-3xl shadow-xl ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border overflow-hidden`}>
+        {/* Content layout with ToC positioned absolutely to not affect content width */}
+        <div className="relative max-w-4xl mx-auto">
+            {/* Main content area - always centered with same width */}
+            <article className={`${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} rounded-3xl shadow-xl ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border overflow-hidden`}>
           <header className={`px-8 md:px-12 pt-12 pb-8 ${themeConfig.colors.light.border.secondary} ${themeConfig.colors.dark.border.secondary} border-b`}>
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <time className={`${themeConfig.typography.fontSize.small} font-medium ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} uppercase tracking-wider`}>
@@ -131,14 +130,13 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
           </div>
         </article>
 
-        {/* Table of Contents Sidebar - Sticky on the side */}
+        {/* Table of Contents Sidebar - Fixed position to not affect content width */}
         {post.toc && post.toc.length > 0 && (
-          <aside className="hidden lg:block w-72 flex-shrink-0 self-start sticky top-24">
+          <aside className="hidden xl:block fixed right-8 top-24 w-56">
             <TableOfContents items={post.toc} />
           </aside>
         )}
       </div>
-    </div>
 
     <div className={`${themeConfig.spacing.container} mx-auto px-6 mt-12 text-center`}>
       <Link 
