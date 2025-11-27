@@ -6,7 +6,7 @@
 export const themeConfig = {
   // Site information
   site: {
-    title: 'kimmandoo.log',
+    title: 'mandoo.log',
     description: 'struggle',
     tagline: '발버둥치는 중',
   },
@@ -263,9 +263,9 @@ export const themeConfig = {
     openGraph: {
       type: 'website',
       locale: 'ko_KR',
-      siteName: 'kimmandoo.log',
+      siteName: 'mandoo.log',
       // Default image for posts without an image (relative to public folder)
-      defaultImage: '/images/og-default.png',
+      defaultImage: 'https://avatars.githubusercontent.com/u/46841652?v=4',
     },
     
     // Twitter Card settings
@@ -280,8 +280,8 @@ export const themeConfig = {
   // Social Links
   socialLinks: {
     github: 'https://github.com/kimmandoo',
-    linkedin: '',
-    medium: '',
+    linkedin: 'https://www.linkedin.com/in/mingyukim99/',
+    medium: 'https://kimmandoo.medium.com/',
   },
 
   // UI Text (easily change language here)
