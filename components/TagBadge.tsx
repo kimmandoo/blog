@@ -11,23 +11,24 @@ export function TagBadge({ tag, size = 'sm', clickable = true }: TagBadgeProps) 
   const { style, hoverStyle } = themeConfig.taxonomy.tags;
   
   const sizeClasses = {
-    sm: 'text-xs px-2 py-1',
-    md: 'text-sm px-3 py-1.5',
-    lg: 'text-base px-4 py-2',
+    sm: 'text-xs px-3 py-1.5',
+    md: 'text-sm px-4 py-2',
+    lg: 'text-base px-5 py-2.5',
   };
 
+  const baseClasses = `tag-badge inline-flex items-center font-medium rounded-xl ${style} ${sizeClasses[size]} backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 shadow-sm transition-all duration-300 ease-out`;
+  const interactiveClasses = clickable ? `${hoverStyle} hover:shadow-md hover:scale-105 active:scale-95 cursor-pointer` : '';
+
   const badge = (
-    <span
-      className={`inline-flex items-center font-medium rounded-full ${style} ${sizeClasses[size]} ${clickable ? hoverStyle : ''} transition-colors`}
-    >
-      <span className="mr-1">#</span>
-      {tag}
+    <span className={`${baseClasses} ${interactiveClasses}`}>
+      <span className="text-gray-400 dark:text-gray-500 mr-1 font-normal">#</span>
+      <span className="relative">{tag}</span>
     </span>
   );
 
   if (clickable) {
     return (
-      <Link href={`/?tag=${encodeURIComponent(tag)}`}>
+      <Link href={`/?tag=${encodeURIComponent(tag)}`} className="group">
         {badge}
       </Link>
     );
