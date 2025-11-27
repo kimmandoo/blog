@@ -125,6 +125,74 @@ export const themeConfig = {
     },
   },
 
+  // Code block configuration
+  codeBlock: {
+    // Enable/disable line numbers
+    showLineNumbers: true,
+    // Starting line number (usually 1)
+    startLineNumber: 1,
+    // Show copy button on hover
+    showCopyButton: true,
+    // Show language badge
+    showLanguageBadge: true,
+    // Colors for code blocks
+    colors: {
+      // Background gradient
+      background: 'linear-gradient(135deg, #1e1e2e 0%, #181825 100%)',
+      // Text color
+      text: '#e6e6e6',
+      // Line number color
+      lineNumber: '#6c7086',
+      // Line number background
+      lineNumberBackground: 'rgba(0, 0, 0, 0.2)',
+      // Border color
+      border: 'rgba(255, 255, 255, 0.1)',
+      // Copy button colors
+      copyButton: {
+        background: 'rgba(255, 255, 255, 0.08)',
+        border: 'rgba(255, 255, 255, 0.15)',
+        text: '#e6e6e6',
+        hoverBackground: 'rgba(255, 255, 255, 0.12)',
+        copiedBackground: 'rgba(16, 185, 129, 0.15)',
+        copiedBorder: 'rgba(16, 185, 129, 0.3)',
+        copiedText: '#10b981',
+      },
+      // Language badge colors
+      languageBadge: {
+        background: 'rgba(255, 255, 255, 0.08)',
+        border: 'rgba(255, 255, 255, 0.1)',
+        text: '#888',
+      },
+    },
+    // Border radius
+    borderRadius: '0.75rem',
+    // Padding
+    padding: '1.5em',
+  },
+
+  // Inline code configuration
+  inlineCode: {
+    colors: {
+      light: {
+        background: '#f1f5f9',
+        text: '#0f172a',
+        border: '#e2e8f0',
+      },
+      dark: {
+        background: '#334155',
+        text: '#f1f5f9',
+        border: '#475569',
+      },
+    },
+    // Border radius
+    borderRadius: '0.375rem',
+    // Padding
+    paddingX: '0.4em',
+    paddingY: '0.2em',
+    // Font size relative to text
+    fontSize: '0.9em',
+  },
+
   // Comments configuration
   comments: {
     enabled: true,
