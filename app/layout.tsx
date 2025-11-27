@@ -67,9 +67,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <head>
-        <link rel="canonical" href={seo.siteUrl} />
-      </head>
       <body className="antialiased">
         <GoogleAnalytics />
         <GoogleAdsense />
