@@ -6,6 +6,7 @@ import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { GoogleAdsense } from "@/components/GoogleAdsense";
 
 const { seo, site } = themeConfig;
+const ogImageUrl = `${seo.siteUrl}${seo.openGraph.defaultImage}`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(seo.siteUrl),
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
     description: site.description,
     images: [
       {
-        url: seo.openGraph.defaultImage,
+        url: ogImageUrl,
         width: 1200,
         height: 630,
         alt: site.title,
@@ -37,7 +38,7 @@ export const metadata: Metadata = {
     card: seo.twitter.card as 'summary_large_image',
     title: site.title,
     description: site.description,
-    images: [seo.openGraph.defaultImage],
+    images: [ogImageUrl],
     site: seo.twitter.site || undefined,
     creator: seo.twitter.creator || undefined,
   },
@@ -56,7 +57,9 @@ export const metadata: Metadata = {
     canonical: seo.siteUrl,
   },
   verification: {
-    google: seo.googleSearchConsole.enabled ? seo.googleSearchConsole.verificationCode : undefined,
+    google: seo.googleSearchConsole.enabled && seo.googleSearchConsole.verificationCode 
+      ? seo.googleSearchConsole.verificationCode 
+      : undefined,
   },
 };
 

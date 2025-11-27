@@ -25,6 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   try {
     const post = await getPostData(slugString);
     const postUrl = `${seo.siteUrl}/posts/${slugString}`;
+    const ogImageUrl = `${seo.siteUrl}${seo.openGraph.defaultImage}`;
     
     return {
       title: post.title,
@@ -42,7 +43,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         tags: post.tags,
         images: [
           {
-            url: seo.openGraph.defaultImage,
+            url: ogImageUrl,
             width: 1200,
             height: 630,
             alt: post.title,
@@ -53,7 +54,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         card: seo.twitter.card as 'summary_large_image',
         title: post.title,
         description: post.excerpt || post.title,
-        images: [seo.openGraph.defaultImage],
+        images: [ogImageUrl],
       },
       alternates: {
         canonical: postUrl,
