@@ -95,9 +95,9 @@ export function PostList({
 
       {/* Categories and Tags Filter */}
       {(allCategories.length > 0 || allTags.length > 0) && (
-        <div className={`mb-12 ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} ${themeConfig.borderRadius.card} p-6 md:p-8 shadow-lg hover:shadow-xl ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border transition-all duration-300`}>
+        <div className="mb-12 space-y-6">
           {allCategories.length > 0 && (
-            <div className="mb-8 last:mb-0">
+            <div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-1 h-5 bg-gradient-to-b from-blue-500 to-violet-500 rounded-full"></div>
                 <h3 className={`text-sm font-bold uppercase tracking-wider ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary}`}>
