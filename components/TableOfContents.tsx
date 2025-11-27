@@ -42,7 +42,7 @@ export function TableOfContents({ items }: TOCProps) {
   }
 
   return (
-    <nav className="sticky top-20">
+    <nav>
       <div className={`${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} ${themeConfig.borderRadius.card} ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border p-6 shadow-md`}>
         <h3 className={`text-sm font-bold uppercase tracking-wider ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} mb-4`}>
           Table of Contents

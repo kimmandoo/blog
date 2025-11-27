@@ -68,9 +68,9 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
 
         {/* Two column layout: content + sidebar */}
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Main content area */}
-            <article className={`flex-1 min-w-0 ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} rounded-3xl shadow-xl ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border overflow-hidden`}>
+          <div className="flex flex-col lg:flex-row gap-8 justify-center">
+            {/* Main content area - centered */}
+            <article className={`flex-1 min-w-0 max-w-4xl ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} rounded-3xl shadow-xl ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border overflow-hidden`}>
           <header className={`px-8 md:px-12 pt-12 pb-8 ${themeConfig.colors.light.border.secondary} ${themeConfig.colors.dark.border.secondary} border-b`}>
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <time className={`${themeConfig.typography.fontSize.small} font-medium ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} uppercase tracking-wider`}>
@@ -131,9 +131,9 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
           </div>
         </article>
 
-        {/* Table of Contents Sidebar - Separate from article */}
+        {/* Table of Contents Sidebar - Sticky on the side */}
         {post.toc && post.toc.length > 0 && (
-          <aside className="hidden lg:block w-80 flex-shrink-0">
+          <aside className="hidden lg:block w-72 flex-shrink-0 self-start sticky top-24">
             <TableOfContents items={post.toc} />
           </aside>
         )}
