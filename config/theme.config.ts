@@ -16,51 +16,51 @@ export const themeConfig = {
     // Light mode colors
     light: {
       background: {
-        primary: 'from-white via-gray-50 to-gray-100',
-        card: 'bg-white',
-        cardHover: 'hover:border-gray-300',
+        primary: 'from-slate-50 via-white to-blue-50',
+        card: 'bg-white/80 backdrop-blur-sm',
+        cardHover: 'hover:border-indigo-200 hover:shadow-indigo-100/50',
       },
       text: {
-        primary: 'text-black',
-        secondary: 'text-gray-600',
-        tertiary: 'text-gray-500',
+        primary: 'text-slate-900',
+        secondary: 'text-slate-600',
+        tertiary: 'text-slate-500',
       },
       border: {
-        primary: 'border-gray-100',
-        secondary: 'border-gray-200',
+        primary: 'border-slate-200/60',
+        secondary: 'border-slate-200',
       },
       accent: {
-        primary: 'bg-black text-white',
-        gradient: 'from-black via-gray-700 to-black',
+        primary: 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white',
+        gradient: 'from-indigo-600 via-purple-600 to-pink-500',
       },
       code: {
-        background: 'bg-gray-100',
-        text: 'text-gray-800',
+        background: 'bg-slate-100',
+        text: 'text-slate-800',
       },
     },
     // Dark mode colors
     dark: {
       background: {
-        primary: 'dark:from-black dark:via-gray-900 dark:to-black',
-        card: 'dark:bg-gray-900',
-        cardHover: 'dark:hover:border-gray-700',
+        primary: 'dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950',
+        card: 'dark:bg-slate-800/80 dark:backdrop-blur-sm',
+        cardHover: 'dark:hover:border-indigo-500/50 dark:hover:shadow-indigo-500/10',
       },
       text: {
         primary: 'dark:text-white',
-        secondary: 'dark:text-gray-400',
-        tertiary: 'dark:text-gray-500',
+        secondary: 'dark:text-slate-300',
+        tertiary: 'dark:text-slate-400',
       },
       border: {
-        primary: 'dark:border-gray-800',
-        secondary: 'dark:border-gray-800',
+        primary: 'dark:border-slate-700/60',
+        secondary: 'dark:border-slate-700',
       },
       accent: {
-        primary: 'dark:bg-white dark:text-black',
-        gradient: 'dark:from-white dark:via-gray-300 dark:to-white',
+        primary: 'dark:bg-gradient-to-r dark:from-indigo-500 dark:to-purple-500 dark:text-white',
+        gradient: 'dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400',
       },
       code: {
-        background: 'dark:bg-gray-800',
-        text: 'dark:text-gray-200',
+        background: 'dark:bg-slate-700',
+        text: 'dark:text-slate-200',
       },
     },
   },
@@ -118,32 +118,32 @@ export const themeConfig = {
 
   // Shadows
   shadows: {
-    card: 'shadow-sm hover:shadow-xl',
-    button: 'shadow-lg hover:shadow-2xl',
+    card: 'shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 hover:shadow-xl hover:shadow-indigo-200/30 dark:hover:shadow-indigo-500/10',
+    button: 'shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/40',
   },
 
   // Animations
   animations: {
-    transition: 'transition-all duration-300',
-    hover: 'hover:-translate-y-1',
-    scale: 'hover:scale-105',
+    transition: 'transition-all duration-300 ease-out',
+    hover: 'hover:-translate-y-1.5',
+    scale: 'hover:scale-[1.02]',
   },
 
   // Category and Tag settings
   taxonomy: {
     categories: {
       colors: [
-        'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-        'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-        'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
-        'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200',
-        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-        'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200',
+        'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 dark:from-blue-900/50 dark:to-indigo-900/50 dark:text-blue-300 border border-blue-200/50 dark:border-blue-700/50',
+        'bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-700 dark:from-emerald-900/50 dark:to-green-900/50 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-700/50',
+        'bg-gradient-to-r from-purple-100 to-violet-100 text-purple-700 dark:from-purple-900/50 dark:to-violet-900/50 dark:text-purple-300 border border-purple-200/50 dark:border-purple-700/50',
+        'bg-gradient-to-r from-pink-100 to-rose-100 text-pink-700 dark:from-pink-900/50 dark:to-rose-900/50 dark:text-pink-300 border border-pink-200/50 dark:border-pink-700/50',
+        'bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-700 dark:from-amber-900/50 dark:to-yellow-900/50 dark:text-amber-300 border border-amber-200/50 dark:border-amber-700/50',
+        'bg-gradient-to-r from-indigo-100 to-blue-100 text-indigo-700 dark:from-indigo-900/50 dark:to-blue-900/50 dark:text-indigo-300 border border-indigo-200/50 dark:border-indigo-700/50',
       ],
     },
     tags: {
-      style: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
-      hoverStyle: 'hover:bg-gray-200 dark:hover:bg-gray-700',
+      style: 'bg-slate-100/80 text-slate-600 dark:bg-slate-700/50 dark:text-slate-300 border border-slate-200/50 dark:border-slate-600/50',
+      hoverStyle: 'hover:bg-slate-200/80 dark:hover:bg-slate-600/50 hover:border-slate-300 dark:hover:border-slate-500',
     },
   },
 

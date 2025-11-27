@@ -43,8 +43,13 @@ export function TableOfContents({ items }: TOCProps) {
 
   return (
     <nav>
-      <div className={`${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} ${themeConfig.borderRadius.card} ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border p-6 shadow-md`}>
-        <h3 className={`text-sm font-bold uppercase tracking-wider ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} mb-4`}>
+      <div className={`${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} ${themeConfig.borderRadius.card} ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border p-6 shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 relative overflow-hidden`}>
+        {/* Gradient accent */}
+        <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
+        <h3 className={`text-sm font-bold uppercase tracking-wider ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} mb-4 flex items-center gap-2`}>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
+          </svg>
           Table of Contents
         </h3>
         <ul className="space-y-2">
@@ -57,8 +62,8 @@ export function TableOfContents({ items }: TOCProps) {
                 href={`#${item.id}`}
                 className={`block text-sm ${themeConfig.animations.transition} ${
                   activeId === item.id
-                    ? `${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} font-semibold`
-                    : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:text-black dark:hover:text-white`
+                    ? 'text-indigo-600 dark:text-indigo-400 font-semibold'
+                    : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:text-indigo-600 dark:hover:text-indigo-400`
                 }`}
                 onClick={(e) => {
                   e.preventDefault();

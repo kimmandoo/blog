@@ -43,17 +43,17 @@ export function SocialLinks() {
   }
 
   return (
-    <div className="flex items-center justify-center gap-4 mb-6">
+    <div className="flex items-center justify-center gap-3 mb-8">
       {activeLinks.map((link) => (
         <a
           key={link.name}
           href={link.url}
           target="_blank"
           rel="noopener noreferrer"
-          className={`flex items-center gap-2 px-4 py-2 ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border ${themeConfig.borderRadius.button} ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:text-black dark:hover:text-white ${themeConfig.animations.transition} ${themeConfig.animations.scale}`}
+          className={`flex items-center gap-2 px-5 py-2.5 ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border ${themeConfig.borderRadius.button} ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:border-indigo-300 dark:hover:border-indigo-600 hover:text-indigo-600 dark:hover:text-indigo-400 ${themeConfig.animations.transition} hover:shadow-md hover:shadow-indigo-100 dark:hover:shadow-indigo-900/20 group`}
           title={link.name}
         >
-          {link.icon}
+          <span className="group-hover:scale-110 transition-transform duration-300">{link.icon}</span>
           <span className="text-sm font-medium">{link.name}</span>
         </a>
       ))}

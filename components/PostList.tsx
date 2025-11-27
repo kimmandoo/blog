@@ -95,10 +95,15 @@ export function PostList({
 
       {/* Categories and Tags Filter */}
       {(allCategories.length > 0 || allTags.length > 0) && (
-        <div className={`mb-12 ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} ${themeConfig.borderRadius.card} ${themeConfig.spacing.card} shadow-md ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border`}>
+        <div className={`mb-12 ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} ${themeConfig.borderRadius.card} ${themeConfig.spacing.card} shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border relative overflow-hidden`}>
+          {/* Decorative gradient */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
           {allCategories.length > 0 && (
             <div className="mb-6 last:mb-0">
-              <h3 className={`text-sm font-bold uppercase tracking-wider ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} mb-3`}>
+              <h3 className={`text-sm font-bold uppercase tracking-wider ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} mb-3 flex items-center gap-2`}>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
                 {themeConfig.text.categories}
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -110,7 +115,10 @@ export function PostList({
           )}
           {allTags.length > 0 && (
             <div>
-              <h3 className={`text-sm font-bold uppercase tracking-wider ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} mb-3`}>
+              <h3 className={`text-sm font-bold uppercase tracking-wider ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} mb-3 flex items-center gap-2`}>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+                </svg>
                 {themeConfig.text.tags}
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -164,12 +172,23 @@ export function PostList({
             </div>
           </div>
         ) : (
-          filteredPosts.map((post) => (
-            <article key={post.slug} className="group">
+          filteredPosts.map((post, index) => (
+            <article key={post.slug} className="group" style={{ animationDelay: `${index * 100}ms` }}>
               <Link href={`/posts/${post.slug}`}>
-                <div className={`${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} ${themeConfig.borderRadius.card} ${themeConfig.spacing.card} ${themeConfig.shadows.card} ${themeConfig.animations.transition} ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border ${themeConfig.colors.light.background.cardHover} ${themeConfig.colors.dark.background.cardHover} ${themeConfig.animations.hover}`}>
+                <div className={`relative ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} ${themeConfig.borderRadius.card} ${themeConfig.spacing.card} ${themeConfig.shadows.card} ${themeConfig.animations.transition} ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border ${themeConfig.colors.light.background.cardHover} ${themeConfig.colors.dark.background.cardHover} ${themeConfig.animations.hover} overflow-hidden`}>
+                  {/* Gradient accent line */}
+                  <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  
+                  {/* Post number indicator */}
+                  <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center text-xs font-bold text-slate-500 dark:text-slate-400 opacity-50 group-hover:opacity-100 transition-opacity">
+                    {String(index + 1).padStart(2, '0')}
+                  </div>
+                  
                   <div className="flex items-center gap-3 mb-4">
-                    <time className={`${themeConfig.typography.fontSize.small} font-medium ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} uppercase tracking-wider`}>
+                    <time className={`${themeConfig.typography.fontSize.small} font-medium ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} uppercase tracking-wider flex items-center gap-2`}>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
                       {format(new Date(post.date), 'MMMM dd, yyyy')}
                     </time>
                     {post.category && (
@@ -181,11 +200,11 @@ export function PostList({
                       />
                     )}
                   </div>
-                  <h2 className={`${themeConfig.typography.fontSize.heading} font-semibold mb-4 ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} group-hover:text-gray-700 dark:group-hover:text-gray-300 ${themeConfig.animations.transition}`}>
+                  <h2 className={`${themeConfig.typography.fontSize.heading} font-bold mb-4 ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-purple-600 dark:group-hover:from-indigo-400 dark:group-hover:to-purple-400 group-hover:bg-clip-text group-hover:text-transparent ${themeConfig.animations.transition}`}>
                     {post.title}
                   </h2>
                   {post.excerpt && (
-                    <p className={`${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} leading-relaxed ${themeConfig.typography.fontSize.body} mb-4`}>
+                    <p className={`${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} leading-relaxed ${themeConfig.typography.fontSize.body} mb-4 line-clamp-2`}>
                       {post.excerpt}
                     </p>
                   )}
@@ -196,9 +215,9 @@ export function PostList({
                       ))}
                     </div>
                   )}
-                  <div className={`mt-6 flex items-center ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} font-medium group-hover:translate-x-2 ${themeConfig.animations.transition}`}>
-                    <span>Read more</span>
-                    <svg className="w-5 h-5 ml-2" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className={`mt-6 flex items-center font-semibold group-hover:translate-x-2 ${themeConfig.animations.transition}`}>
+                    <span className="bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">Read more</span>
+                    <svg className="w-5 h-5 ml-2 text-indigo-600 dark:text-indigo-400" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
                       <path d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
                   </div>
