@@ -406,3 +406,174 @@ article {
 .prose sup a:hover {
   text-decoration: underline;
 }
+
+/* Math/KaTeX Styles */
+.prose .katex-display {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+@media (prefers-color-scheme: dark) {
+  .prose .katex-display {
+    background: #1f2937;
+  }
+}
+
+.prose .katex {
+  font-size: 1.1em;
+}
+
+/* Subscript and Superscript */
+.prose sub,
+.prose sup {
+  font-size: 0.75em;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+.prose sup {
+  top: -0.5em;
+}
+
+.prose sub {
+  bottom: -0.25em;
+}
+
+/* Definition Lists */
+.prose dl {
+  margin: 1.5rem 0;
+}
+
+.prose dt {
+  font-weight: 600;
+  color: #111827;
+  margin-top: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .prose dt {
+    color: #f9fafb;
+  }
+}
+
+.prose dd {
+  margin-left: 1.5rem;
+  margin-top: 0.25rem;
+  color: #374151;
+}
+
+@media (prefers-color-scheme: dark) {
+  .prose dd {
+    color: #d1d5db;
+  }
+}
+
+/* Abbreviations */
+.prose abbr {
+  text-decoration: underline dotted;
+  cursor: help;
+}
+
+/* Keyboard Input */
+.prose kbd {
+  display: inline-block;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.875em;
+  font-family: 'Courier New', Courier, monospace;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  box-shadow: 0 1px 0 1px rgba(0, 0, 0, 0.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  .prose kbd {
+    background: #374151;
+    border-color: #4b5563;
+  }
+}
+
+/* Mark/Highlight */
+.prose mark {
+  background: #fef08a;
+  padding: 0.1rem 0.2rem;
+  border-radius: 0.125rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .prose mark {
+    background: #854d0e;
+    color: #fef9c3;
+  }
+}
+
+/* Details/Summary (Collapsible) */
+.prose details {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .prose details {
+    background: #1f2937;
+    border-color: #374151;
+  }
+}
+
+.prose summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #111827;
+}
+
+@media (prefers-color-scheme: dark) {
+  .prose summary {
+    color: #f9fafb;
+  }
+}
+
+.prose details[open] summary {
+  margin-bottom: 0.75rem;
+}
+
+/* Image Captions (figcaption) */
+.prose figure {
+  margin: 1.5rem 0;
+}
+
+.prose figcaption {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+@media (prefers-color-scheme: dark) {
+  .prose figcaption {
+    color: #9ca3af;
+  }
+}
+
+/* Video/Audio Elements */
+.prose video,
+.prose audio {
+  width: 100%;
+  margin: 1.5rem 0;
+  border-radius: 0.5rem;
+}
+
+/* Iframe (embedded content) */
+.prose iframe {
+  width: 100%;
+  border: none;
+  border-radius: 0.5rem;
+  margin: 1.5rem 0;
+}

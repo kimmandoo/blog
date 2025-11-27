@@ -3,10 +3,13 @@ import path from 'path';
 import matter from 'gray-matter';
 import { remark } from 'remark';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import remarkEmoji from 'remark-emoji';
 import remarkRehype from 'remark-rehype';
 import rehypeStringify from 'rehype-stringify';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeSlug from 'rehype-slug';
+import rehypeKatex from 'rehype-katex';
 
 const postsDirectory = path.join(process.cwd(), 'posts');
 
@@ -116,9 +119,12 @@ export async function getPostData(slug: string): Promise<PostData> {
   // trusted sources (repository files) controlled by the site owner, not user input.
   const processedContent = await remark()
     .use(remarkGfm)
+    .use(remarkMath)
+    .use(remarkEmoji)
     .use(remarkRehype)
     .use(rehypeSlug)
     .use(rehypeHighlight)
+    .use(rehypeKatex)
     .use(rehypeStringify)
     .process(matterResult.content);
   const contentHtml = processedContent.toString();
