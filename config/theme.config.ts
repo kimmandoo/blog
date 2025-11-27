@@ -233,6 +233,50 @@ export const themeConfig = {
     },
   },
 
+  // SEO configuration
+  seo: {
+    // Site URL (required for sitemap, canonical URLs, and Open Graph)
+    siteUrl: 'https://kimmandoo.vercel.app',
+    
+    // Google Analytics (GA4)
+    // Get your Measurement ID from: https://analytics.google.com/
+    googleAnalytics: {
+      enabled: false,
+      measurementId: '', // Format: 'G-XXXXXXXXXX'
+    },
+    
+    // Google Search Console
+    // Get verification code from: https://search.google.com/search-console
+    googleSearchConsole: {
+      enabled: false,
+      verificationCode: '', // Just the code, not the full meta tag
+    },
+    
+    // Google AdSense
+    // Get your client ID from: https://www.google.com/adsense/
+    googleAdsense: {
+      enabled: false,
+      clientId: '', // Format: 'ca-pub-XXXXXXXXXX'
+    },
+    
+    // Open Graph defaults
+    openGraph: {
+      type: 'website',
+      locale: 'ko_KR',
+      siteName: 'kimmandoo.log',
+      // Default image for posts without an image (relative to public folder)
+      defaultImage: '/images/og-default.png',
+    },
+    
+    // Twitter Card settings
+    twitter: {
+      card: 'summary_large_image',
+      // Your Twitter handle (optional)
+      site: '',
+      creator: '',
+    },
+  },
+
   // UI Text (easily change language here)
   text: {
     categories: 'Categories',

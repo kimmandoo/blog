@@ -40,6 +40,14 @@ Separate color schemes for light and dark modes:
 - Enable/disable comments
 - Giscus settings for GitHub Discussions-based comments
 
+### SEO Configuration
+- Site URL for sitemap and canonical URLs
+- Google Analytics integration
+- Google Search Console verification
+- Google AdSense integration
+- Open Graph metadata settings
+- Twitter Card settings
+
 ### UI Text
 - All user-facing text strings (categories, tags, filter labels, messages)
 - Easy to change for different languages or customize wording
@@ -163,3 +171,103 @@ Categories automatically get assigned colors from the palette defined in `themeC
 ### Tag Styling
 
 Tags are styled consistently with the hashtag prefix. Customize the appearance in `themeConfig.taxonomy.tags`.
+
+## SEO Setup
+
+### Site URL
+
+Set your site URL for proper SEO:
+
+```typescript
+seo: {
+  siteUrl: 'https://your-domain.com',
+}
+```
+
+### Google Analytics
+
+To enable Google Analytics:
+
+1. Create a Google Analytics 4 property at https://analytics.google.com/
+2. Get your Measurement ID (format: `G-XXXXXXXXXX`)
+3. Update the configuration:
+
+```typescript
+seo: {
+  googleAnalytics: {
+    enabled: true,
+    measurementId: 'G-XXXXXXXXXX',
+  },
+}
+```
+
+### Google Search Console
+
+To enable Google Search Console verification:
+
+1. Go to https://search.google.com/search-console
+2. Add your property and choose "HTML tag" verification
+3. Copy the verification code (the `content` value from the meta tag)
+4. Update the configuration:
+
+```typescript
+seo: {
+  googleSearchConsole: {
+    enabled: true,
+    verificationCode: 'your-verification-code',
+  },
+}
+```
+
+### Google AdSense
+
+To enable Google AdSense:
+
+1. Create an AdSense account at https://www.google.com/adsense/
+2. Get your client ID (format: `ca-pub-XXXXXXXXXX`)
+3. Update the configuration:
+
+```typescript
+seo: {
+  googleAdsense: {
+    enabled: true,
+    clientId: 'ca-pub-XXXXXXXXXX',
+  },
+}
+```
+
+### Open Graph Settings
+
+Customize how your posts appear when shared on social media:
+
+```typescript
+seo: {
+  openGraph: {
+    type: 'website',
+    locale: 'ko_KR',
+    siteName: 'Your Blog Name',
+    defaultImage: '/images/og-default.png',
+  },
+}
+```
+
+### Twitter Card Settings
+
+Customize how your posts appear on Twitter:
+
+```typescript
+seo: {
+  twitter: {
+    card: 'summary_large_image',
+    site: '@yourtwitterhandle',
+    creator: '@yourtwitterhandle',
+  },
+}
+```
+
+## Generated SEO Files
+
+The blog automatically generates:
+
+- `/sitemap.xml` - Contains all your posts for search engines
+- `/robots.txt` - Tells search engines which pages to crawl
