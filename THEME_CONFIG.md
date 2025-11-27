@@ -76,6 +76,34 @@ typography: {
 }
 ```
 
+### Example: Changing Post Body Text Size
+
+```typescript
+prose: {
+  // Base prose size: prose-sm, prose-base, prose-lg, prose-xl, prose-2xl
+  size: 'prose-xl', // Make post body text larger
+  // Heading sizes
+  h1: 'text-5xl',
+  h2: 'text-4xl',
+  h3: 'text-3xl',
+  // Paragraph text color
+  paragraphColor: {
+    light: 'text-gray-800',
+    dark: 'text-gray-200',
+  },
+}
+```
+
+### Example: Changing Code Block Settings
+
+```typescript
+codeBlock: {
+  showLineNumbers: true, // Show line numbers
+  showCopyButton: true,  // Show copy button
+  showLanguageBadge: true, // Show language badge
+}
+```
+
 ### Example: Changing Language
 
 ```typescript

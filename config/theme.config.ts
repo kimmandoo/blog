@@ -80,6 +80,28 @@ export const themeConfig = {
     },
   },
 
+  // Prose styling for post body content
+  // Easy to modify text sizes, colors, and spacing
+  // Note: Use only standard Tailwind classes (text-*, prose-*) to ensure proper CSS generation
+  prose: {
+    // Base prose size: prose-sm, prose-base, prose-lg, prose-xl, prose-2xl
+    size: 'prose-lg',
+    // Heading sizes: text-xl, text-2xl, text-3xl, text-4xl, text-5xl, etc.
+    h1: 'text-4xl',
+    h2: 'text-3xl',
+    h3: 'text-2xl',
+    // Paragraph text color: text-gray-600, text-gray-700, text-gray-800, etc.
+    paragraphColor: {
+      light: 'text-gray-700',
+      dark: 'text-gray-300',
+    },
+    // List text color
+    listColor: {
+      light: 'text-gray-700',
+      dark: 'text-gray-300',
+    },
+  },
+
   // Spacing
   spacing: {
     container: 'max-w-4xl',
@@ -128,13 +150,13 @@ export const themeConfig = {
   // Code block configuration
   codeBlock: {
     // Enable/disable line numbers
-    showLineNumbers: true,
+    showLineNumbers: false,
     // Starting line number (usually 1)
     startLineNumber: 1,
     // Show copy button on hover
-    showCopyButton: true,
+    showCopyButton: false,
     // Show language badge
-    showLanguageBadge: true,
+    showLanguageBadge: false,
     // Colors for code blocks
     colors: {
       // Background gradient
