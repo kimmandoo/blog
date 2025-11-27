@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { Metadata } from 'next';
 import { getPostData, getAllPostSlugs, getAllCategories } from '@/lib/posts';
 import { format } from 'date-fns';
 import { CategoryBadge } from '@/components/CategoryBadge';
@@ -16,14 +17,48 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string[] }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string[] }> }): Promise<Metadata> {
   const { slug } = await params;
   const slugString = slug.join('/');
+  const { seo, site } = themeConfig;
+  
   try {
     const post = await getPostData(slugString);
+    const postUrl = `${seo.siteUrl}/posts/${slugString}`;
+    const ogImageUrl = `${seo.siteUrl}${seo.openGraph.defaultImage}`;
+    
     return {
       title: post.title,
       description: post.excerpt || post.title,
+      keywords: post.tags || [],
+      openGraph: {
+        type: 'article',
+        locale: seo.openGraph.locale,
+        url: postUrl,
+        siteName: seo.openGraph.siteName,
+        title: post.title,
+        description: post.excerpt || post.title,
+        publishedTime: post.date,
+        authors: [site.title],
+        tags: post.tags,
+        images: [
+          {
+            url: ogImageUrl,
+            width: 1200,
+            height: 630,
+            alt: post.title,
+          },
+        ],
+      },
+      twitter: {
+        card: seo.twitter.card as 'summary_large_image',
+        title: post.title,
+        description: post.excerpt || post.title,
+        images: [ogImageUrl],
+      },
+      alternates: {
+        canonical: postUrl,
+      },
     };
   } catch {
     return {
