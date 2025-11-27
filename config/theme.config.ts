@@ -277,6 +277,13 @@ export const themeConfig = {
     },
   },
 
+  // Social Links
+  socialLinks: {
+    github: 'https://github.com/kimmandoo',
+    linkedin: '',
+    medium: '',
+  },
+
   // UI Text (easily change language here)
   text: {
     categories: 'Categories',
