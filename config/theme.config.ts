@@ -72,10 +72,10 @@ export const themeConfig = {
       mono: '"Courier New", Courier, monospace',
     },
     fontSize: {
-      title: 'text-5xl',
-      heading: 'text-3xl',
+      title: 'text-3xl',
+      heading: 'text-2xl',
       subheading: 'text-xl',
-      body: 'text-lg',
+      body: 'text-base',
       small: 'text-sm',
     },
   },
@@ -85,11 +85,11 @@ export const themeConfig = {
   // Note: Use only standard Tailwind classes (text-*, prose-*) to ensure proper CSS generation
   prose: {
     // Base prose size: prose-sm, prose-base, prose-lg, prose-xl, prose-2xl
-    size: 'prose-lg',
+    size: 'prose-base',
     // Heading sizes: text-xl, text-2xl, text-3xl, text-4xl, text-5xl, etc.
-    h1: 'text-4xl',
-    h2: 'text-3xl',
-    h3: 'text-2xl',
+    h1: 'text-3xl',
+    h2: 'text-2xl',
+    h3: 'text-xl',
     // Paragraph text color: text-gray-600, text-gray-700, text-gray-800, etc.
     paragraphColor: {
       light: 'text-gray-700',
@@ -189,7 +189,7 @@ export const themeConfig = {
     // Border radius
     borderRadius: '0.75rem',
     // Padding
-    padding: '1.5em',
+    padding: '0.5em',
   },
 
   // Inline code configuration

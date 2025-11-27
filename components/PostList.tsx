@@ -177,7 +177,7 @@ export function PostList({
                       />
                     )}
                   </div>
-                  <h2 className={`${themeConfig.typography.fontSize.heading} font-bold mb-4 ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} group-hover:text-gray-700 dark:group-hover:text-gray-300 ${themeConfig.animations.transition}`}>
+                  <h2 className={`${themeConfig.typography.fontSize.heading} font-semibold mb-4 ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} group-hover:text-gray-700 dark:group-hover:text-gray-300 ${themeConfig.animations.transition}`}>
                     {post.title}
                   </h2>
                   {post.excerpt && (

@@ -83,7 +83,7 @@ export function Comments() {
   return (
     <div className="mt-12">
       <div className="mb-6">
-        <h3 className="text-2xl font-bold text-black dark:text-white">{themeConfig.text.comments}</h3>
+        <h3 className="text-2xl font-semibold text-black dark:text-white">{themeConfig.text.comments}</h3>
         <div className="h-0.5 w-16 bg-black dark:bg-white mt-2"></div>
       </div>
       <div ref={commentsRef} className="giscus"></div>

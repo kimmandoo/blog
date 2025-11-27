@@ -84,7 +84,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
                 />
               )}
             </div>
-            <h1 className={`text-5xl md:text-6xl font-black ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} mb-4 leading-tight`}>
+            <h1 className={`text-4xl md:text-3xl font-semibold ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} mb-4 leading-tight`}>
               {post.title}
             </h1>
             {post.excerpt && (

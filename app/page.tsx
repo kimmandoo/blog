@@ -27,11 +27,10 @@ export default async function Home({
     <div className={`min-h-screen bg-gradient-to-br ${themeConfig.colors.light.background.primary} ${themeConfig.colors.dark.background.primary}`}>
       <main className={`${themeConfig.spacing.container} mx-auto px-6 ${themeConfig.spacing.section}`}>
         <header className="mb-20 text-center">
-          <div className="inline-block mb-6">
-            <h1 className={`${themeConfig.typography.fontSize.title} font-black mb-2 bg-gradient-to-r ${themeConfig.colors.light.accent.gradient} ${themeConfig.colors.dark.accent.gradient} bg-clip-text text-transparent`}>
-              {themeConfig.site.title}
+          <div className={`${themeConfig.typography.fontSize.title} ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} font-semibold`}>
+            <h1> 
+              {themeConfig.site.title} 
             </h1>
-            <div className={`h-1 bg-gradient-to-r from-transparent via-black to-transparent dark:via-white`}></div>
           </div>
           <p className={`${themeConfig.typography.fontSize.body} ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} font-light`}>
             {themeConfig.site.tagline}
