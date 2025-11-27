@@ -7,6 +7,7 @@ import { CategoryBadge } from '@/components/CategoryBadge';
 import { TagBadge } from '@/components/TagBadge';
 import { Comments } from '@/components/Comments';
 import { CodeBlockEnhancer } from '@/components/CodeBlock';
+import { MermaidRenderer } from '@/components/MermaidRenderer';
 import { TableOfContents } from '@/components/TableOfContents';
 import { themeConfig } from '@/config/theme.config';
 
@@ -137,6 +138,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
 
           <div className="px-8 md:px-12 py-12">
             <CodeBlockEnhancer />
+            <MermaidRenderer />
             
             <div 
               className={`prose ${themeConfig.prose.size} dark:prose-invert max-w-none

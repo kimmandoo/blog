@@ -66,3 +66,45 @@ app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });
 ```
+
+## Mermaid Diagrams
+
+### Flowchart
+
+```mermaid
+flowchart TD
+    A[Start] --> B{Is it working?}
+    B -->|Yes| C[Great!]
+    B -->|No| D[Debug]
+    D --> B
+    C --> E[End]
+```
+
+### Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Browser
+    participant Server
+    User->>Browser: Click button
+    Browser->>Server: Send request
+    Server-->>Browser: Return response
+    Browser-->>User: Display result
+```
+
+### Class Diagram
+
+```mermaid
+classDiagram
+    class Animal {
+        +String name
+        +int age
+        +makeSound()
+    }
+    class Dog {
+        +String breed
+        +bark()
+    }
+    Animal <|-- Dog
+```
