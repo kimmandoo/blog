@@ -133,17 +133,19 @@ export const themeConfig = {
   taxonomy: {
     categories: {
       colors: [
-        'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-        'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-        'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
-        'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200',
-        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-        'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200',
+        'bg-gradient-to-r from-blue-500/90 to-blue-600/90 text-white dark:from-blue-400/90 dark:to-blue-500/90 dark:text-white',
+        'bg-gradient-to-r from-emerald-500/90 to-emerald-600/90 text-white dark:from-emerald-400/90 dark:to-emerald-500/90 dark:text-white',
+        'bg-gradient-to-r from-violet-500/90 to-violet-600/90 text-white dark:from-violet-400/90 dark:to-violet-500/90 dark:text-white',
+        'bg-gradient-to-r from-rose-500/90 to-rose-600/90 text-white dark:from-rose-400/90 dark:to-rose-500/90 dark:text-white',
+        'bg-gradient-to-r from-amber-500/90 to-amber-600/90 text-white dark:from-amber-400/90 dark:to-amber-500/90 dark:text-white',
+        'bg-gradient-to-r from-indigo-500/90 to-indigo-600/90 text-white dark:from-indigo-400/90 dark:to-indigo-500/90 dark:text-white',
+        'bg-gradient-to-r from-cyan-500/90 to-cyan-600/90 text-white dark:from-cyan-400/90 dark:to-cyan-500/90 dark:text-white',
+        'bg-gradient-to-r from-fuchsia-500/90 to-fuchsia-600/90 text-white dark:from-fuchsia-400/90 dark:to-fuchsia-500/90 dark:text-white',
       ],
     },
     tags: {
-      style: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
-      hoverStyle: 'hover:bg-gray-200 dark:hover:bg-gray-700',
+      style: 'bg-white/80 text-gray-700 dark:bg-gray-800/80 dark:text-gray-200',
+      hoverStyle: 'hover:bg-white hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white',
     },
   },
 
