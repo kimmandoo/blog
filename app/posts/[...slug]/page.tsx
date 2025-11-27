@@ -71,7 +71,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
           <div className="flex flex-col lg:flex-row gap-8 justify-center">
             {/* Left spacer - mirrors ToC width to keep content centered */}
             {post.toc && post.toc.length > 0 && (
-              <div className="hidden lg:block w-72 flex-shrink-0" aria-hidden="true" role="presentation" />
+              <div className="hidden lg:block w-56 flex-shrink-0" aria-hidden="true" role="presentation" />
             )}
             
             {/* Main content area - centered */}
@@ -138,7 +138,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
 
         {/* Table of Contents Sidebar - Sticky on the side */}
         {post.toc && post.toc.length > 0 && (
-          <aside className="hidden lg:block w-72 flex-shrink-0 self-start sticky top-24">
+          <aside className="hidden lg:block w-56 flex-shrink-0 self-start sticky top-24">
             <TableOfContents items={post.toc} />
           </aside>
         )}

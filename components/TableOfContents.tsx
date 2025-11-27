@@ -43,8 +43,8 @@ export function TableOfContents({ items }: TOCProps) {
 
   return (
     <nav>
-      <div className={`${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} ${themeConfig.borderRadius.card} ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border p-6 shadow-md`}>
-        <h3 className={`text-sm font-bold uppercase tracking-wider ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} mb-4`}>
+      <div className={`${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} ${themeConfig.borderRadius.card} ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border p-4 shadow-md`}>
+        <h3 className={`text-xs font-bold uppercase tracking-wider ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} mb-3`}>
           Table of Contents
         </h3>
         <ul className="space-y-2">
