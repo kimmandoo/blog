@@ -91,19 +91,49 @@ export function CodeBlockEnhancer() {
 }
 
 // Helper function to add line numbers to code blocks
+// Note: This function processes pre-sanitized HTML content from rehype-highlight.
+// The source content comes from trusted markdown files in the repository,
+// not from user input. See lib/posts.ts for the content processing pipeline.
 function addLineNumbers(codeElement: Element, startLine: number) {
-  const code = codeElement.innerHTML;
-  const lines = code.split('\n');
+  // Get the existing HTML content which includes syntax highlighting spans
+  const originalContent = codeElement.innerHTML;
+  const lines = originalContent.split('\n');
   
   // Remove empty last line if it exists (common with code blocks)
   if (lines.length > 0 && lines[lines.length - 1].trim() === '') {
     lines.pop();
   }
   
-  const numberedLines = lines.map((line, index) => {
-    const lineNumber = startLine + index;
-    return `<span class="code-line-wrapper"><span class="line-number">${lineNumber}</span><span class="code-line">${line}</span></span>`;
-  }).join('\n');
+  // Clear the code element
+  codeElement.innerHTML = '';
   
-  codeElement.innerHTML = numberedLines;
+  // Create line wrappers using DOM methods for safety
+  lines.forEach((lineHtml, index) => {
+    const lineNumber = startLine + index;
+    
+    // Create wrapper span
+    const wrapper = document.createElement('span');
+    wrapper.className = 'code-line-wrapper';
+    
+    // Create line number span
+    const lineNumSpan = document.createElement('span');
+    lineNumSpan.className = 'line-number';
+    lineNumSpan.textContent = String(lineNumber);
+    
+    // Create code line span
+    // The lineHtml contains pre-processed syntax highlighting from rehype-highlight
+    // which only generates safe span elements with class attributes
+    const codeLineSpan = document.createElement('span');
+    codeLineSpan.className = 'code-line';
+    codeLineSpan.innerHTML = lineHtml;
+    
+    wrapper.appendChild(lineNumSpan);
+    wrapper.appendChild(codeLineSpan);
+    codeElement.appendChild(wrapper);
+    
+    // Add newline text node between lines (except for the last line)
+    if (index < lines.length - 1) {
+      codeElement.appendChild(document.createTextNode('\n'));
+    }
+  });
 }
