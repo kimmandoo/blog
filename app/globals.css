@@ -236,3 +236,173 @@ html {
 article {
   animation: fadeIn 0.5s ease-out;
 }
+
+/* GFM Table Styles */
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+@media (prefers-color-scheme: dark) {
+  .prose table {
+    border-color: #374151;
+  }
+}
+
+.prose thead {
+  background: #f9fafb;
+}
+
+@media (prefers-color-scheme: dark) {
+  .prose thead {
+    background: #1f2937;
+  }
+}
+
+.prose th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #111827;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+@media (prefers-color-scheme: dark) {
+  .prose th {
+    color: #f9fafb;
+    border-bottom-color: #374151;
+  }
+}
+
+.prose td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+}
+
+@media (prefers-color-scheme: dark) {
+  .prose td {
+    border-bottom-color: #374151;
+    color: #d1d5db;
+  }
+}
+
+.prose tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.prose tbody tr:hover {
+  background: #f9fafb;
+}
+
+@media (prefers-color-scheme: dark) {
+  .prose tbody tr:hover {
+    background: #1f2937;
+  }
+}
+
+/* GFM Task List Styles */
+.prose ul.contains-task-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.prose li.task-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose li.task-list-item input[type="checkbox"] {
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid #d1d5db;
+  border-radius: 0.25rem;
+  margin-top: 0.25rem;
+  flex-shrink: 0;
+  cursor: pointer;
+  position: relative;
+  background: transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+  .prose li.task-list-item input[type="checkbox"] {
+    border-color: #4b5563;
+  }
+}
+
+.prose li.task-list-item input[type="checkbox"]:checked {
+  background: #000;
+  border-color: #000;
+}
+
+@media (prefers-color-scheme: dark) {
+  .prose li.task-list-item input[type="checkbox"]:checked {
+    background: #fff;
+    border-color: #fff;
+  }
+}
+
+.prose li.task-list-item input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 0.35rem;
+  top: 0.1rem;
+  width: 0.3rem;
+  height: 0.6rem;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+@media (prefers-color-scheme: dark) {
+  .prose li.task-list-item input[type="checkbox"]:checked::after {
+    border-color: #000;
+  }
+}
+
+/* GFM Strikethrough Styles */
+.prose del {
+  text-decoration: line-through;
+  color: #9ca3af;
+}
+
+@media (prefers-color-scheme: dark) {
+  .prose del {
+    color: #6b7280;
+  }
+}
+
+/* GFM Footnote Styles */
+.prose .footnotes {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .prose .footnotes {
+    border-top-color: #374151;
+  }
+}
+
+.prose .footnotes ol {
+  padding-left: 1.5rem;
+}
+
+.prose sup a {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.prose sup a:hover {
+  text-decoration: underline;
+}
