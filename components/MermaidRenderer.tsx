@@ -30,6 +30,8 @@ export function MermaidRenderer() {
       const container = document.createElement('div');
       container.className = 'mermaid-container';
       container.id = `mermaid-${index}`;
+      // Store original content for theme change re-rendering
+      container.setAttribute('data-original', graphDefinition);
 
       // Replace the pre element with the container
       pre.parentNode?.replaceChild(container, pre);
@@ -41,7 +43,7 @@ export function MermaidRenderer() {
         })
         .catch((error) => {
           console.error('Mermaid rendering error:', error);
-          container.innerHTML = `<pre class="text-red-500">Mermaid diagram error: ${error.message}</pre>`;
+          container.textContent = `Mermaid diagram error: ${error.message}`;
         });
     });
 
@@ -64,7 +66,7 @@ export function MermaidRenderer() {
           document.querySelectorAll('.mermaid-container').forEach((container, idx) => {
             const originalContent = container.getAttribute('data-original');
             if (originalContent) {
-              mermaid.render(`mermaid-svg-rerender-${idx}`, originalContent)
+              mermaid.render(`mermaid-svg-rerender-${idx}-${Date.now()}`, originalContent)
                 .then(({ svg }) => {
                   container.innerHTML = svg;
                 })
