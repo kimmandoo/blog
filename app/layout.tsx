@@ -4,6 +4,8 @@ import "katex/dist/katex.min.css";
 import { themeConfig } from "@/config/theme.config";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { GoogleAdsense } from "@/components/GoogleAdsense";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const { seo, site } = themeConfig;
 const ogImageUrl = `${seo.siteUrl}${seo.openGraph.defaultImage}`;
@@ -69,11 +71,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning>
       <body className="antialiased">
-        <GoogleAnalytics />
-        <GoogleAdsense />
-        {children}
+        <ThemeProvider>
+          <GoogleAnalytics />
+          <GoogleAdsense />
+          <ThemeToggle />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* Configure dark mode to use class-based approach */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -21,8 +24,20 @@
   --color-foreground: var(--foreground);
 }
 
+/* Dark mode via class (manual toggle) */
+html.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  
+  /* Dark mode inline code */
+  --inline-code-bg: #334155;
+  --inline-code-text: #f1f5f9;
+  --inline-code-border: #475569;
+}
+
+/* Dark mode via system preference (fallback when no class is set) */
 @media (prefers-color-scheme: dark) {
-  :root {
+  html:not(.light):not(.dark) {
     --background: #0a0a0a;
     --foreground: #ededed;
     
@@ -62,8 +77,12 @@ code, pre {
   filter: brightness(0.95);
 }
 
+html.dark :not(pre) > code:hover {
+  filter: brightness(1.1);
+}
+
 @media (prefers-color-scheme: dark) {
-  :not(pre) > code:hover {
+  html:not(.light):not(.dark) :not(pre) > code:hover {
     filter: brightness(1.1);
   }
 }
@@ -323,8 +342,13 @@ html {
   color: #fff;
 }
 
+html.dark ::selection {
+  background-color: #fff;
+  color: #000;
+}
+
 @media (prefers-color-scheme: dark) {
-  ::selection {
+  html:not(.light):not(.dark) ::selection {
     background-color: #fff;
     color: #000;
   }
@@ -356,8 +380,12 @@ article {
   border: 1px solid #e5e7eb;
 }
 
+html.dark .prose table {
+  border-color: #374151;
+}
+
 @media (prefers-color-scheme: dark) {
-  .prose table {
+  html:not(.light):not(.dark) .prose table {
     border-color: #374151;
   }
 }
@@ -366,8 +394,12 @@ article {
   background: #f9fafb;
 }
 
+html.dark .prose thead {
+  background: #1f2937;
+}
+
 @media (prefers-color-scheme: dark) {
-  .prose thead {
+  html:not(.light):not(.dark) .prose thead {
     background: #1f2937;
   }
 }
@@ -380,8 +412,13 @@ article {
   border-bottom: 2px solid #e5e7eb;
 }
 
+html.dark .prose th {
+  color: #f9fafb;
+  border-bottom-color: #374151;
+}
+
 @media (prefers-color-scheme: dark) {
-  .prose th {
+  html:not(.light):not(.dark) .prose th {
     color: #f9fafb;
     border-bottom-color: #374151;
   }
@@ -393,8 +430,13 @@ article {
   color: #374151;
 }
 
+html.dark .prose td {
+  border-bottom-color: #374151;
+  color: #d1d5db;
+}
+
 @media (prefers-color-scheme: dark) {
-  .prose td {
+  html:not(.light):not(.dark) .prose td {
     border-bottom-color: #374151;
     color: #d1d5db;
   }
@@ -408,8 +450,12 @@ article {
   background: #f9fafb;
 }
 
+html.dark .prose tbody tr:hover {
+  background: #1f2937;
+}
+
 @media (prefers-color-scheme: dark) {
-  .prose tbody tr:hover {
+  html:not(.light):not(.dark) .prose tbody tr:hover {
     background: #1f2937;
   }
 }
@@ -440,8 +486,12 @@ article {
   background: transparent;
 }
 
+html.dark .prose li.task-list-item input[type="checkbox"] {
+  border-color: #4b5563;
+}
+
 @media (prefers-color-scheme: dark) {
-  .prose li.task-list-item input[type="checkbox"] {
+  html:not(.light):not(.dark) .prose li.task-list-item input[type="checkbox"] {
     border-color: #4b5563;
   }
 }
@@ -451,8 +501,13 @@ article {
   border-color: #000;
 }
 
+html.dark .prose li.task-list-item input[type="checkbox"]:checked {
+  background: #fff;
+  border-color: #fff;
+}
+
 @media (prefers-color-scheme: dark) {
-  .prose li.task-list-item input[type="checkbox"]:checked {
+  html:not(.light):not(.dark) .prose li.task-list-item input[type="checkbox"]:checked {
     background: #fff;
     border-color: #fff;
   }
@@ -470,8 +525,12 @@ article {
   transform: rotate(45deg);
 }
 
+html.dark .prose li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #000;
+}
+
 @media (prefers-color-scheme: dark) {
-  .prose li.task-list-item input[type="checkbox"]:checked::after {
+  html:not(.light):not(.dark) .prose li.task-list-item input[type="checkbox"]:checked::after {
     border-color: #000;
   }
 }
@@ -482,8 +541,12 @@ article {
   color: #9ca3af;
 }
 
+html.dark .prose del {
+  color: #6b7280;
+}
+
 @media (prefers-color-scheme: dark) {
-  .prose del {
+  html:not(.light):not(.dark) .prose del {
     color: #6b7280;
   }
 }
@@ -496,8 +559,12 @@ article {
   font-size: 0.875rem;
 }
 
+html.dark .prose .footnotes {
+  border-top-color: #374151;
+}
+
 @media (prefers-color-scheme: dark) {
-  .prose .footnotes {
+  html:not(.light):not(.dark) .prose .footnotes {
     border-top-color: #374151;
   }
 }
@@ -525,8 +592,12 @@ article {
   overflow-x: auto;
 }
 
+html.dark .prose .katex-display {
+  background: #1f2937;
+}
+
 @media (prefers-color-scheme: dark) {
-  .prose .katex-display {
+  html:not(.light):not(.dark) .prose .katex-display {
     background: #1f2937;
   }
 }
@@ -563,8 +634,12 @@ article {
   margin-top: 1rem;
 }
 
+html.dark .prose dt {
+  color: #f9fafb;
+}
+
 @media (prefers-color-scheme: dark) {
-  .prose dt {
+  html:not(.light):not(.dark) .prose dt {
     color: #f9fafb;
   }
 }
@@ -575,8 +650,12 @@ article {
   color: #374151;
 }
 
+html.dark .prose dd {
+  color: #d1d5db;
+}
+
 @media (prefers-color-scheme: dark) {
-  .prose dd {
+  html:not(.light):not(.dark) .prose dd {
     color: #d1d5db;
   }
 }
@@ -599,8 +678,13 @@ article {
   box-shadow: 0 1px 0 1px rgba(0, 0, 0, 0.05);
 }
 
+html.dark .prose kbd {
+  background: #374151;
+  border-color: #4b5563;
+}
+
 @media (prefers-color-scheme: dark) {
-  .prose kbd {
+  html:not(.light):not(.dark) .prose kbd {
     background: #374151;
     border-color: #4b5563;
   }
@@ -613,8 +697,13 @@ article {
   border-radius: 0.125rem;
 }
 
+html.dark .prose mark {
+  background: #854d0e;
+  color: #fef9c3;
+}
+
 @media (prefers-color-scheme: dark) {
-  .prose mark {
+  html:not(.light):not(.dark) .prose mark {
     background: #854d0e;
     color: #fef9c3;
   }
@@ -629,8 +718,13 @@ article {
   border-radius: 0.5rem;
 }
 
+html.dark .prose details {
+  background: #1f2937;
+  border-color: #374151;
+}
+
 @media (prefers-color-scheme: dark) {
-  .prose details {
+  html:not(.light):not(.dark) .prose details {
     background: #1f2937;
     border-color: #374151;
   }
@@ -642,8 +736,12 @@ article {
   color: #111827;
 }
 
+html.dark .prose summary {
+  color: #f9fafb;
+}
+
 @media (prefers-color-scheme: dark) {
-  .prose summary {
+  html:not(.light):not(.dark) .prose summary {
     color: #f9fafb;
   }
 }
@@ -665,8 +763,12 @@ article {
   font-style: italic;
 }
 
+html.dark .prose figcaption {
+  color: #9ca3af;
+}
+
 @media (prefers-color-scheme: dark) {
-  .prose figcaption {
+  html:not(.light):not(.dark) .prose figcaption {
     color: #9ca3af;
   }
 }
