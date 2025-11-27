@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import { remark } from 'remark';
+import remarkGfm from 'remark-gfm';
 import remarkRehype from 'remark-rehype';
 import rehypeStringify from 'rehype-stringify';
 import rehypeHighlight from 'rehype-highlight';
@@ -114,6 +115,7 @@ export async function getPostData(slug: string): Promise<PostData> {
   // Note: rehype-sanitize is not used here as all markdown content comes from 
   // trusted sources (repository files) controlled by the site owner, not user input.
   const processedContent = await remark()
+    .use(remarkGfm)
     .use(remarkRehype)
     .use(rehypeSlug)
     .use(rehypeHighlight)

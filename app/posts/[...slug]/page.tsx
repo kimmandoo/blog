@@ -66,98 +66,101 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
           </Link>
         </div>
 
-        {/* Two column layout: content + sidebar */}
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Main content area */}
-            <article className={`flex-1 min-w-0 ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} rounded-3xl shadow-xl ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border overflow-hidden`}>
-          <header className={`px-8 md:px-12 pt-12 pb-8 ${themeConfig.colors.light.border.secondary} ${themeConfig.colors.dark.border.secondary} border-b`}>
-            <div className="flex flex-wrap items-center gap-3 mb-4">
-              <time className={`${themeConfig.typography.fontSize.small} font-medium ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} uppercase tracking-wider`}>
-                {format(new Date(post.date), 'MMMM dd, yyyy')}
-              </time>
-              {post.category && (
-                <CategoryBadge 
-                  category={post.category} 
-                  index={allCategories.indexOf(post.category)}
-                  size="md"
+        {/* Layout with centered post and separate TOC sidebar */}
+        <div className="relative max-w-7xl mx-auto">
+          {/* Main content area - centered */}
+          <div className="flex justify-center">
+            <article className={`w-full max-w-3xl ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} rounded-3xl shadow-xl ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border overflow-hidden`}>
+              <header className={`px-8 md:px-12 pt-12 pb-8 ${themeConfig.colors.light.border.secondary} ${themeConfig.colors.dark.border.secondary} border-b`}>
+                <div className="flex flex-wrap items-center gap-3 mb-4">
+                  <time className={`${themeConfig.typography.fontSize.small} font-medium ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} uppercase tracking-wider`}>
+                    {format(new Date(post.date), 'MMMM dd, yyyy')}
+                  </time>
+                  {post.category && (
+                    <CategoryBadge 
+                      category={post.category} 
+                      index={allCategories.indexOf(post.category)}
+                      size="md"
+                    />
+                  )}
+                </div>
+                <h1 className={`text-5xl md:text-6xl font-black ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} mb-4 leading-tight`}>
+                  {post.title}
+                </h1>
+                {post.excerpt && (
+                  <p className={`${themeConfig.typography.fontSize.subheading} ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} leading-relaxed`}>
+                    {post.excerpt}
+                  </p>
+                )}
+                {post.tags && post.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-6">
+                    {post.tags.map((tag) => (
+                      <TagBadge key={tag} tag={tag} size="md" />
+                    ))}
+                  </div>
+                )}
+              </header>
+
+              <div className="px-8 md:px-12 py-12">
+                <CodeBlockEnhancer />
+                
+                <div 
+                  className="prose prose-lg dark:prose-invert max-w-none
+                    prose-headings:font-bold prose-headings:text-black dark:prose-headings:text-white prose-headings:scroll-mt-20
+                    prose-h1:text-4xl prose-h1:mb-6 prose-h1:mt-12
+                    prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-10 prose-h2:pb-2 prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-gray-800
+                    prose-h3:text-2xl prose-h3:mb-3 prose-h3:mt-8
+                    prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-6
+                    prose-a:text-black dark:prose-a:text-white prose-a:font-medium prose-a:no-underline prose-a:border-b-2 prose-a:border-black dark:prose-a:border-white hover:prose-a:border-gray-400 dark:hover:prose-a:border-gray-600 prose-a:transition-colors
+                    prose-strong:text-black dark:prose-strong:text-white prose-strong:font-bold
+                    prose-code:text-black dark:prose-code:text-white prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-2 prose-code:py-1 prose-code:rounded-lg prose-code:before:content-none prose-code:after:content-none prose-code:font-mono prose-code:text-sm
+                    prose-pre:bg-gradient-to-br prose-pre:from-gray-900 prose-pre:to-black dark:prose-pre:from-gray-950 dark:prose-pre:to-black prose-pre:border prose-pre:border-gray-800 dark:prose-pre:border-gray-700 prose-pre:rounded-2xl prose-pre:shadow-lg prose-pre:p-6
+                    prose-blockquote:border-l-4 prose-blockquote:border-black dark:prose-blockquote:border-white prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300 prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-gray-900 prose-blockquote:py-4 prose-blockquote:rounded-r-xl
+                    prose-hr:border-gray-200 dark:prose-hr:border-gray-800 prose-hr:my-12
+                    prose-ul:text-gray-700 dark:prose-ul:text-gray-300 prose-ul:list-disc prose-ul:pl-6
+                    prose-ol:text-gray-700 dark:prose-ol:text-gray-300 prose-ol:list-decimal prose-ol:pl-6
+                    prose-li:text-gray-700 dark:prose-li:text-gray-300 prose-li:mb-2
+                    prose-img:rounded-2xl prose-img:shadow-lg
+                    prose-table:border-collapse prose-table:w-full
+                    prose-th:border prose-th:border-gray-300 dark:prose-th:border-gray-700 prose-th:px-4 prose-th:py-2 prose-th:bg-gray-100 dark:prose-th:bg-gray-800 prose-th:text-left prose-th:font-semibold
+                    prose-td:border prose-td:border-gray-300 dark:prose-td:border-gray-700 prose-td:px-4 prose-td:py-2"
+                  dangerouslySetInnerHTML={{ __html: post.content || '' }}
                 />
-              )}
-            </div>
-            <h1 className={`text-5xl md:text-6xl font-black ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} mb-4 leading-tight`}>
-              {post.title}
-            </h1>
-            {post.excerpt && (
-              <p className={`${themeConfig.typography.fontSize.subheading} ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} leading-relaxed`}>
-                {post.excerpt}
-              </p>
-            )}
-            {post.tags && post.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-6">
-                {post.tags.map((tag) => (
-                  <TagBadge key={tag} tag={tag} size="md" />
-                ))}
               </div>
-            )}
-          </header>
 
-          <div className="px-8 md:px-12 py-12">
-            <CodeBlockEnhancer />
-            
-            <div 
-              className="prose prose-lg dark:prose-invert max-w-none
-                prose-headings:font-bold prose-headings:text-black dark:prose-headings:text-white prose-headings:scroll-mt-20
-                prose-h1:text-4xl prose-h1:mb-6 prose-h1:mt-12
-                prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-10 prose-h2:pb-2 prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-gray-800
-                prose-h3:text-2xl prose-h3:mb-3 prose-h3:mt-8
-                prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-6
-                prose-a:text-black dark:prose-a:text-white prose-a:font-medium prose-a:no-underline prose-a:border-b-2 prose-a:border-black dark:prose-a:border-white hover:prose-a:border-gray-400 dark:hover:prose-a:border-gray-600 prose-a:transition-colors
-                prose-strong:text-black dark:prose-strong:text-white prose-strong:font-bold
-                prose-code:text-black dark:prose-code:text-white prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-2 prose-code:py-1 prose-code:rounded-lg prose-code:before:content-none prose-code:after:content-none prose-code:font-mono prose-code:text-sm
-                prose-pre:bg-gradient-to-br prose-pre:from-gray-900 prose-pre:to-black dark:prose-pre:from-gray-950 dark:prose-pre:to-black prose-pre:border prose-pre:border-gray-800 dark:prose-pre:border-gray-700 prose-pre:rounded-2xl prose-pre:shadow-lg prose-pre:p-6
-                prose-blockquote:border-l-4 prose-blockquote:border-black dark:prose-blockquote:border-white prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300 prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-gray-900 prose-blockquote:py-4 prose-blockquote:rounded-r-xl
-                prose-hr:border-gray-200 dark:prose-hr:border-gray-800 prose-hr:my-12
-                prose-ul:text-gray-700 dark:prose-ul:text-gray-300 prose-ul:list-disc prose-ul:pl-6
-                prose-ol:text-gray-700 dark:prose-ol:text-gray-300 prose-ol:list-decimal prose-ol:pl-6
-                prose-li:text-gray-700 dark:prose-li:text-gray-300 prose-li:mb-2
-                prose-img:rounded-2xl prose-img:shadow-lg"
-              dangerouslySetInnerHTML={{ __html: post.content || '' }}
-            />
+              {/* Comments Section */}
+              <div className={`px-8 md:px-12 pb-12 pt-8 ${themeConfig.colors.light.border.secondary} ${themeConfig.colors.dark.border.secondary} border-t`}>
+                <Comments />
+              </div>
+            </article>
           </div>
 
-          {/* Comments Section */}
-          <div className={`px-8 md:px-12 pb-12 pt-8 ${themeConfig.colors.light.border.secondary} ${themeConfig.colors.dark.border.secondary} border-t`}>
-            <Comments />
-          </div>
-        </article>
+          {/* Table of Contents Sidebar - Positioned absolutely on the right */}
+          {post.toc && post.toc.length > 0 && (
+            <aside className="hidden xl:block absolute top-0 right-0 w-72">
+              <TableOfContents items={post.toc} />
+            </aside>
+          )}
+        </div>
 
-        {/* Table of Contents Sidebar - Separate from article */}
-        {post.toc && post.toc.length > 0 && (
-          <aside className="hidden lg:block w-80 flex-shrink-0">
-            <TableOfContents items={post.toc} />
-          </aside>
-        )}
-      </div>
+        <div className={`${themeConfig.spacing.container} mx-auto px-6 mt-12 text-center`}>
+          <Link 
+            href="/"
+            className={`inline-flex items-center px-8 py-4 ${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary} ${themeConfig.borderRadius.button} font-bold ${themeConfig.animations.scale} ${themeConfig.animations.transition} ${themeConfig.shadows.button}`}
+          >
+            <svg 
+              className="w-5 h-5 mr-2" 
+              fill="none" 
+              strokeWidth="2" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path d="M19 12H5M5 12l7 7M5 12l7-7" />
+            </svg>
+            Back to Home
+          </Link>
+        </div>
+      </main>
     </div>
-
-    <div className={`${themeConfig.spacing.container} mx-auto px-6 mt-12 text-center`}>
-      <Link 
-        href="/"
-        className={`inline-flex items-center px-8 py-4 ${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary} ${themeConfig.borderRadius.button} font-bold ${themeConfig.animations.scale} ${themeConfig.animations.transition} ${themeConfig.shadows.button}`}
-      >
-        <svg 
-          className="w-5 h-5 mr-2" 
-          fill="none" 
-          strokeWidth="2" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path d="M19 12H5M5 12l7 7M5 12l7-7" />
-        </svg>
-        Back to Home
-      </Link>
-    </div>
-  </main>
-</div>
   );
 }
