@@ -4,6 +4,7 @@ date: "2025-01-15"
 excerpt: "This is my first blog post. Learn about this minimal, modern blog built with Next.js and deployed on Vercel."
 category: "General"
 tags: ["welcome", "nextjs", "blog"]
+draft: true
 ---
 
 # Welcome to My Blog

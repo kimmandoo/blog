@@ -4,6 +4,7 @@ date: "2025-11-27"
 excerpt: "This post tests nested folder support and table of contents feature"
 category: "Tutorial"
 tags: ["test", "md", "mandoo"]
+draft: true
 ---
 
 ```shell

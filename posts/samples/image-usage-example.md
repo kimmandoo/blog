@@ -4,6 +4,7 @@ date: "2025-01-20"
 excerpt: "블로그 포스트에 이미지를 추가하는 방법을 보여주는 예시입니다."
 category: "Tutorial"
 tags: ["images", "markdown", "guide"]
+draft: true
 ---
 
 # 이미지 사용 예시
