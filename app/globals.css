@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* Configure dark mode to use class selector */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -16,21 +19,20 @@
   --inline-code-border: #e2e8f0;
 }
 
+/* Dark mode via class (for manual toggle) */
+html.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  
+  /* Dark mode inline code */
+  --inline-code-bg: #334155;
+  --inline-code-text: #f1f5f9;
+  --inline-code-border: #475569;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    
-    /* Dark mode inline code */
-    --inline-code-bg: #334155;
-    --inline-code-text: #f1f5f9;
-    --inline-code-border: #475569;
-  }
 }
 
 body {
@@ -62,10 +64,8 @@ code, pre {
   filter: brightness(0.95);
 }
 
-@media (prefers-color-scheme: dark) {
-  :not(pre) > code:hover {
-    filter: brightness(1.1);
-  }
+html.dark :not(pre) > code:hover {
+  filter: brightness(1.1);
 }
 
 /* ============================
@@ -323,11 +323,9 @@ html {
   color: #fff;
 }
 
-@media (prefers-color-scheme: dark) {
-  ::selection {
-    background-color: #fff;
-    color: #000;
-  }
+html.dark ::selection {
+  background-color: #fff;
+  color: #000;
 }
 
 /* Animations */
@@ -356,20 +354,16 @@ article {
   border: 1px solid #e5e7eb;
 }
 
-@media (prefers-color-scheme: dark) {
-  .prose table {
-    border-color: #374151;
-  }
+html.dark .prose table {
+  border-color: #374151;
 }
 
 .prose thead {
   background: #f9fafb;
 }
 
-@media (prefers-color-scheme: dark) {
-  .prose thead {
-    background: #1f2937;
-  }
+html.dark .prose thead {
+  background: #1f2937;
 }
 
 .prose th {
@@ -380,11 +374,9 @@ article {
   border-bottom: 2px solid #e5e7eb;
 }
 
-@media (prefers-color-scheme: dark) {
-  .prose th {
-    color: #f9fafb;
-    border-bottom-color: #374151;
-  }
+html.dark .prose th {
+  color: #f9fafb;
+  border-bottom-color: #374151;
 }
 
 .prose td {
@@ -393,11 +385,9 @@ article {
   color: #374151;
 }
 
-@media (prefers-color-scheme: dark) {
-  .prose td {
-    border-bottom-color: #374151;
-    color: #d1d5db;
-  }
+html.dark .prose td {
+  border-bottom-color: #374151;
+  color: #d1d5db;
 }
 
 .prose tbody tr:last-child td {
@@ -408,10 +398,8 @@ article {
   background: #f9fafb;
 }
 
-@media (prefers-color-scheme: dark) {
-  .prose tbody tr:hover {
-    background: #1f2937;
-  }
+html.dark .prose tbody tr:hover {
+  background: #1f2937;
 }
 
 /* GFM Task List Styles */
@@ -440,10 +428,8 @@ article {
   background: transparent;
 }
 
-@media (prefers-color-scheme: dark) {
-  .prose li.task-list-item input[type="checkbox"] {
-    border-color: #4b5563;
-  }
+html.dark .prose li.task-list-item input[type="checkbox"] {
+  border-color: #4b5563;
 }
 
 .prose li.task-list-item input[type="checkbox"]:checked {
@@ -451,11 +437,9 @@ article {
   border-color: #000;
 }
 
-@media (prefers-color-scheme: dark) {
-  .prose li.task-list-item input[type="checkbox"]:checked {
-    background: #fff;
-    border-color: #fff;
-  }
+html.dark .prose li.task-list-item input[type="checkbox"]:checked {
+  background: #fff;
+  border-color: #fff;
 }
 
 .prose li.task-list-item input[type="checkbox"]:checked::after {
@@ -470,10 +454,8 @@ article {
   transform: rotate(45deg);
 }
 
-@media (prefers-color-scheme: dark) {
-  .prose li.task-list-item input[type="checkbox"]:checked::after {
-    border-color: #000;
-  }
+html.dark .prose li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #000;
 }
 
 /* GFM Strikethrough Styles */
@@ -482,10 +464,8 @@ article {
   color: #9ca3af;
 }
 
-@media (prefers-color-scheme: dark) {
-  .prose del {
-    color: #6b7280;
-  }
+html.dark .prose del {
+  color: #6b7280;
 }
 
 /* GFM Footnote Styles */
@@ -496,10 +476,8 @@ article {
   font-size: 0.875rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  .prose .footnotes {
-    border-top-color: #374151;
-  }
+html.dark .prose .footnotes {
+  border-top-color: #374151;
 }
 
 .prose .footnotes ol {
@@ -525,10 +503,8 @@ article {
   overflow-x: auto;
 }
 
-@media (prefers-color-scheme: dark) {
-  .prose .katex-display {
-    background: #1f2937;
-  }
+html.dark .prose .katex-display {
+  background: #1f2937;
 }
 
 .prose .katex {
@@ -563,10 +539,8 @@ article {
   margin-top: 1rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  .prose dt {
-    color: #f9fafb;
-  }
+html.dark .prose dt {
+  color: #f9fafb;
 }
 
 .prose dd {
@@ -575,10 +549,8 @@ article {
   color: #374151;
 }
 
-@media (prefers-color-scheme: dark) {
-  .prose dd {
-    color: #d1d5db;
-  }
+html.dark .prose dd {
+  color: #d1d5db;
 }
 
 /* Abbreviations */
@@ -599,11 +571,9 @@ article {
   box-shadow: 0 1px 0 1px rgba(0, 0, 0, 0.05);
 }
 
-@media (prefers-color-scheme: dark) {
-  .prose kbd {
-    background: #374151;
-    border-color: #4b5563;
-  }
+html.dark .prose kbd {
+  background: #374151;
+  border-color: #4b5563;
 }
 
 /* Mark/Highlight */
@@ -613,11 +583,9 @@ article {
   border-radius: 0.125rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  .prose mark {
-    background: #854d0e;
-    color: #fef9c3;
-  }
+html.dark .prose mark {
+  background: #854d0e;
+  color: #fef9c3;
 }
 
 /* Details/Summary (Collapsible) */
@@ -629,11 +597,9 @@ article {
   border-radius: 0.5rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  .prose details {
-    background: #1f2937;
-    border-color: #374151;
-  }
+html.dark .prose details {
+  background: #1f2937;
+  border-color: #374151;
 }
 
 .prose summary {
@@ -642,10 +608,8 @@ article {
   color: #111827;
 }
 
-@media (prefers-color-scheme: dark) {
-  .prose summary {
-    color: #f9fafb;
-  }
+html.dark .prose summary {
+  color: #f9fafb;
 }
 
 .prose details[open] summary {
@@ -665,10 +629,8 @@ article {
   font-style: italic;
 }
 
-@media (prefers-color-scheme: dark) {
-  .prose figcaption {
-    color: #9ca3af;
-  }
+html.dark .prose figcaption {
+  color: #9ca3af;
 }
 
 /* Video/Audio Elements */

@@ -7,6 +7,7 @@ import { CategoryBadge } from '@/components/CategoryBadge';
 import { TagBadge } from '@/components/TagBadge';
 import { SearchBar } from '@/components/SearchBar';
 import { SocialLinks } from '@/components/SocialLinks';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { themeConfig } from '@/config/theme.config';
 import { PostData } from '@/lib/posts';
 
@@ -46,8 +47,11 @@ export function PostList({
 
   return (
     <>
-      {/* Social Links */}
-      <SocialLinks />
+      {/* Social Links and Theme Toggle */}
+      <div className="flex items-center justify-center gap-4 mb-6">
+        <SocialLinks />
+        <ThemeToggle />
+      </div>
 
       {/* Search Bar */}
       <div className="mb-12">

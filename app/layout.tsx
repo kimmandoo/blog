@@ -4,6 +4,7 @@ import "katex/dist/katex.min.css";
 import { themeConfig } from "@/config/theme.config";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { GoogleAdsense } from "@/components/GoogleAdsense";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const { seo, site } = themeConfig;
 const ogImageUrl = `${seo.siteUrl}${seo.openGraph.defaultImage}`;
@@ -69,11 +70,29 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var theme = localStorage.getItem('theme');
+                  if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className="antialiased">
-        <GoogleAnalytics />
-        <GoogleAdsense />
-        {children}
+        <ThemeProvider>
+          <GoogleAnalytics />
+          <GoogleAdsense />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

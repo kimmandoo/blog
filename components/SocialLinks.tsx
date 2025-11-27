@@ -43,7 +43,7 @@ export function SocialLinks() {
   }
 
   return (
-    <div className="flex items-center justify-center gap-4 mb-6">
+    <>
       {activeLinks.map((link) => (
         <a
           key={link.name}
@@ -57,6 +57,6 @@ export function SocialLinks() {
           <span className="text-sm font-medium">{link.name}</span>
         </a>
       ))}
-    </div>
+    </>
   );
 }
