@@ -105,22 +105,22 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
             <CodeBlockEnhancer />
             
             <div 
-              className="prose prose-lg dark:prose-invert max-w-none
+              className={`prose ${themeConfig.prose.size} dark:prose-invert max-w-none
                 prose-headings:font-bold prose-headings:text-black dark:prose-headings:text-white prose-headings:scroll-mt-20
-                prose-h1:text-4xl prose-h1:mb-6 prose-h1:mt-12
-                prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-10 prose-h2:pb-2 prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-gray-800
-                prose-h3:text-2xl prose-h3:mb-3 prose-h3:mt-8
-                prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-6
+                prose-h1:${themeConfig.prose.h1} prose-h1:mb-6 prose-h1:mt-12
+                prose-h2:${themeConfig.prose.h2} prose-h2:mb-4 prose-h2:mt-10 prose-h2:pb-2 prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-gray-800
+                prose-h3:${themeConfig.prose.h3} prose-h3:mb-3 prose-h3:mt-8
+                prose-p:${themeConfig.prose.paragraphColor.light} dark:prose-p:${themeConfig.prose.paragraphColor.dark} prose-p:leading-relaxed prose-p:mb-6
                 prose-a:text-black dark:prose-a:text-white prose-a:font-medium prose-a:no-underline prose-a:border-b-2 prose-a:border-black dark:prose-a:border-white hover:prose-a:border-gray-400 dark:hover:prose-a:border-gray-600 prose-a:transition-colors
                 prose-strong:text-black dark:prose-strong:text-white prose-strong:font-bold
                 prose-code:text-black dark:prose-code:text-white prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-2 prose-code:py-1 prose-code:rounded-lg prose-code:before:content-none prose-code:after:content-none prose-code:font-mono prose-code:text-sm
                 prose-pre:bg-gradient-to-br prose-pre:from-gray-900 prose-pre:to-black dark:prose-pre:from-gray-950 dark:prose-pre:to-black prose-pre:border prose-pre:border-gray-800 dark:prose-pre:border-gray-700 prose-pre:rounded-2xl prose-pre:shadow-lg prose-pre:p-6
                 prose-blockquote:border-l-4 prose-blockquote:border-black dark:prose-blockquote:border-white prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300 prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-gray-900 prose-blockquote:py-4 prose-blockquote:rounded-r-xl
                 prose-hr:border-gray-200 dark:prose-hr:border-gray-800 prose-hr:my-12
-                prose-ul:text-gray-700 dark:prose-ul:text-gray-300 prose-ul:list-disc prose-ul:pl-6
-                prose-ol:text-gray-700 dark:prose-ol:text-gray-300 prose-ol:list-decimal prose-ol:pl-6
-                prose-li:text-gray-700 dark:prose-li:text-gray-300 prose-li:mb-2
-                prose-img:rounded-2xl prose-img:shadow-lg"
+                prose-ul:${themeConfig.prose.listColor.light} dark:prose-ul:${themeConfig.prose.listColor.dark} prose-ul:list-disc prose-ul:pl-6
+                prose-ol:${themeConfig.prose.listColor.light} dark:prose-ol:${themeConfig.prose.listColor.dark} prose-ol:list-decimal prose-ol:pl-6
+                prose-li:${themeConfig.prose.listColor.light} dark:prose-li:${themeConfig.prose.listColor.dark} prose-li:mb-2
+                prose-img:rounded-2xl prose-img:shadow-lg`}
               dangerouslySetInnerHTML={{ __html: post.content || '' }}
             />
           </div>
