@@ -28,6 +28,7 @@ export interface PostData {
   category?: string;
   tags?: string[];
   toc?: TOCItem[];
+  draft?: boolean;
 }
 
 // Helper function to recursively find all markdown files
@@ -76,9 +77,12 @@ export function getSortedPostsData(): PostData[] {
         excerpt: matterResult.data.excerpt || '',
         category: matterResult.data.category || '',
         tags: matterResult.data.tags || [],
-        ...(matterResult.data as Omit<PostData, 'slug' | 'title' | 'date' | 'excerpt' | 'category' | 'tags'>),
+        draft: matterResult.data.draft || false,
+        ...(matterResult.data as Omit<PostData, 'slug' | 'title' | 'date' | 'excerpt' | 'category' | 'tags' | 'draft'>),
       };
-    });
+    })
+    // Filter out draft posts
+    .filter(post => !post.draft);
 
   // Sort posts by date
   return allPostsData.sort((a, b) => {
@@ -96,6 +100,13 @@ export function getAllPostSlugs() {
     : [];
   
   return fileNames
+    .filter(fileName => {
+      // Check if post is draft
+      const fullPath = path.join(postsDirectory, fileName);
+      const fileContents = fs.readFileSync(fullPath, 'utf8');
+      const matterResult = matter(fileContents);
+      return !matterResult.data.draft;
+    })
     .map(fileName => {
       return {
         slug: fileName.replace(/\.md$/, '').replace(/\\/g, '/'),
@@ -110,6 +121,11 @@ export async function getPostData(slug: string): Promise<PostData> {
 
   // Use gray-matter to parse the post metadata section
   const matterResult = matter(fileContents);
+
+  // Check if post is draft and throw error to prevent direct access
+  if (matterResult.data.draft) {
+    throw new Error('Post not found');
+  }
 
   // Extract TOC items from markdown content
   const toc = extractTOC(matterResult.content);
@@ -138,8 +154,9 @@ export async function getPostData(slug: string): Promise<PostData> {
     excerpt: matterResult.data.excerpt || '',
     category: matterResult.data.category || '',
     tags: matterResult.data.tags || [],
+    draft: matterResult.data.draft || false,
     toc,
-    ...(matterResult.data as Omit<PostData, 'slug' | 'title' | 'date' | 'content' | 'excerpt' | 'category' | 'tags' | 'toc'>),
+    ...(matterResult.data as Omit<PostData, 'slug' | 'title' | 'date' | 'content' | 'excerpt' | 'category' | 'tags' | 'draft' | 'toc'>),
   };
 }
 
