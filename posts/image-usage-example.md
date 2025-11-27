@@ -25,8 +25,10 @@ tags: ["images", "markdown", "guide"]
 1. `public/images/` 폴더에 이미지 파일을 저장
 2. 마크다운에서 `/images/` 경로로 참조
 
+![예시 이미지](/images/test/test.jpg)
+
+
 ```markdown
-![예시 이미지](/images/posts/example.jpg)
 ```
 
 **폴더 구조:**

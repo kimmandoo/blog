@@ -3,8 +3,8 @@ import "./globals.css";
 import "katex/dist/katex.min.css";
 
 export const metadata: Metadata = {
-  title: "Blog",
-  description: "A minimal, modern blog",
+  title: "kimmandoo.log",
+  description: "struggles and growths",
 };
 
 export default function RootLayout({
