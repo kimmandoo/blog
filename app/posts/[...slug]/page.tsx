@@ -66,9 +66,14 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
           </Link>
         </div>
 
-        {/* Two column layout: content + sidebar */}
+        {/* Three column layout: spacer + content + sidebar for centered content with ToC */}
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-8 justify-center">
+            {/* Left spacer - mirrors ToC width to keep content centered */}
+            {post.toc && post.toc.length > 0 && (
+              <div className="hidden lg:block w-72 flex-shrink-0" aria-hidden="true" role="presentation" />
+            )}
+            
             {/* Main content area - centered */}
             <article className={`flex-1 min-w-0 max-w-4xl ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} rounded-3xl shadow-xl ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border overflow-hidden`}>
           <header className={`px-8 md:px-12 pt-12 pb-8 ${themeConfig.colors.light.border.secondary} ${themeConfig.colors.dark.border.secondary} border-b`}>
