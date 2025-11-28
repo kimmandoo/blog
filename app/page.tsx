@@ -24,15 +24,14 @@ export default async function Home({
   });
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${themeConfig.colors.light.background.primary} ${themeConfig.colors.dark.background.primary}`}>
-      <main className={`${themeConfig.spacing.container} mx-auto px-6 ${themeConfig.spacing.section}`}>
-        <header className="mb-20 text-center">
-          <div className={`${themeConfig.typography.fontSize.title} ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} font-semibold`}>
-            <h1> 
-              {themeConfig.site.title} 
-            </h1>
-          </div>
-          <p className={`${themeConfig.typography.fontSize.body} ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} font-light`}>
+    <div className={`min-h-screen bg-gradient-to-b ${themeConfig.colors.light.background.primary} ${themeConfig.colors.dark.background.primary}`}>
+      <main className={`${themeConfig.spacing.container} mx-auto px-5 ${themeConfig.spacing.section}`}>
+        {/* Simple header */}
+        <header className="mb-12">
+          <h1 className={`${themeConfig.typography.fontSize.title} ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} font-medium tracking-tight`}>
+            {themeConfig.site.title}
+          </h1>
+          <p className={`${themeConfig.typography.fontSize.small} ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} mt-1`}>
             {themeConfig.site.tagline}
           </p>
         </header>

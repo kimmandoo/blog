@@ -11,56 +11,56 @@ export const themeConfig = {
     tagline: '발버둥치는 중',
   },
 
-  // Color scheme
+  // Color scheme - Simple & Modern
   colors: {
     // Light mode colors
     light: {
       background: {
-        primary: 'from-white via-gray-50 to-gray-100',
+        primary: 'from-stone-50 to-stone-100',
         card: 'bg-white',
-        cardHover: 'hover:border-gray-300',
+        cardHover: 'hover:bg-stone-50',
       },
       text: {
-        primary: 'text-black',
-        secondary: 'text-gray-600',
-        tertiary: 'text-gray-500',
+        primary: 'text-stone-900',
+        secondary: 'text-stone-600',
+        tertiary: 'text-stone-400',
       },
       border: {
-        primary: 'border-gray-100',
-        secondary: 'border-gray-200',
+        primary: 'border-stone-200',
+        secondary: 'border-stone-300',
       },
       accent: {
-        primary: 'bg-black text-white',
-        gradient: 'from-black via-gray-700 to-black',
+        primary: 'bg-stone-900 text-white',
+        gradient: 'from-stone-800 to-stone-900',
       },
       code: {
-        background: 'bg-gray-100',
-        text: 'text-gray-800',
+        background: 'bg-stone-100',
+        text: 'text-stone-800',
       },
     },
     // Dark mode colors
     dark: {
       background: {
-        primary: 'dark:from-black dark:via-gray-900 dark:to-black',
-        card: 'dark:bg-gray-900',
-        cardHover: 'dark:hover:border-gray-700',
+        primary: 'dark:from-stone-950 dark:to-stone-900',
+        card: 'dark:bg-stone-900/50',
+        cardHover: 'dark:hover:bg-stone-800/50',
       },
       text: {
-        primary: 'dark:text-white',
-        secondary: 'dark:text-gray-400',
-        tertiary: 'dark:text-gray-500',
+        primary: 'dark:text-stone-100',
+        secondary: 'dark:text-stone-400',
+        tertiary: 'dark:text-stone-500',
       },
       border: {
-        primary: 'dark:border-gray-800',
-        secondary: 'dark:border-gray-800',
+        primary: 'dark:border-stone-800',
+        secondary: 'dark:border-stone-700',
       },
       accent: {
-        primary: 'dark:bg-white dark:text-black',
-        gradient: 'dark:from-white dark:via-gray-300 dark:to-white',
+        primary: 'dark:bg-stone-100 dark:text-stone-900',
+        gradient: 'dark:from-stone-100 dark:to-stone-200',
       },
       code: {
-        background: 'dark:bg-gray-800',
-        text: 'dark:text-gray-200',
+        background: 'dark:bg-stone-800',
+        text: 'dark:text-stone-200',
       },
     },
   },
@@ -68,13 +68,13 @@ export const themeConfig = {
   // Typography
   typography: {
     fontFamily: {
-      sans: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-      mono: '"Courier New", Courier, monospace',
+      sans: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+      mono: '"JetBrains Mono", "Fira Code", Menlo, Monaco, Consolas, monospace',
     },
     fontSize: {
-      title: 'text-3xl',
-      heading: 'text-2xl',
-      subheading: 'text-xl',
+      title: 'text-2xl',
+      heading: 'text-xl',
+      subheading: 'text-lg',
       body: 'text-base',
       small: 'text-sm',
     },
@@ -87,73 +87,73 @@ export const themeConfig = {
     // Base prose size: prose-sm, prose-base, prose-lg, prose-xl, prose-2xl
     size: 'prose-base',
     // Heading sizes: text-xl, text-2xl, text-3xl, text-4xl, text-5xl, etc.
-    h1: 'text-3xl',
-    h2: 'text-2xl',
-    h3: 'text-xl',
+    h1: 'text-2xl',
+    h2: 'text-xl',
+    h3: 'text-lg',
     // Paragraph text color: text-gray-600, text-gray-700, text-gray-800, etc.
     paragraphColor: {
-      light: 'text-gray-700',
-      dark: 'text-gray-300',
+      light: 'text-stone-600',
+      dark: 'text-stone-300',
     },
     // List text color
     listColor: {
-      light: 'text-gray-700',
-      dark: 'text-gray-300',
+      light: 'text-stone-600',
+      dark: 'text-stone-300',
     },
   },
 
   // Spacing
   spacing: {
-    container: 'max-w-4xl',
-    section: 'py-20',
-    card: 'p-8',
+    container: 'max-w-2xl',
+    section: 'py-16',
+    card: 'p-6',
   },
 
   // Border radius
   borderRadius: {
-    card: 'rounded-2xl',
-    button: 'rounded-full',
-    image: 'rounded-2xl',
+    card: 'rounded-lg',
+    button: 'rounded-md',
+    image: 'rounded-lg',
   },
 
   // Shadows
   shadows: {
-    card: 'shadow-sm hover:shadow-xl',
-    button: 'shadow-lg hover:shadow-2xl',
+    card: 'shadow-none hover:shadow-sm',
+    button: 'shadow-sm hover:shadow-md',
   },
 
   // Animations
   animations: {
-    transition: 'transition-all duration-300',
-    hover: 'hover:-translate-y-1',
-    scale: 'hover:scale-105',
+    transition: 'transition-all duration-200 ease-out',
+    hover: '',
+    scale: '',
   },
 
-  // Category and Tag settings
+  // Category and Tag settings - Simple flat colors
   taxonomy: {
     categories: {
       colors: [
-        'bg-gradient-to-r from-blue-500/90 to-blue-600/90 text-white dark:from-blue-400/90 dark:to-blue-500/90 dark:text-white',
-        'bg-gradient-to-r from-emerald-500/90 to-emerald-600/90 text-white dark:from-emerald-400/90 dark:to-emerald-500/90 dark:text-white',
-        'bg-gradient-to-r from-violet-500/90 to-violet-600/90 text-white dark:from-violet-400/90 dark:to-violet-500/90 dark:text-white',
-        'bg-gradient-to-r from-rose-500/90 to-rose-600/90 text-white dark:from-rose-400/90 dark:to-rose-500/90 dark:text-white',
-        'bg-gradient-to-r from-amber-500/90 to-amber-600/90 text-white dark:from-amber-400/90 dark:to-amber-500/90 dark:text-white',
-        'bg-gradient-to-r from-indigo-500/90 to-indigo-600/90 text-white dark:from-indigo-400/90 dark:to-indigo-500/90 dark:text-white',
-        'bg-gradient-to-r from-cyan-500/90 to-cyan-600/90 text-white dark:from-cyan-400/90 dark:to-cyan-500/90 dark:text-white',
-        'bg-gradient-to-r from-fuchsia-500/90 to-fuchsia-600/90 text-white dark:from-fuchsia-400/90 dark:to-fuchsia-500/90 dark:text-white',
-        'bg-gradient-to-r from-teal-500/90 to-teal-600/90 text-white dark:from-teal-400/90 dark:to-teal-500/90 dark:text-white',
-        'bg-gradient-to-r from-orange-500/90 to-orange-600/90 text-white dark:from-orange-400/90 dark:to-orange-500/90 dark:text-white',
-        'bg-gradient-to-r from-pink-500/90 to-pink-600/90 text-white dark:from-pink-400/90 dark:to-pink-500/90 dark:text-white',
-        'bg-gradient-to-r from-lime-500/90 to-lime-600/90 text-white dark:from-lime-400/90 dark:to-lime-500/90 dark:text-white',
-        'bg-gradient-to-r from-sky-500/90 to-sky-600/90 text-white dark:from-sky-400/90 dark:to-sky-500/90 dark:text-white',
-        'bg-gradient-to-r from-purple-500/90 to-purple-600/90 text-white dark:from-purple-400/90 dark:to-purple-500/90 dark:text-white',
-        'bg-gradient-to-r from-red-500/90 to-red-600/90 text-white dark:from-red-400/90 dark:to-red-500/90 dark:text-white',
-        'bg-gradient-to-r from-yellow-500/90 to-yellow-600/90 text-white dark:from-yellow-400/90 dark:to-yellow-500/90 dark:text-white',
+        'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+        'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
+        'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300',
+        'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300',
+        'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+        'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300',
+        'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300',
+        'bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-900/30 dark:text-fuchsia-300',
+        'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300',
+        'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
+        'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300',
+        'bg-lime-100 text-lime-700 dark:bg-lime-900/30 dark:text-lime-300',
+        'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300',
+        'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
+        'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
+        'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300',
       ],
     },
     tags: {
-      style: 'bg-white/80 text-gray-700 dark:bg-gray-800/80 dark:text-gray-200',
-      hoverStyle: 'hover:bg-white hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white',
+      style: 'bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300',
+      hoverStyle: 'hover:bg-stone-200 hover:text-stone-800 dark:hover:bg-stone-700 dark:hover:text-stone-200',
     },
   },
 

@@ -19,14 +19,14 @@ export function ThemeToggle() {
   return (
     <button
       onClick={cycleTheme}
-      className="fixed top-6 right-6 z-50 p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 hover:scale-110 transition-all duration-300"
+      className="fixed top-4 right-4 z-50 p-2 rounded-md bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 transition-colors duration-200"
       aria-label={`Current theme: ${theme}. Click to switch.`}
       title={`Theme: ${theme} (${resolvedTheme})`}
     >
       {/* Sun icon for light mode */}
       {resolvedTheme === 'light' && (
         <svg
-          className="w-5 h-5 text-yellow-500"
+          className="w-4 h-4 text-stone-600"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -42,7 +42,7 @@ export function ThemeToggle() {
       {/* Moon icon for dark mode */}
       {resolvedTheme === 'dark' && (
         <svg
-          className="w-5 h-5 text-blue-400"
+          className="w-4 h-4 text-stone-300"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -55,9 +55,9 @@ export function ThemeToggle() {
           />
         </svg>
       )}
-      {/* System indicator - shows a small badge */}
+      {/* System indicator */}
       {theme === 'system' && (
-        <span className="absolute -bottom-1 -right-1 text-[10px] bg-gray-500 text-white px-1 rounded">
+        <span className="absolute -bottom-0.5 -right-0.5 text-[8px] bg-stone-500 text-white px-1 rounded text-center leading-tight">
           auto
         </span>
       )}
