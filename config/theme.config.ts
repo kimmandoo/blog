@@ -206,14 +206,14 @@ export const themeConfig = {
   inlineCode: {
     colors: {
       light: {
-        background: '#f1f5f9',
-        text: '#0f172a',
-        border: '#e2e8f0',
+        background: '#fef3c7',
+        text: '#92400e',
+        border: '#fcd34d',
       },
       dark: {
-        background: '#334155',
-        text: '#f1f5f9',
-        border: '#475569',
+        background: '#451a03',
+        text: '#fde68a',
+        border: '#78350f',
       },
     },
     // Border radius
@@ -223,6 +223,12 @@ export const themeConfig = {
     paddingY: '0.2em',
     // Font size relative to text
     fontSize: '0.9em',
+  },
+
+  // Image configuration for posts
+  // maxWidth options: 'sm' (384px), 'md' (448px), 'lg' (512px), 'xl' (576px), '2xl' (672px), 'full' (100%)
+  postImage: {
+    maxWidth: 'full',
   },
 
   // Comments configuration
