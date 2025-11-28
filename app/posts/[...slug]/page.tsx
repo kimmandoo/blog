@@ -152,7 +152,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
                 prose-ul:${themeConfig.prose.listColor.light} dark:prose-ul:${themeConfig.prose.listColor.dark} prose-ul:list-disc prose-ul:pl-6
                 prose-ol:${themeConfig.prose.listColor.light} dark:prose-ol:${themeConfig.prose.listColor.dark} prose-ol:list-decimal prose-ol:pl-6
                 prose-li:${themeConfig.prose.listColor.light} dark:prose-li:${themeConfig.prose.listColor.dark} prose-li:mb-2
-                prose-img:rounded-lg`}
+                prose-img:rounded-lg prose-img:mx-auto prose-img:block`}
               dangerouslySetInnerHTML={{ __html: post.content || '' }}
             />
           </div>
