@@ -106,26 +106,26 @@ export const themeConfig = {
   spacing: {
     container: 'max-w-4xl',
     section: 'py-20',
-    card: 'p-8',
+    card: 'p-6',
   },
 
   // Border radius
   borderRadius: {
-    card: 'rounded-2xl',
+    card: 'rounded-none',
     button: 'rounded-full',
-    image: 'rounded-2xl',
+    image: 'rounded-lg',
   },
 
   // Shadows
   shadows: {
-    card: 'shadow-sm hover:shadow-xl',
+    card: '',
     button: 'shadow-lg hover:shadow-2xl',
   },
 
   // Animations
   animations: {
-    transition: 'transition-all duration-300',
-    hover: 'hover:-translate-y-1',
+    transition: 'transition-all duration-200',
+    hover: '',
     scale: 'hover:scale-105',
   },
 
