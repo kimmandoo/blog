@@ -173,34 +173,48 @@ export function PostList({
           filteredPosts.map((post) => (
             <article key={post.slug} className="group">
               <Link href={`/posts/${post.slug}`}>
-                <div className={`py-8 ${themeConfig.animations.transition} hover:bg-gray-50 dark:hover:bg-gray-900/50`}>
-                  <div className="flex items-center gap-3 mb-3">
-                    <time className={`text-sm ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
-                      {format(new Date(post.date), 'yyyy.MM.dd')}
-                    </time>
-                    {post.category && (
-                      <span className={`text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary}`}>
-                        {post.category}
-                      </span>
-                    )}
-                  </div>
-                  <h2 className={`text-xl font-medium mb-2 ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} group-hover:opacity-70 ${themeConfig.animations.transition}`}>
-                    {post.title}
-                  </h2>
-                  {post.excerpt && (
-                    <p className={`${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} text-sm leading-relaxed mb-3 overflow-hidden`} style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
-                      {post.excerpt}
-                    </p>
-                  )}
-                  {post.tags && post.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5">
-                      {post.tags.map((tag) => (
-                        <span key={tag} className={`text-xs ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
-                          #{tag}
-                        </span>
-                      ))}
+                <div className={`py-6 px-4 -mx-4 rounded-lg ${themeConfig.animations.transition} hover:bg-gray-50 dark:hover:bg-gray-900/50`}>
+                  <div className="flex items-start gap-4">
+                    {/* Left accent bar */}
+                    <div className="hidden sm:block w-1 h-full min-h-[60px] rounded-full bg-gradient-to-b from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800 group-hover:from-blue-400 group-hover:to-violet-500 transition-all duration-300"></div>
+                    
+                    <div className="flex-1">
+                      <div className="flex flex-wrap items-center gap-3 mb-2">
+                        <time className={`text-sm font-medium ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
+                          {format(new Date(post.date), 'yyyy.MM.dd')}
+                        </time>
+                        {post.category && (
+                          <span className={`text-xs px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} font-medium`}>
+                            {post.category}
+                          </span>
+                        )}
+                      </div>
+                      <h2 className={`text-lg sm:text-xl font-semibold mb-2 ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} group-hover:text-blue-600 dark:group-hover:text-blue-400 ${themeConfig.animations.transition}`}>
+                        {post.title}
+                      </h2>
+                      {post.excerpt && (
+                        <p className={`${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} text-sm leading-relaxed mb-3 overflow-hidden`} style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                          {post.excerpt}
+                        </p>
+                      )}
+                      {post.tags && post.tags.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-2">
+                          {post.tags.map((tag) => (
+                            <span key={tag} className={`text-xs px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-800/50 ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                  )}
+                    
+                    {/* Arrow indicator */}
+                    <div className="hidden sm:flex items-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <svg className="w-5 h-5 text-gray-400 dark:text-gray-600" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
               </Link>
             </article>
