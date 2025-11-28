@@ -129,10 +129,10 @@ export function PostList({
         </div>
       )}
 
-      <div className="space-y-8">
+      <div className="divide-y divide-gray-200 dark:divide-gray-800">
         {filteredPosts.length === 0 ? (
-          <div className={`text-center py-20 ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} rounded-3xl shadow-lg ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border`}>
-            <div className="max-w-md mx-auto px-6">
+          <div className="text-center py-16">
+            <div className="max-w-md mx-auto">
               {searchQuery ? (
                 <>
                   <p className={`${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} mb-6 ${themeConfig.typography.fontSize.body}`}>
@@ -140,7 +140,7 @@ export function PostList({
                   </p>
                   <button 
                     onClick={() => setSearchQuery('')}
-                    className={`inline-flex items-center px-6 py-3 ${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary} ${themeConfig.borderRadius.button} font-bold ${themeConfig.animations.scale} ${themeConfig.animations.transition} ${themeConfig.shadows.button}`}
+                    className={`inline-flex items-center px-5 py-2.5 ${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary} ${themeConfig.borderRadius.button} font-medium ${themeConfig.animations.transition} hover:opacity-80`}
                   >
                     Clear Search
                   </button>
@@ -152,7 +152,7 @@ export function PostList({
                   </p>
                   <Link 
                     href="/"
-                    className={`inline-flex items-center px-6 py-3 ${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary} ${themeConfig.borderRadius.button} font-bold ${themeConfig.animations.scale} ${themeConfig.animations.transition} ${themeConfig.shadows.button}`}
+                    className={`inline-flex items-center px-5 py-2.5 ${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary} ${themeConfig.borderRadius.button} font-medium ${themeConfig.animations.transition} hover:opacity-80`}
                   >
                     {themeConfig.text.viewAllPosts}
                   </Link>
@@ -160,10 +160,10 @@ export function PostList({
               ) : (
                 <>
                   <p className={`${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} mb-6 ${themeConfig.typography.fontSize.body}`}>
-                    No posts yet. Add markdown files to the <code className={`px-3 py-1 ${themeConfig.colors.light.code.background} ${themeConfig.colors.dark.code.background} ${themeConfig.colors.light.code.text} ${themeConfig.colors.dark.code.text} rounded-lg font-mono text-sm`}>posts/</code> directory.
+                    No posts yet. Add markdown files to the <code className={`px-2 py-0.5 ${themeConfig.colors.light.code.background} ${themeConfig.colors.dark.code.background} ${themeConfig.colors.light.code.text} ${themeConfig.colors.dark.code.text} rounded font-mono text-sm`}>posts/</code> directory.
                   </p>
                   <p className={`text-sm ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
-                    Example: <code className={`px-3 py-1 ${themeConfig.colors.light.code.background} ${themeConfig.colors.dark.code.background} ${themeConfig.colors.light.code.text} ${themeConfig.colors.dark.code.text} rounded-lg font-mono text-xs`}>posts/my-first-post.md</code>
+                    Example: <code className={`px-2 py-0.5 ${themeConfig.colors.light.code.background} ${themeConfig.colors.dark.code.background} ${themeConfig.colors.light.code.text} ${themeConfig.colors.dark.code.text} rounded font-mono text-xs`}>posts/my-first-post.md</code>
                   </p>
                 </>
               )}
@@ -173,41 +173,34 @@ export function PostList({
           filteredPosts.map((post) => (
             <article key={post.slug} className="group">
               <Link href={`/posts/${post.slug}`}>
-                <div className={`${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} ${themeConfig.borderRadius.card} ${themeConfig.spacing.card} ${themeConfig.shadows.card} ${themeConfig.animations.transition} ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border ${themeConfig.colors.light.background.cardHover} ${themeConfig.colors.dark.background.cardHover} ${themeConfig.animations.hover}`}>
-                  <div className="flex items-center gap-3 mb-4">
-                    <time className={`${themeConfig.typography.fontSize.small} font-medium ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} uppercase tracking-wider`}>
-                      {format(new Date(post.date), 'MMMM dd, yyyy')}
+                <div className={`py-8 ${themeConfig.animations.transition} hover:bg-gray-50 dark:hover:bg-gray-900/50`}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <time className={`text-sm ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
+                      {format(new Date(post.date), 'yyyy.MM.dd')}
                     </time>
                     {post.category && (
-                      <CategoryBadge 
-                        category={post.category} 
-                        index={allCategories.indexOf(post.category)} 
-                        size="sm"
-                        clickable={false}
-                      />
+                      <span className={`text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary}`}>
+                        {post.category}
+                      </span>
                     )}
                   </div>
-                  <h2 className={`${themeConfig.typography.fontSize.heading} font-semibold mb-4 ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} group-hover:text-gray-700 dark:group-hover:text-gray-300 ${themeConfig.animations.transition}`}>
+                  <h2 className={`text-xl font-medium mb-2 ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} group-hover:opacity-70 ${themeConfig.animations.transition}`}>
                     {post.title}
                   </h2>
                   {post.excerpt && (
-                    <p className={`${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} leading-relaxed ${themeConfig.typography.fontSize.body} mb-4`}>
+                    <p className={`${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} text-sm leading-relaxed mb-3 overflow-hidden`} style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
                       {post.excerpt}
                     </p>
                   )}
                   {post.tags && post.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-6">
+                    <div className="flex flex-wrap gap-1.5">
                       {post.tags.map((tag) => (
-                        <TagBadge key={tag} tag={tag} clickable={false} />
+                        <span key={tag} className={`text-xs ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
+                          #{tag}
+                        </span>
                       ))}
                     </div>
                   )}
-                  <div className={`mt-6 flex items-center ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} font-medium group-hover:translate-x-2 ${themeConfig.animations.transition}`}>
-                    <span>Read more</span>
-                    <svg className="w-5 h-5 ml-2" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
-                      <path d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                  </div>
                 </div>
               </Link>
             </article>
