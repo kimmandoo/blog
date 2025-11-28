@@ -106,7 +106,7 @@ export const themeConfig = {
   spacing: {
     container: 'max-w-4xl',
     postWidth: 'max-w-4xl',
-    section: 'py-20',
+    section: 'py-16',
     card: 'p-6',
   },
 
@@ -259,8 +259,8 @@ export const themeConfig = {
     // Google Search Console
     // Get verification code from: https://search.google.com/search-console
     googleSearchConsole: {
-      enabled: false,
-      verificationCode: '', // Just the code, not the full meta tag
+      enabled: true,
+      verificationCode: '2bDuthndamSKLN-WVkRLx6zmhJ8yjQ3rYhIbunRpvTE', // Just the code, not the full meta tag
     },
     
     // Google AdSense
