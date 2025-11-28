@@ -260,9 +260,8 @@ export const themeConfig = {
     // Get verification code from: https://search.google.com/search-console
     googleSearchConsole: {
       enabled: true,
-      verificationCode: '2bDuthndamSKLN-WVkRLx6zmhJ8yjQ3rYhIbunRpvTE', // Just the code, not the full meta tag
+      verificationCode: 'k8VrbwUFnj8lxGHtc7y0pXF1UTDdVrz3sgsQdnwtFww', // Just the code, not the full meta tag
     },
-    
     // Google AdSense
     // Get your client ID from: https://www.google.com/adsense/
     googleAdsense: {
