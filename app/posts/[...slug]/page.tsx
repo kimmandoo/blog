@@ -111,7 +111,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
         </div>
 
         {/* Content layout with ToC positioned absolutely to not affect content width */}
-        <div className="relative max-w-4xl mx-auto">
+        <div className={`relative ${themeConfig.spacing.postWidth} mx-auto`}>
             {/* Main content area - always centered with same width */}
             <article>
           <header className={`pb-8 mb-8 ${themeConfig.colors.light.border.secondary} ${themeConfig.colors.dark.border.secondary} border-b`}>
