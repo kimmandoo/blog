@@ -13,10 +13,10 @@
   --code-block-border: rgba(255, 255, 255, 0.1);
   --code-block-radius: 0.75rem;
   
-  /* Inline code configuration variables - amber/orange theme for better visibility */
-  --inline-code-bg: #fef3c7;
-  --inline-code-text: #92400e;
-  --inline-code-border: #fcd34d;
+  /* Inline code configuration variables */
+  --inline-code-bg: #f1f5f9;
+  --inline-code-text: #0f172a;
+  --inline-code-border: #e2e8f0;
 }
 
 @theme inline {
@@ -29,10 +29,10 @@ html.dark {
   --background: #0a0a0a;
   --foreground: #ededed;
   
-  /* Dark mode inline code - amber/orange theme */
-  --inline-code-bg: #451a03;
-  --inline-code-text: #fde68a;
-  --inline-code-border: #78350f;
+  /* Dark mode inline code */
+  --inline-code-bg: #334155;
+  --inline-code-text: #f1f5f9;
+  --inline-code-border: #475569;
 }
 
 /* Dark mode via system preference (fallback when no class is set) */
@@ -41,10 +41,10 @@ html.dark {
     --background: #0a0a0a;
     --foreground: #ededed;
     
-    /* Dark mode inline code - amber/orange theme */
-    --inline-code-bg: #451a03;
-    --inline-code-text: #fde68a;
-    --inline-code-border: #78350f;
+    /* Dark mode inline code */
+    --inline-code-bg: #334155;
+    --inline-code-text: #f1f5f9;
+    --inline-code-border: #475569;
   }
 }
 
