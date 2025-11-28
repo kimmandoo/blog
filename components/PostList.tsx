@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { format } from 'date-fns';
 import { CategoryBadge } from '@/components/CategoryBadge';
 import { TagBadge } from '@/components/TagBadge';
-import { SearchBar } from '@/components/SearchBar';
+import { SearchModal } from '@/components/SearchModal';
+import { FilterDropdown } from '@/components/FilterDropdown';
 import { SocialLinks } from '@/components/SocialLinks';
 import { themeConfig } from '@/config/theme.config';
 import { PostData } from '@/lib/posts';
@@ -46,20 +47,41 @@ export function PostList({
 
   return (
     <>
-      {/* Social Links */}
-      <SocialLinks />
-
-      {/* Search Bar */}
-      <div className="mb-12">
-        <SearchBar onSearch={setSearchQuery} placeholder="Search posts by title, excerpt, category, or tags..." />
+      {/* Toolbar: Social Links + Search + Filter */}
+      <div className="flex items-center justify-between mb-8">
+        <SocialLinks />
+        <div className="flex items-center gap-2">
+          <SearchModal onSearch={setSearchQuery} placeholder="Search posts..." />
+          <FilterDropdown 
+            allCategories={allCategories} 
+            allTags={allTags}
+            selectedCategory={selectedCategory}
+            selectedTag={selectedTag}
+          />
+        </div>
       </div>
 
-      {/* Filter Tags */}
-      {(selectedCategory || selectedTag) && (
-        <div className="mb-8 flex flex-wrap items-center gap-3">
-          <span className={`font-medium ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary}`}>
-            {themeConfig.text.filter}
+      {/* Active Search/Filter Indicator */}
+      {(searchQuery || selectedCategory || selectedTag) && (
+        <div className="mb-6 flex flex-wrap items-center gap-3">
+          <span className={`text-sm font-medium ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
+            Showing:
           </span>
+          {searchQuery && (
+            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800">
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                &quot;{searchQuery}&quot;
+              </span>
+              <button 
+                onClick={() => setSearchQuery('')}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <svg className="w-4 h-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          )}
           {selectedCategory && (
             <div className="flex items-center gap-2">
               <CategoryBadge 
@@ -69,9 +91,9 @@ export function PostList({
               />
               <Link 
                 href="/"
-                className={`text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 ${themeConfig.animations.transition}`}
+                className={`text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 ${themeConfig.animations.transition}`}
               >
-                <svg className="w-5 h-5" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
                   <path d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </Link>
@@ -82,48 +104,12 @@ export function PostList({
               <TagBadge tag={selectedTag} clickable={false} />
               <Link 
                 href="/"
-                className={`text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 ${themeConfig.animations.transition}`}
+                className={`text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 ${themeConfig.animations.transition}`}
               >
-                <svg className="w-5 h-5" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
                   <path d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </Link>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Categories and Tags Filter */}
-      {(allCategories.length > 0 || allTags.length > 0) && (
-        <div className="mb-12 space-y-6">
-          {allCategories.length > 0 && (
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-1 h-5 bg-gradient-to-b from-blue-500 to-violet-500 rounded-full"></div>
-                <h3 className={`text-sm font-bold uppercase tracking-wider ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary}`}>
-                  {themeConfig.text.categories}
-                </h3>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                {allCategories.map((cat, index) => (
-                  <CategoryBadge key={cat} category={cat} index={index} />
-                ))}
-              </div>
-            </div>
-          )}
-          {allTags.length > 0 && (
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-1 h-5 bg-gradient-to-b from-gray-400 to-gray-600 dark:from-gray-500 dark:to-gray-300 rounded-full"></div>
-                <h3 className={`text-sm font-bold uppercase tracking-wider ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary}`}>
-                  {themeConfig.text.tags}
-                </h3>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {allTags.map((tag) => (
-                  <TagBadge key={tag} tag={tag} />
-                ))}
-              </div>
             </div>
           )}
         </div>
