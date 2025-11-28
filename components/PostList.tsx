@@ -183,6 +183,11 @@ export function PostList({
                         <time className={`text-sm font-medium ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
                           {format(new Date(post.date), 'yyyy.MM.dd')}
                         </time>
+                        {post.readingTime && (
+                          <span className={`text-sm ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
+                            · {post.readingTime} min read
+                          </span>
+                        )}
                         {post.category && (
                           <span className={`text-xs px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} font-medium`}>
                             {post.category}

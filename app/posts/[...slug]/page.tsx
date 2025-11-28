@@ -1,12 +1,15 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Metadata } from 'next';
-import { getPostData, getAllPostSlugs } from '@/lib/posts';
+import { getPostData, getAllPostSlugs, getAdjacentPosts } from '@/lib/posts';
 import { format } from 'date-fns';
 import { Comments } from '@/components/Comments';
 import { CodeBlockEnhancer } from '@/components/CodeBlock';
 import { MermaidRenderer } from '@/components/MermaidRenderer';
 import { TableOfContents } from '@/components/TableOfContents';
+import { ReadingProgressBar } from '@/components/ReadingProgressBar';
+import { ShareButtons } from '@/components/ShareButtons';
+import { PostNavigation } from '@/components/PostNavigation';
 import { themeConfig } from '@/config/theme.config';
 
 export async function generateStaticParams() {
@@ -77,8 +80,17 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
     notFound();
   }
 
+  // Get adjacent posts for navigation
+  const { previous: previousPost, next: nextPost } = getAdjacentPosts(slugString);
+  
+  // Generate full URL for sharing
+  const postUrl = `${themeConfig.seo.siteUrl}/posts/${slugString}`;
+
   return (
     <div className={`min-h-screen bg-gradient-to-br ${themeConfig.colors.light.background.primary} ${themeConfig.colors.dark.background.primary}`}>
+      {/* Reading Progress Bar */}
+      <ReadingProgressBar />
+      
       <main className="mx-auto px-6 py-16">
         <div className={`${themeConfig.spacing.container} mx-auto mb-12`}>
           <Link 
@@ -107,6 +119,11 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
               <time className={`text-sm ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
                 {format(new Date(post.date), 'yyyy.MM.dd')}
               </time>
+              {post.readingTime && (
+                <span className={`text-sm ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
+                  · {post.readingTime} min read
+                </span>
+              )}
               {post.category && (
                 <span className={`text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary}`}>
                   {post.category}
@@ -156,6 +173,17 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
               dangerouslySetInnerHTML={{ __html: post.content || '' }}
             />
           </div>
+
+          {/* Share Buttons */}
+          <div className={`py-6 ${themeConfig.colors.light.border.secondary} ${themeConfig.colors.dark.border.secondary} border-t`}>
+            <ShareButtons title={post.title} url={postUrl} />
+          </div>
+
+          {/* Post Navigation */}
+          <PostNavigation 
+            previousPost={previousPost ? { slug: previousPost.slug, title: previousPost.title } : null}
+            nextPost={nextPost ? { slug: nextPost.slug, title: nextPost.title } : null}
+          />
 
           {/* Comments Section */}
           <div className={`pt-8 mt-8 ${themeConfig.colors.light.border.secondary} ${themeConfig.colors.dark.border.secondary} border-t`}>

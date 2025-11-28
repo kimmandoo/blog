@@ -10,6 +10,7 @@ import rehypeStringify from 'rehype-stringify';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeSlug from 'rehype-slug';
 import rehypeKatex from 'rehype-katex';
+import { calculateReadingTime } from './readingTime';
 
 const postsDirectory = path.join(process.cwd(), 'posts');
 
@@ -29,6 +30,7 @@ export interface PostData {
   tags?: string[];
   toc?: TOCItem[];
   draft?: boolean;
+  readingTime?: number;
 }
 
 // Helper function to recursively find all markdown files
@@ -68,6 +70,9 @@ export function getSortedPostsData(): PostData[] {
 
       // Use gray-matter to parse the post metadata section
       const matterResult = matter(fileContents);
+      
+      // Calculate reading time
+      const readingTime = calculateReadingTime(matterResult.content);
 
       // Combine the data with the slug
       return {
@@ -78,7 +83,8 @@ export function getSortedPostsData(): PostData[] {
         category: matterResult.data.category || '',
         tags: matterResult.data.tags || [],
         draft: matterResult.data.draft || false,
-        ...(matterResult.data as Omit<PostData, 'slug' | 'title' | 'date' | 'excerpt' | 'category' | 'tags' | 'draft'>),
+        readingTime,
+        ...(matterResult.data as Omit<PostData, 'slug' | 'title' | 'date' | 'excerpt' | 'category' | 'tags' | 'draft' | 'readingTime'>),
       };
     })
     // Filter out draft posts
@@ -129,6 +135,9 @@ export async function getPostData(slug: string): Promise<PostData> {
 
   // Extract TOC items from markdown content
   const toc = extractTOC(matterResult.content);
+  
+  // Calculate reading time
+  const readingTime = calculateReadingTime(matterResult.content);
 
   // Use remark to convert markdown into HTML string
   // Note: rehype-sanitize is not used here as all markdown content comes from 
@@ -156,7 +165,8 @@ export async function getPostData(slug: string): Promise<PostData> {
     tags: matterResult.data.tags || [],
     draft: matterResult.data.draft || false,
     toc,
-    ...(matterResult.data as Omit<PostData, 'slug' | 'title' | 'date' | 'content' | 'excerpt' | 'category' | 'tags' | 'draft' | 'toc'>),
+    readingTime,
+    ...(matterResult.data as Omit<PostData, 'slug' | 'title' | 'date' | 'content' | 'excerpt' | 'category' | 'tags' | 'draft' | 'toc' | 'readingTime'>),
   };
 }
 
@@ -220,4 +230,20 @@ export function getPostsByCategory(category: string): PostData[] {
 export function getPostsByTag(tag: string): PostData[] {
   const posts = getSortedPostsData();
   return posts.filter(post => post.tags && post.tags.includes(tag));
+}
+
+export function getAdjacentPosts(currentSlug: string): { previous: PostData | null; next: PostData | null } {
+  const posts = getSortedPostsData();
+  const currentIndex = posts.findIndex(post => post.slug === currentSlug);
+  
+  if (currentIndex === -1) {
+    return { previous: null, next: null };
+  }
+  
+  return {
+    // Previous post (newer, lower index)
+    previous: currentIndex > 0 ? posts[currentIndex - 1] : null,
+    // Next post (older, higher index)
+    next: currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null,
+  };
 }
