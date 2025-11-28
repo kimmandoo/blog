@@ -24,6 +24,7 @@ Separate color schemes for light and dark modes:
 
 ### Spacing & Layout
 - Container widths
+- Post content width
 - Section padding
 - Card padding
 
@@ -81,6 +82,17 @@ typography: {
     title: 'text-7xl', // Make title larger
     body: 'text-base', // Make body text smaller
   },
+}
+```
+
+### Example: Changing Post Content Width
+
+```typescript
+spacing: {
+  container: 'max-w-4xl',
+  postWidth: 'max-w-5xl', // Make post content wider (options: max-w-lg, max-w-xl, max-w-2xl, max-w-3xl, max-w-4xl, max-w-5xl, max-w-6xl, max-w-7xl, max-w-full)
+  section: 'py-20',
+  card: 'p-6',
 }
 ```
 

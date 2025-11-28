@@ -105,6 +105,7 @@ export const themeConfig = {
   // Spacing
   spacing: {
     container: 'max-w-4xl',
+    postWidth: 'max-w-4xl',
     section: 'py-20',
     card: 'p-6',
   },
