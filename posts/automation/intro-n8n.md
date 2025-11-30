@@ -89,7 +89,7 @@ echo "EXTERNAL_IP=PUBLIC_IP" > .env
 
 IP는 GCP 콘솔에서 확인할 수 있고, 아니면 `curl -s ifconfig.me`로도 확인할 수 있다.
 
-```bash
+```yml
 cat <<EOF > docker-compose.yml
 services:
   n8n:
@@ -150,3 +150,34 @@ n8n으로 만드는 모든 워크플로우는 처음에 세팅한 곳에 저장�
 
 http로만 달아놔서 웹훅 제한이 걸리는 곳이 많을 거고, ai agent 써서 뭔가를 하려면 api credit 결제해서 걸어둬야하는데 아직은 살짝 부담이다. 뭘 어떻게 할 지 조금만 더 생각해보겠다.
 
+## https 뚫기 - n8n tunnel
+
+n8n에서 제공하는 기본 기능 중에 tunnel이 존재했다. ssl 할 필요가 없었던 것!
+
+docker-compose.yml 파일을 수정해주자.
+
+```yml
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    restart: always
+    ports:
+      - "5678:5678"
+    environment:
+      #- N8N_HOST=${EXTERNAL_IP}
+      - N8N_PORT=5678
+      #- N8N_PROTOCOL=http
+      #- WEBHOOK_URL=http://${EXTERNAL_IP}:5678/
+      - GENERIC_TIMEZONE=Asia/Seoul
+      - N8N_SECURE_COOKIE=false
+    command: start --tunnel
+    volumes:
+      - ./n8n_data:/home/node/.n8n
+```
+
+이렇게 하고, 다시 컨테이너를 올리고 로그를 잘 봐야된다.
+
+`docker compose up -d && docker compose logs -f n8n`.
+
+그러면 `https://XXXXXXX.hooks.n8n.cloud/` 형식의 주소를 던져주는 데, 이걸 써서 웹훅을 걸면 된다. 완벽하다.
