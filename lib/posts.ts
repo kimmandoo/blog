@@ -174,8 +174,20 @@ export async function getPostData(slug: string): Promise<PostData> {
 function extractTOC(content: string): TOCItem[] {
   const toc: TOCItem[] = [];
   const lines = content.split('\n');
+  let inCodeBlock = false;
   
   for (const line of lines) {
+    // Check for code block fence (``` or ~~~)
+    if (/^```|^~~~/.test(line.trim())) {
+      inCodeBlock = !inCodeBlock;
+      continue;
+    }
+    
+    // Skip headings inside code blocks
+    if (inCodeBlock) {
+      continue;
+    }
+    
     const match = line.match(/^(#{1,6})\s+(.+)$/);
     if (match) {
       const level = match[1].length;
