@@ -148,7 +148,7 @@ n8n으로 만드는 모든 워크플로우는 처음에 세팅한 곳에 저장�
 
 뭘 할지는 이제부터 생각해봐야된다...
 
-http로만 달아놔서 웹훅 제한이 걸리는 곳이 많을 거고, ai agent 써서 뭔가를 하려면 api credit 결제해서 걸어둬야하는데 아직은 살짝 부담이다. 뭘 어떻게 할 지 조금만 더 생각해보겠다.
+ai agent 써서 뭔가를 하려면 api credit 결제해서 걸어둬야하는데 아직은 살짝 부담이다. 뭘 어떻게 할 지 조금만 더 생각해보겠다.
 
 ## https 뚫기 - n8n tunnel
 
@@ -186,3 +186,62 @@ services:
 `docker compose up -d && docker compose logs -f n8n`.
 
 그러면 `https://XXXXXXX.hooks.n8n.cloud/` 형식의 주소를 던져주는 데, 이걸 써서 웹훅을 걸면 된다. 완벽하다.
+
+## 408 에러가 너무 자주 발생한다 - 도메인을 사자
+
+안정성이 너무 떨어져서 https를 쓸 수 있는 다른 방법을 찾아야한다.
+
+ngrok은 무료버전을 쓰면.. webhook이 접근 못할 수 있어서 clouldflare를 쓰기로 했다.
+
+namecheap에서 도메인을 샀다. 저렴한 도메인은 1달러밖에 안하더라. 도메인을 cloudflare에 등록하고, free plan을 선택해준다.
+
+![image-20251201010613889](/images/image-20251201010613889.png)
+
+ 네임서버를 맞춰주고, zero trust 설정까지 해준다. (zero trust도 free plan 쓸 수 있다.)
+
+![image-20251201011111249](/images/image-20251201011111249.png)
+
+![image-20251201011144820](/images/image-20251201011144820.png)
+
+이후 도커를 선택해서 gcp위에 설치하면 된다. `eyJh`로 시작하는 토큰값을 꼭 기억해야된다.
+
+![image-20251201011620943](/images/image-20251201011620943.png)
+
+여기까지 했으면 이제 docker compose 파일을 수정할 차례다.
+
+```yml
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    restart: always
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_PORT=5678
+      - WEBHOOK_URL=https://n8n.도메인
+      - N8N_EDITOR_BASE_URL=https://n8n.도메인
+      - GENERIC_TIMEZONE=Asia/Seoul
+      - N8N_SECURE_COOKIE=false
+      - N8N_PROXY_HOPS=1
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true # 권한 경고 해결
+      - DB_SQLITE_POOL_SIZE=10                     # SQLite 성능 경고 해결
+      - N8N_RUNNERS_ENABLED=true                   # 태스크 러너 경고 해결
+      - N8N_GIT_NODE_DISABLE_BARE_REPOS=true       # Git 보안 경고 해결
+    volumes:
+      - ./n8n_data:/home/node/.n8n
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    restart: always
+    command: tunnel run
+    environment:
+      # 아까 복사한 긴 토큰
+      - TUNNEL_TOKEN=eyJhIjoiM... 
+```
+
+이제 컨테이너를 재시작해주면 아래와 같은 로그를 볼 수 있다.
+
+![image-20251201012408252](/images/image-20251201012408252.png)
+
+그럼 아까 cloudflare에서 지정한 `n8n.도메인`으로 고정주소 접속이 가능해진 것이다! 1년 요금이 1달러 좀 넘으니 충분히 투자할만하다는 생각이 든다.
