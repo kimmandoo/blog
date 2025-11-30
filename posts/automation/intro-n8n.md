@@ -171,7 +171,11 @@ services:
       #- WEBHOOK_URL=http://${EXTERNAL_IP}:5678/
       - GENERIC_TIMEZONE=Asia/Seoul
       - N8N_SECURE_COOKIE=false
-      - N8N_PROXY_HOPS=1
+      - N8N_PROXY_HOPS=1                           # trust proxy 에러 해결
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true # 권한 경고 해결
+      - DB_SQLITE_POOL_SIZE=10                     # SQLite 성능 경고 해결
+      - N8N_RUNNERS_ENABLED=true                   # 태스크 러너 경고 해결
+      - N8N_GIT_NODE_DISABLE_BARE_REPOS=true       # Git 보안 경고 해결
     command: start --tunnel
     volumes:
       - ./n8n_data:/home/node/.n8n
