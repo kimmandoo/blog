@@ -171,6 +171,7 @@ services:
       #- WEBHOOK_URL=http://${EXTERNAL_IP}:5678/
       - GENERIC_TIMEZONE=Asia/Seoul
       - N8N_SECURE_COOKIE=false
+      - N8N_PROXY_HOPS=1
     command: start --tunnel
     volumes:
       - ./n8n_data:/home/node/.n8n
