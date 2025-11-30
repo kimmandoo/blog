@@ -252,7 +252,7 @@ export const themeConfig = {
     // Google Analytics (GA4)
     // Get your Measurement ID from: https://analytics.google.com/
     googleAnalytics: {
-      enabled: false,
+      enabled: true,
       measurementId: 'G-B77D5GLJNH', // Format: 'G-XXXXXXXXXX'
     },
     
