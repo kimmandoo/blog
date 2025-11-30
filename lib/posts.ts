@@ -11,6 +11,7 @@ import rehypeHighlight from 'rehype-highlight';
 import rehypeSlug from 'rehype-slug';
 import rehypeKatex from 'rehype-katex';
 import { calculateReadingTime } from './readingTime';
+import GithubSlugger from 'github-slugger';
 
 const postsDirectory = path.join(process.cwd(), 'posts');
 
@@ -174,17 +175,34 @@ export async function getPostData(slug: string): Promise<PostData> {
 function extractTOC(content: string): TOCItem[] {
   const toc: TOCItem[] = [];
   const lines = content.split('\n');
-  let inCodeBlock = false;
+  let codeBlockFence: string | null = null;
+  const slugger = new GithubSlugger();
   
   for (const line of lines) {
-    // Check for code block fence (``` or ~~~)
-    if (/^```|^~~~/.test(line.trim())) {
-      inCodeBlock = !inCodeBlock;
+    // Check for code block fence (``` or ~~~) at start of line
+    const backtickMatch = line.match(/^(`{3,})/);
+    const tildeMatch = line.match(/^(~{3,})/);
+    
+    if (backtickMatch) {
+      if (codeBlockFence === null) {
+        codeBlockFence = backtickMatch[1];
+      } else if (codeBlockFence[0] === '`' && backtickMatch[1].length >= codeBlockFence.length) {
+        codeBlockFence = null;
+      }
+      continue;
+    }
+    
+    if (tildeMatch) {
+      if (codeBlockFence === null) {
+        codeBlockFence = tildeMatch[1];
+      } else if (codeBlockFence[0] === '~' && tildeMatch[1].length >= codeBlockFence.length) {
+        codeBlockFence = null;
+      }
       continue;
     }
     
     // Skip headings inside code blocks
-    if (inCodeBlock) {
+    if (codeBlockFence !== null) {
       continue;
     }
     
@@ -192,14 +210,8 @@ function extractTOC(content: string): TOCItem[] {
     if (match) {
       const level = match[1].length;
       const text = match[2].trim();
-      // Use same slugging algorithm as rehype-slug
-      const id = text
-        .toLowerCase()
-        .replace(/[^\w\s-]/g, '') // Remove special characters except word chars, spaces, hyphens
-        .replace(/\s+/g, '-')      // Replace spaces with hyphens
-        .replace(/-+/g, '-')       // Replace multiple hyphens with single hyphen
-        .replace(/^-|-$/g, '')     // Remove leading/trailing hyphens
-        .trim();
+      // Use github-slugger to match rehype-slug's ID generation
+      const id = slugger.slug(text);
       
       toc.push({ id, text, level });
     }
