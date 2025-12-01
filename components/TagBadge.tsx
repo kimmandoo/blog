@@ -23,7 +23,7 @@ export function TagBadge({ tag, size = 'sm', clickable = true }: TagBadgeProps) 
     <span className={`${baseClasses} ${interactiveClasses} relative group overflow-hidden`}>
       {/* Animated gradient background on hover */}
       <span className="absolute inset-0 bg-gradient-to-r from-gray-200/0 via-gray-300/40 to-gray-200/0 dark:from-gray-700/0 dark:via-gray-600/40 dark:to-gray-700/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></span>
-      <span className="text-gray-500 dark:text-gray-400 font-bold text-[0.9em] relative">#</span>
+      <span className="text-gray-500 dark:text-gray-400 font-bold text-sm relative">#</span>
       <span className="relative">{tag}</span>
     </span>
   );
