@@ -37,7 +37,7 @@ export function SearchBar({ onSearch, placeholder = "Search posts..." }: SearchB
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={placeholder}
-        className={`w-full pl-12 pr-4 py-4 ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border-2 ${themeConfig.borderRadius.card} ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-black dark:focus:border-white ${themeConfig.animations.transition}`}
+        className={`w-full pl-12 pr-4 py-4 ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border-2 rounded-md ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-black dark:focus:border-white ${themeConfig.animations.transition}`}
       />
       {query && (
         <button
