@@ -153,8 +153,8 @@ export const themeConfig = {
       ],
     },
     tags: {
-      style: 'bg-white/80 text-gray-700 dark:bg-gray-800/80 dark:text-gray-200',
-      hoverStyle: 'hover:bg-white hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white',
+      style: 'bg-white/90 text-gray-800 dark:bg-gray-800/90 dark:text-gray-100',
+      hoverStyle: 'hover:bg-gradient-to-r hover:from-gray-100 hover:to-white hover:text-gray-900 dark:hover:from-gray-700 dark:hover:to-gray-800 dark:hover:text-white',
     },
   },
 

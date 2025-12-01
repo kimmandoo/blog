@@ -93,39 +93,61 @@ export function PostList({
         </div>
       )}
 
-      {/* Categories and Tags Filter */}
+      {/* Categories and Tags Filter - Modern Layout */}
       {(allCategories.length > 0 || allTags.length > 0) && (
-        <div className="mb-12 space-y-6">
-          {allCategories.length > 0 && (
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-1 h-5 bg-gradient-to-b from-blue-500 to-violet-500 rounded-full"></div>
-                <h3 className={`text-sm font-bold uppercase tracking-wider ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary}`}>
-                  {themeConfig.text.categories}
-                </h3>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                {allCategories.map((cat, index) => (
-                  <CategoryBadge key={cat} category={cat} index={index} />
-                ))}
-              </div>
+        <div className="mb-12">
+          {/* Modern Card Container with Glassmorphism */}
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/60 to-gray-50/60 dark:from-gray-900/60 dark:to-gray-800/60 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 shadow-lg p-6 md:p-8">
+            {/* Decorative gradient background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-violet-500/5 to-fuchsia-500/5 dark:from-blue-400/10 dark:via-violet-400/10 dark:to-fuchsia-400/10 pointer-events-none"></div>
+            
+            {/* Content */}
+            <div className="relative space-y-8">
+              {/* Categories Section */}
+              {allCategories.length > 0 && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-violet-600 shadow-md">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <h3 className={`text-base font-bold tracking-wide ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary}`}>
+                      {themeConfig.text.categories}
+                    </h3>
+                    <div className="flex-1 h-px bg-gradient-to-r from-gray-300/50 via-gray-200/30 to-transparent dark:from-gray-600/50 dark:via-gray-700/30"></div>
+                  </div>
+                  <div className="flex flex-wrap gap-2.5">
+                    {allCategories.map((cat, index) => (
+                      <CategoryBadge key={cat} category={cat} index={index} size="md" />
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Tags Section */}
+              {allTags.length > 0 && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-gray-500 to-gray-700 dark:from-gray-400 dark:to-gray-600 shadow-md">
+                      <svg className="w-4 h-4 text-white" fill="none" strokeWidth="2.5" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                      </svg>
+                    </div>
+                    <h3 className={`text-base font-bold tracking-wide ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary}`}>
+                      {themeConfig.text.tags}
+                    </h3>
+                    <div className="flex-1 h-px bg-gradient-to-r from-gray-300/50 via-gray-200/30 to-transparent dark:from-gray-600/50 dark:via-gray-700/30"></div>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {allTags.map((tag) => (
+                      <TagBadge key={tag} tag={tag} size="md" />
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-          {allTags.length > 0 && (
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-1 h-5 bg-gradient-to-b from-gray-400 to-gray-600 dark:from-gray-500 dark:to-gray-300 rounded-full"></div>
-                <h3 className={`text-sm font-bold uppercase tracking-wider ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary}`}>
-                  {themeConfig.text.tags}
-                </h3>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {allTags.map((tag) => (
-                  <TagBadge key={tag} tag={tag} />
-                ))}
-              </div>
-            </div>
-          )}
+          </div>
         </div>
       )}
 
