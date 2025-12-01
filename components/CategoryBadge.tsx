@@ -19,7 +19,7 @@ export function CategoryBadge({ category, index = 0, size = 'md', clickable = tr
   };
 
   const baseClasses = `category-badge inline-flex items-center font-bold rounded-xl ${colorClass} ${sizeClasses[size]} backdrop-blur-md border border-white/30 dark:border-white/20 shadow-lg transition-all duration-300 ease-out`;
-  const interactiveClasses = clickable ? 'hover:shadow-2xl hover:scale-[1.05] hover:-translate-y-0.5 active:scale-95 cursor-pointer group' : '';
+  const interactiveClasses = clickable ? 'hover:shadow-2xl hover:scale-105 hover:-translate-y-0.5 active:scale-95 cursor-pointer group' : '';
 
   const badge = (
     <span className={`${baseClasses} ${interactiveClasses} relative overflow-hidden`}>

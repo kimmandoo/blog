@@ -17,7 +17,7 @@ export function TagBadge({ tag, size = 'sm', clickable = true }: TagBadgeProps) 
   };
 
   const baseClasses = `tag-badge inline-flex items-center font-semibold rounded-lg ${style} ${sizeClasses[size]} backdrop-blur-md border border-gray-300/60 dark:border-gray-600/60 shadow-md transition-all duration-300 ease-out`;
-  const interactiveClasses = clickable ? `${hoverStyle} hover:shadow-xl hover:scale-[1.03] hover:-translate-y-0.5 active:scale-95 cursor-pointer` : '';
+  const interactiveClasses = clickable ? `${hoverStyle} hover:shadow-xl hover:scale-105 hover:-translate-y-0.5 active:scale-95 cursor-pointer` : '';
 
   const badge = (
     <span className={`${baseClasses} ${interactiveClasses} relative group overflow-hidden`}>
