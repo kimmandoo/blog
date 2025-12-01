@@ -50,7 +50,7 @@ export function PostList({
       <SocialLinks />
 
       {/* Search Bar */}
-      <div className="mb-12">
+      <div className="mb-6">
         <SearchBar onSearch={setSearchQuery} placeholder="Search posts by title, excerpt, category, or tags..." />
       </div>
 
@@ -95,7 +95,7 @@ export function PostList({
 
       {/* Categories and Tags Filter - Minimal Modern Layout */}
       {(allCategories.length > 0 || allTags.length > 0) && (
-        <div className="mb-12">
+        <div className="mb-6">
           {/* Minimal Card Container */}
           <div className="relative rounded-lg bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-800 p-6 md:p-8">
             {/* Content */}
