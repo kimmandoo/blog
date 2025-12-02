@@ -81,7 +81,6 @@ Gemini API Token은 [여기](https://aistudio.google.com/app/)에서 프로젝�
 모든 토큰은 각 블록의 credentials에서 설정해주면 된다.
 
 ![alt text](/images/251202/image.png)
-
 이게 다 만들어진 workflow다. 각 블록별로 설명해보겠다.
 
 먼저 텔레그램 봇이 메시지를 받으면 트리거된다. 메시지 내용에는 url이 있는데, 이 Url을 Jina로 감싸서 다음 블록으로 넘긴다. 이러면 마크다운으로 바뀌어서 날아간다.
