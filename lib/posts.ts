@@ -226,6 +226,10 @@ function extractTOC(content: string): TOCItem[] {
 }
 
 // Helper function to extract the first image from markdown content
+// Regex patterns declared as constants for better performance
+const MARKDOWN_IMAGE_REGEX = /!\[([^\]]*)\]\(([^)]+)\)/;
+const HTML_IMAGE_REGEX = /<img[^>]+src=["']([^"']+)["']/;
+
 function extractFirstImage(content: string): string | null {
   const lines = content.split('\n');
   let codeBlockFence: string | null = null;
@@ -259,20 +263,21 @@ function extractFirstImage(content: string): string | null {
     }
     
     // Match markdown images: ![alt text](image-url)
-    const markdownImageMatch = line.match(/!\[([^\]]*)\]\(([^)]+)\)/);
+    const markdownImageMatch = line.match(MARKDOWN_IMAGE_REGEX);
     if (markdownImageMatch) {
       const imageUrl = markdownImageMatch[2].trim();
-      // Return the image URL if it's a valid path
-      if (imageUrl) {
+      // Return the image URL if it's a valid non-empty string
+      if (imageUrl && imageUrl.length > 0) {
         return imageUrl;
       }
     }
     
     // Match HTML images: <img src="image-url" ...>
-    const htmlImageMatch = line.match(/<img[^>]+src=["']([^"']+)["']/);
+    const htmlImageMatch = line.match(HTML_IMAGE_REGEX);
     if (htmlImageMatch) {
       const imageUrl = htmlImageMatch[1].trim();
-      if (imageUrl) {
+      // Return the image URL if it's a valid non-empty string
+      if (imageUrl && imageUrl.length > 0) {
         return imageUrl;
       }
     }
