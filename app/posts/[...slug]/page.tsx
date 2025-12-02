@@ -27,7 +27,28 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   try {
     const post = await getPostData(slugString);
     const postUrl = `${seo.siteUrl}/posts/${slugString}`;
-    const ogImageUrl = `${seo.siteUrl}${seo.openGraph.defaultImage}`;
+    
+    // Use the first image from the post content if available, otherwise use default
+    let ogImageUrl: string;
+    if (post.firstImage) {
+      // If the image is a relative path (starts with /), prepend the site URL
+      // If it's already an absolute URL (http/https), use it as-is
+      if (post.firstImage.startsWith('http://') || post.firstImage.startsWith('https://')) {
+        ogImageUrl = post.firstImage;
+      } else if (post.firstImage.startsWith('/')) {
+        ogImageUrl = `${seo.siteUrl}${post.firstImage}`;
+      } else {
+        // Relative path without leading slash, prepend site URL with /
+        ogImageUrl = `${seo.siteUrl}/${post.firstImage}`;
+      }
+    } else {
+      // Use default image - check if it's already a full URL or a path
+      if (seo.openGraph.defaultImage.startsWith('http://') || seo.openGraph.defaultImage.startsWith('https://')) {
+        ogImageUrl = seo.openGraph.defaultImage;
+      } else {
+        ogImageUrl = `${seo.siteUrl}${seo.openGraph.defaultImage}`;
+      }
+    }
     
     return {
       title: post.title,

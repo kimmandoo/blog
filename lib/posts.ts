@@ -32,6 +32,7 @@ export interface PostData {
   toc?: TOCItem[];
   draft?: boolean;
   readingTime?: number;
+  firstImage?: string | null;
 }
 
 // Helper function to recursively find all markdown files
@@ -137,6 +138,9 @@ export async function getPostData(slug: string): Promise<PostData> {
   // Extract TOC items from markdown content
   const toc = extractTOC(matterResult.content);
   
+  // Extract first image from markdown content
+  const firstImage = extractFirstImage(matterResult.content);
+  
   // Calculate reading time
   const readingTime = calculateReadingTime(matterResult.content);
 
@@ -167,7 +171,8 @@ export async function getPostData(slug: string): Promise<PostData> {
     draft: matterResult.data.draft || false,
     toc,
     readingTime,
-    ...(matterResult.data as Omit<PostData, 'slug' | 'title' | 'date' | 'content' | 'excerpt' | 'category' | 'tags' | 'draft' | 'toc' | 'readingTime'>),
+    firstImage,
+    ...(matterResult.data as Omit<PostData, 'slug' | 'title' | 'date' | 'content' | 'excerpt' | 'category' | 'tags' | 'draft' | 'toc' | 'readingTime' | 'firstImage'>),
   };
 }
 
@@ -218,6 +223,67 @@ function extractTOC(content: string): TOCItem[] {
   }
   
   return toc;
+}
+
+// Helper function to extract the first image from markdown content
+// Regex patterns declared as constants for better performance
+const MARKDOWN_IMAGE_REGEX = /!\[([^\]]*)\]\(([^)]+)\)/;
+const HTML_IMAGE_REGEX = /<img[^>]+src=["']([^"']+)["']/;
+
+function extractFirstImage(content: string): string | null {
+  const lines = content.split('\n');
+  let codeBlockFence: string | null = null;
+  
+  for (const line of lines) {
+    // Check for code block fence (``` or ~~~) at start of line
+    const backtickMatch = line.match(/^(`{3,})/);
+    const tildeMatch = line.match(/^(~{3,})/);
+    
+    if (backtickMatch) {
+      if (codeBlockFence === null) {
+        codeBlockFence = backtickMatch[1];
+      } else if (codeBlockFence[0] === '`' && backtickMatch[1].length >= codeBlockFence.length) {
+        codeBlockFence = null;
+      }
+      continue;
+    }
+    
+    if (tildeMatch) {
+      if (codeBlockFence === null) {
+        codeBlockFence = tildeMatch[1];
+      } else if (codeBlockFence[0] === '~' && tildeMatch[1].length >= codeBlockFence.length) {
+        codeBlockFence = null;
+      }
+      continue;
+    }
+    
+    // Skip images inside code blocks
+    if (codeBlockFence !== null) {
+      continue;
+    }
+    
+    // Match markdown images: ![alt text](image-url)
+    const markdownImageMatch = line.match(MARKDOWN_IMAGE_REGEX);
+    if (markdownImageMatch) {
+      const imageUrl = markdownImageMatch[2].trim();
+      // Return the image URL if it's a valid non-empty string
+      if (imageUrl && imageUrl.length > 0) {
+        return imageUrl;
+      }
+    }
+    
+    // Match HTML images: <img src="image-url" ...>
+    const htmlImageMatch = line.match(HTML_IMAGE_REGEX);
+    if (htmlImageMatch) {
+      const imageUrl = htmlImageMatch[1].trim();
+      // Return the image URL if it's a valid non-empty string
+      if (imageUrl && imageUrl.length > 0) {
+        return imageUrl;
+      }
+    }
+  }
+  
+  return null;
 }
 
 export function getAllCategories(): string[] {
