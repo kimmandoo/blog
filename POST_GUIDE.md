@@ -500,10 +500,11 @@ Your posts automatically include:
 
 See the `posts/samples/` directory for complete examples:
 
-- `posts/samples/welcome.md` - Basic post structure
-- `posts/samples/code-block-test.md` - Code blocks and syntax highlighting
+- `posts/samples/template-basic.md` - Basic post template with required fields
+- `posts/samples/template-complete.md` - Complete template with all features
+- `posts/samples/code-block-test.md` - Code blocks and syntax highlighting examples
 - `posts/samples/image-usage-example.md` - Image usage examples
-- `posts/samples/getting-started-nextjs.md` - Complete tutorial example
+- `posts/samples/getting-started-nextjs.md` - Tutorial example
 
 ## 🎨 Customization
 

@@ -291,45 +291,151 @@ tags: ["nextjs", "react"]
 ### Adding Pages
 
 Create new pages in `app/` directory:
+
+```
+app/
+  about/
+    page.tsx    # Creates /about page
 ```
 
 ## 📁 Project Structure
 
 ```
 blog/
-├── app/                 # Next.js app directory
-│   ├── posts/[slug]/   # Dynamic post pages
-│   ├── page.tsx        # Homepage
-│   ├── layout.tsx      # Root layout
-│   └── globals.css     # Global styles
-├── posts/              # Your blog posts (*.md)
-├── lib/
-│   └── posts.ts        # Post processing utilities
-├── public/             # Static assets
-└── package.json
+├── app/                      # Next.js app directory (routing)
+│   ├── posts/[...slug]/     # Dynamic post pages
+│   ├── page.tsx             # Homepage
+│   ├── layout.tsx           # Root layout
+│   └── globals.css          # Global styles
+├── components/              # React components
+│   ├── PostList.tsx         # Post listing component
+│   ├── Comments.tsx         # Giscus comments
+│   ├── TableOfContents.tsx  # TOC component
+│   └── ...                  # Other components
+├── config/                  # Configuration files
+│   ├── theme.config.ts      # Main configuration (customize this!)
+│   └── theme.config.template.ts  # Template for reference
+├── lib/                     # Utility functions
+│   ├── posts.ts            # Post processing logic
+│   ├── rss.ts              # RSS feed generation
+│   └── readingTime.ts      # Reading time calculation
+├── posts/                   # Your blog posts (*.md files)
+│   ├── samples/            # Example posts and templates
+│   └── your-post.md        # Your posts go here
+├── public/                  # Static assets
+│   ├── images/             # Images for posts
+│   ├── favicon.ico         # Site favicon
+│   └── ...                 # Other static files
+├── FORK_SETUP.md           # Fork setup guide
+├── POST_GUIDE.md           # Post writing guide
+├── THEME_CONFIG.md         # Theme customization guide
+├── IMAGE_GUIDE.md          # Image usage guide
+├── README.md               # This file
+└── package.json            # Dependencies
 ```
 
 ## 🛠️ Tech Stack
 
-- **Framework**: [Next.js 15](https://nextjs.org/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Markdown**: [gray-matter](https://github.com/jonschlinkert/gray-matter) + [remark](https://github.com/remarkjs/remark)
-- **Hosting**: [Vercel](https://vercel.com/)
+- **Framework**: [Next.js 16](https://nextjs.org/) with App Router
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **Markdown**: [gray-matter](https://github.com/jonschlinkert/gray-matter) + [remark](https://github.com/remarkjs/remark) + [rehype](https://github.com/rehypejs/rehype)
+- **Syntax Highlighting**: [rehype-highlight](https://github.com/rehypejs/rehype-highlight)
+- **Math**: [KaTeX](https://katex.org/) via rehype-katex
+- **Diagrams**: [Mermaid](https://mermaid.js.org/)
+- **Comments**: [Giscus](https://giscus.app/) (optional)
+- **Hosting**: [Vercel](https://vercel.com/) (or any Node.js host)
 - **Language**: TypeScript
 
-## 📝 Example Posts
+## 📖 Complete Documentation
 
-Check out the example posts in the `posts/` directory to see how to structure your content.
+| Document | Description |
+|----------|-------------|
+| **[FORK_SETUP.md](FORK_SETUP.md)** | Complete guide to fork and customize this blog |
+| **[POST_GUIDE.md](POST_GUIDE.md)** | How to write posts with all features |
+| **[THEME_CONFIG.md](THEME_CONFIG.md)** | Customize colors, fonts, layout |
+| **[IMAGE_GUIDE.md](IMAGE_GUIDE.md)** | Adding and optimizing images |
+| **[DEPLOYMENT.md](DEPLOYMENT.md)** | Deployment instructions (English) |
+| **[DEPLOYMENT-KO.md](DEPLOYMENT-KO.md)** | 배포 가이드 (한국어) |
+| **[CONTRIBUTING.md](CONTRIBUTING.md)** | How to contribute to this project |
+
+## 🎯 Quick Reference
+
+### Essential Files to Customize After Forking
+
+1. **`config/theme.config.ts`** - Your blog settings (REQUIRED)
+   - Site title, description, tagline
+   - Site URL (for SEO)
+   - Social links
+   - Analytics (optional)
+
+2. **`posts/`** - Your blog posts
+   - Remove sample posts
+   - Add your own `.md` files
+
+3. **`public/images/`** - Your images
+   - Add favicon
+   - Add logo/avatar
+   - Add post images
+
+### Common Commands
+
+```bash
+# Development
+npm install              # Install dependencies
+npm run dev             # Start dev server (http://localhost:3000)
+
+# Production
+npm run build           # Build for production
+npm start               # Start production server
+
+# Code Quality
+npm run lint            # Run ESLint
+```
+
+### Quick Post Template
+
+```markdown
+---
+title: "Your Post Title"
+date: "2025-01-20"
+excerpt: "Brief description"
+category: "Category Name"
+tags: ["tag1", "tag2"]
+---
+
+# Your content here...
+```
+
+### Getting Help
+
+- 📖 **Check documentation** - Most questions are answered in the guides
+- 🐛 **Report bugs** - [Open an issue](https://github.com/kimmandoo/blog/issues)
+- 💬 **Discussions** - [Ask questions](https://github.com/kimmandoo/blog/discussions)
+- 🤝 **Contributing** - See [CONTRIBUTING.md](CONTRIBUTING.md)
+
+## 🌟 Example Blogs
+
+Using this template? Let us know! We'd love to feature your blog here.
 
 ## 🤝 Contributing
 
-Feel free to open issues or submit pull requests!
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## 📄 License
 
-MIT
+MIT License - feel free to use this template for your own blog!
+
+## 🙏 Acknowledgments
+
+Built with:
+- [Next.js](https://nextjs.org/) - React framework
+- [Tailwind CSS](https://tailwindcss.com/) - Styling
+- [Vercel](https://vercel.com/) - Hosting
+- And many other open source projects
 
 ---
 
-Built with ❤️ using Next.js and Vercel
+**Ready to start blogging?** Fork this repository and make it your own! 🚀
+
+Built with ❤️ by developers, for developers.
 

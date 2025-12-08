@@ -426,10 +426,10 @@ Happy blogging! 🎉
 
 ## Additional Resources
 
-- [POST_GUIDE.md](../../POST_GUIDE.md) - Complete post writing guide
-- [FORK_SETUP.md](../../FORK_SETUP.md) - Setup and configuration
-- [IMAGE_GUIDE.md](../../IMAGE_GUIDE.md) - Image usage guide
-- [THEME_CONFIG.md](../../THEME_CONFIG.md) - Customization options
+- [POST_GUIDE.md](/POST_GUIDE.md) - Complete post writing guide
+- [FORK_SETUP.md](/FORK_SETUP.md) - Setup and configuration
+- [IMAGE_GUIDE.md](/IMAGE_GUIDE.md) - Image usage guide
+- [THEME_CONFIG.md](/THEME_CONFIG.md) - Customization options
 
 ---
 
