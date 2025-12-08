@@ -25,12 +25,13 @@ export function generateRssFeed(posts: PostData[]): string {
 
       const title = escapeXml(post.title);
       const description = escapeXml(post.excerpt || '');
+      const escapedUrl = escapeXml(postUrl);
       const categories = post.tags?.map(tag => `    <category>${escapeXml(tag)}</category>`).join('\n') || '';
 
       return `  <item>
     <title>${title}</title>
-    <link>${postUrl}</link>
-    <guid>${postUrl}</guid>
+    <link>${escapedUrl}</link>
+    <guid>${escapedUrl}</guid>
     <pubDate>${pubDate}</pubDate>
     <description>${description}</description>
 ${categories}
@@ -38,15 +39,18 @@ ${categories}
     })
     .join('\n');
 
+  const escapedSiteUrl = escapeXml(seo.siteUrl);
+  const escapedFeedUrl = escapeXml(`${seo.siteUrl}/feed.xml`);
+
   return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>${escapeXml(site.title)}</title>
-    <link>${seo.siteUrl}</link>
+    <link>${escapedSiteUrl}</link>
     <description>${escapeXml(site.description)}</description>
     <language>${language}</language>
     <lastBuildDate>${buildDate}</lastBuildDate>
-    <atom:link href="${seo.siteUrl}/feed.xml" rel="self" type="application/rss+xml"/>
+    <atom:link href="${escapedFeedUrl}" rel="self" type="application/rss+xml"/>
 ${rssItems}
   </channel>
 </rss>`;
