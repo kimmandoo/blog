@@ -10,6 +10,7 @@ A clean, minimal blog built with Next.js, Tailwind CSS, and deployed on Vercel. 
 - 📱 **Responsive**: Looks great on all devices
 - 🌙 **Dark Mode**: Automatic dark mode support
 - 🚀 **Fast**: Built with Next.js for optimal performance
+- 📡 **RSS Feed**: Subscribe to posts via RSS at `/feed.xml`
 
 ## 🚀 Quick Start
 
@@ -124,6 +125,21 @@ app/
   contact/
     page.tsx    # Creates /contact page
 ```
+
+### RSS Feed
+
+Your blog automatically generates an RSS feed at `/feed.xml`. Readers can subscribe to your blog using any RSS reader by adding:
+
+```
+https://yourdomain.com/feed.xml
+```
+
+The RSS feed includes:
+- Post titles and links
+- Publication dates
+- Post excerpts
+- Tags as categories
+- Automatic updates when you publish new posts
 
 ## 📁 Project Structure
 
