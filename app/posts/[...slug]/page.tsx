@@ -110,7 +110,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
   return (
     <div className={`min-h-screen bg-gradient-to-br ${themeConfig.colors.light.background.primary} ${themeConfig.colors.dark.background.primary}`}>
       {/* Reading Progress Bar */}
-      <ReadingProgressBar />
+      <ReadingProgressBar readingTime={post.readingTime} />
       
       <main className="mx-auto px-6 py-16">
         <div className={`${themeConfig.spacing.container} mx-auto mb-12`}>

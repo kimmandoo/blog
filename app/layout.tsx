@@ -57,6 +57,9 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: seo.siteUrl,
+    types: {
+      'application/rss+xml': `${seo.siteUrl}/feed.xml`,
+    },
   },
   verification: {
     google: seo.googleSearchConsole.enabled && seo.googleSearchConsole.verificationCode 
