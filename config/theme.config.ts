@@ -294,6 +294,30 @@ export const themeConfig = {
     medium: 'https://kimmandoo.medium.com/',
   },
 
+  // RSS Feed configuration
+  rss: {
+    // Enable/disable RSS feed generation at /feed.xml
+    enabled: true,
+    // Maximum number of posts to include in feed (0 = all posts)
+    maxItems: 50,
+    // Cache duration in seconds (default: 1 hour)
+    cacheMaxAge: 3600,
+  },
+
+  // Reading Progress Indicator configuration
+  readingProgress: {
+    // Enable/disable the reading progress features
+    enabled: true,
+    // Show the top progress bar
+    showTopBar: true,
+    // Show the floating circular indicator (bottom-right)
+    showFloatingIndicator: true,
+    // Scroll threshold (in pixels) before showing the floating indicator
+    floatingIndicatorThreshold: 100,
+    // Hide floating indicator when reading is complete (percentage)
+    hideWhenCompleteThreshold: 99,
+  },
+
   // UI Text (easily change language here)
   text: {
     categories: 'Categories',
@@ -307,6 +331,12 @@ export const themeConfig = {
     commentsSetupGuide: 'View Giscus setup guide',
     giscusNotConfigured: '⚠️ Giscus repository information is not configured.',
     giscusConfigInstructions: 'Please set repo, repoId, and categoryId in the configuration.',
+    // Reading progress text
+    readingProgress: {
+      minutesRemaining: '분 남음', // "{X}분 남음" = "{X} minutes remaining"
+      readingComplete: '읽기 완료!', // "Reading complete!"
+      minutesRead: '분', // Used in "X/Y분" format
+    },
   },
 };
 

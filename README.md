@@ -107,10 +107,68 @@ That's it! Your blog is now live and will auto-deploy on every push to GitHub.
 
 ## 🔧 Configuration
 
+### Quick Start for Forking
+
+After forking this repository, update these key settings in `config/theme.config.ts`:
+
+1. **Site Information** (Required):
+```typescript
+site: {
+  title: 'Your Blog Name',
+  description: 'Your blog description',
+  tagline: 'Your tagline',
+}
+```
+
+2. **SEO Settings** (Required):
+```typescript
+seo: {
+  siteUrl: 'https://yourdomain.com',  // Your actual domain
+  openGraph: {
+    locale: 'en_US',  // or 'ko_KR', 'ja_JP', etc.
+    siteName: 'Your Blog Name',
+    defaultImage: '/og-image.jpg',  // Your default OG image
+  }
+}
+```
+
+3. **Social Links** (Optional):
+```typescript
+socialLinks: {
+  github: 'https://github.com/yourusername',
+  linkedin: 'https://linkedin.com/in/yourusername',
+  medium: 'https://yourusername.medium.com',
+}
+```
+
+4. **Analytics** (Optional):
+```typescript
+seo: {
+  googleAnalytics: {
+    enabled: true,
+    measurementId: 'G-XXXXXXXXXX',  // Your GA4 ID
+  }
+}
+```
+
+5. **Comments** (Optional):
+```typescript
+comments: {
+  enabled: true,
+  giscus: {
+    repo: 'yourusername/your-repo',
+    repoId: 'YOUR_REPO_ID',
+    // ... other Giscus settings
+  }
+}
+```
+
+See [THEME_CONFIG.md](THEME_CONFIG.md) for complete configuration options.
+
 ### Customization
 
-- **Site Title**: Edit `app/layout.tsx` to change metadata
-- **Styles**: Modify `app/globals.css` for custom colors
+- **Theme Config**: All settings in `config/theme.config.ts` (colors, features, text, etc.)
+- **Styles**: Modify `app/globals.css` for custom CSS
 - **Homepage**: Edit `app/page.tsx` for layout changes
 - **Post Template**: Edit `app/posts/[slug]/page.tsx`
 
@@ -140,6 +198,46 @@ The RSS feed includes:
 - Post excerpts
 - Tags as categories
 - Automatic updates when you publish new posts
+
+**Configuration**: Edit `config/theme.config.ts` to customize RSS settings:
+```typescript
+rss: {
+  enabled: true,        // Enable/disable RSS feed
+  maxItems: 50,        // Max posts in feed (0 = all)
+  cacheMaxAge: 3600,   // Cache duration in seconds
+}
+```
+
+### Reading Progress Indicator
+
+Posts include an enhanced reading progress indicator with:
+- **Top Progress Bar**: Ultra-thin bar showing reading progress
+- **Floating Indicator**: Circular progress widget (bottom-right) with:
+  - Real-time percentage
+  - Time remaining calculation
+  - Hover tooltip with detailed info
+
+**Configuration**: Edit `config/theme.config.ts` to customize:
+```typescript
+readingProgress: {
+  enabled: true,                    // Enable/disable feature
+  showTopBar: true,                 // Show top progress bar
+  showFloatingIndicator: true,      // Show floating indicator
+  floatingIndicatorThreshold: 100,  // Show after scrolling (px)
+  hideWhenCompleteThreshold: 99,    // Hide when % complete
+}
+```
+
+**Customize Text**: Change language/text in `config/theme.config.ts`:
+```typescript
+text: {
+  readingProgress: {
+    minutesRemaining: '분 남음',  // Minutes remaining text
+    readingComplete: '읽기 완료!',  // Complete text
+    minutesRead: '분',            // Minutes unit
+  }
+}
+```
 
 ## 📁 Project Structure
 
