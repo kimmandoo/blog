@@ -18,6 +18,7 @@ title: "Your Post Title Here"
 # Required: Publication date in YYYY-MM-DD format
 # This is used for sorting posts (newest first)
 date: "2025-01-20"
+draft: true
 ---
 
 # Your Post Title Here
