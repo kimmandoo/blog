@@ -2,146 +2,167 @@
 
 A clean, minimal blog built with Next.js, Tailwind CSS, and deployed on Vercel. Write posts in Markdown and they automatically appear on your blog.
 
+**Perfect for developers who want a simple, fast blog without the complexity.**
+
 ## ✨ Features
 
-- 📝 **Markdown Support**: Write posts in simple Markdown files
-- 🎨 **Minimal Design**: Clean white-black aesthetic
+- 📝 **Markdown Support**: Write posts in simple Markdown files with GFM, math equations (KaTeX), and Mermaid diagrams
+- 🎨 **Minimal Design**: Clean white-black aesthetic with customizable themes
 - ⚡ **Auto-Deploy**: Push to GitHub and Vercel automatically deploys
 - 📱 **Responsive**: Looks great on all devices
 - 🌙 **Dark Mode**: Automatic dark mode support
-- 🚀 **Fast**: Built with Next.js for optimal performance
-- 📡 **RSS Feed**: Subscribe to posts via RSS at `/feed.xml`
+- 🚀 **Fast**: Built with Next.js 15 for optimal performance
+- 📡 **RSS Feed**: Built-in RSS feed at `/feed.xml`
+- 💬 **Comments**: Optional Giscus integration (GitHub Discussions)
+- 📊 **Analytics**: Optional Google Analytics integration
+- 🏷️ **Categories & Tags**: Organize posts with beautiful badges
+- 🎯 **SEO Ready**: Automatic sitemap, Open Graph, Twitter Cards
+- 📖 **Reading Progress**: Progress bar and time estimate
+- 🔍 **Search & Filter**: Easy content discovery
 
-## 🚀 Quick Start
+## 🍴 Fork This Blog
 
-### Local Development
+**Want your own blog?** Fork this repository and make it yours in 5 minutes!
 
-1. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+👉 **See the complete setup guide:** [FORK_SETUP.md](FORK_SETUP.md)
 
-2. **Run the development server:**
-   ```bash
-   npm run dev
-   ```
+### Quick Fork Steps:
 
-3. **Open [http://localhost:3000](http://localhost:3000)** in your browser
+1. Click the "Fork" button above
+2. Clone your fork: `git clone https://github.com/YOUR_USERNAME/blog.git`
+3. Install dependencies: `npm install`
+4. Update configuration: Edit `config/theme.config.ts` with your info
+5. Deploy to Vercel: [vercel.com](https://vercel.com) → Import your repo → Deploy
 
-### Writing Blog Posts
+**Done!** 🎉 Your blog is live.
 
-1. Create a new `.md` file in the `posts/` directory
-2. Add front matter with title, date, and excerpt:
+## 📚 Documentation
+
+- **[FORK_SETUP.md](FORK_SETUP.md)** - Complete guide to fork and customize this blog
+- **[POST_GUIDE.md](POST_GUIDE.md)** - How to write posts with all frontmatter options
+- **[THEME_CONFIG.md](THEME_CONFIG.md)** - Customize colors, fonts, and layout
+- **[IMAGE_GUIDE.md](IMAGE_GUIDE.md)** - Adding and optimizing images
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Deployment instructions (English)
+- **[DEPLOYMENT-KO.md](DEPLOYMENT-KO.md)** - 배포 가이드 (한국어)
+
+## 🚀 Quick Start (Local Development)
+
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Run Development Server
+
+```bash
+npm run dev
+```
+
+### 3. Open Your Browser
+
+Visit [http://localhost:3000](http://localhost:3000)
+
+## ✍️ Writing Posts
+
+### Create a New Post
+
+Create a `.md` file in `posts/` directory:
+
+```bash
+touch posts/my-first-post.md
+```
+
+### Add Content
 
 ```markdown
 ---
-title: "Your Post Title"
-date: "2025-01-15"
-excerpt: "A brief description of your post"
+title: "My First Post"
+date: "2025-01-20"
+excerpt: "This is a short description of my post"
+category: "Tutorial"
+tags: ["nextjs", "blogging"]
 ---
 
-# Your Content Here
+# My First Post
 
-Write your post content using Markdown...
+Your content goes here. You can use **Markdown** formatting!
+
+## Subheading
+
+More content...
 ```
 
-3. Save the file - it will automatically appear on your blog!
+**See [POST_GUIDE.md](POST_GUIDE.md) for complete documentation on:**
+- All available frontmatter fields
+- Markdown features (code blocks, tables, math, diagrams)
+- Images and media
+- Best practices
 
-### Front Matter Fields
+### Required Fields
 
-- `title` (required): The post title
-- `date` (required): Publication date in YYYY-MM-DD format
-- `excerpt` (optional): Short description shown on the homepage
-- `category` (optional): Post category
-- `tags` (optional): Array of tags
+- **`title`** (string): The post title
+- **`date`** (string): Publication date in `YYYY-MM-DD` format
 
-### Adding Images to Posts
+### Optional Fields
 
-You can easily add images to your blog posts:
+- **`excerpt`** (string): Brief description (for SEO and post list)
+- **`category`** (string): Single category for organization
+- **`tags`** (array): Tags for detailed categorization
+- **`draft`** (boolean): Set to `true` to hide the post
 
-1. **Save images** in the `public/images/` directory
-2. **Reference in markdown**:
-   ```markdown
-   ![Image description](/images/your-image.jpg)
-   ```
+## 🖼️ Adding Images
 
-**Example:**
+Save images in `public/images/` and reference them:
+
 ```markdown
-# My Post with Images
-
-Here's an image:
-
-![Beautiful landscape](/images/posts/landscape.jpg)
-
-Images automatically get rounded corners and shadow effects!
+![Image description](/images/your-image.jpg)
 ```
 
-For a complete guide on using images (including external URLs, sizing, and best practices), see [IMAGE_GUIDE.md](IMAGE_GUIDE.md).
+**See [IMAGE_GUIDE.md](IMAGE_GUIDE.md) for complete image documentation.**
 
-## 📦 Deploy to Vercel
+## 📦 Deployment
 
-### Method 1: Via Vercel Dashboard (Recommended)
+### Deploy to Vercel (Recommended)
 
 1. Push your code to GitHub
-2. Go to [Vercel](https://vercel.com)
-3. Click "New Project"
-4. Import your GitHub repository
-5. Vercel will auto-detect Next.js and configure everything
-6. Click "Deploy"
+2. Go to [Vercel](https://vercel.com) and click "New Project"
+3. Import your GitHub repository
+4. Click "Deploy" (Vercel auto-configures Next.js)
 
-That's it! Your blog is now live and will auto-deploy on every push to GitHub.
+**Done!** Your blog auto-deploys on every push to GitHub.
 
-### Method 2: Via Vercel CLI
+**See [DEPLOYMENT.md](DEPLOYMENT.md) for other deployment options.**
 
-1. Install Vercel CLI:
-   ```bash
-   npm i -g vercel
-   ```
+## ⚙️ Configuration
 
-2. Deploy:
-   ```bash
-   vercel
-   ```
+### Essential Settings (After Forking)
 
-3. Follow the prompts to link your project
+Edit `config/theme.config.ts` with your information:
 
-## 🔧 Configuration
-
-### Quick Start for Forking
-
-After forking this repository, update these key settings in `config/theme.config.ts`:
-
-1. **Site Information** (Required):
 ```typescript
+// 1. Site Information (Required)
 site: {
   title: 'Your Blog Name',
   description: 'Your blog description',
   tagline: 'Your tagline',
 }
-```
 
-2. **SEO Settings** (Required):
-```typescript
+// 2. SEO Settings (Required)
 seo: {
-  siteUrl: 'https://yourdomain.com',  // Your actual domain
+  siteUrl: 'https://yourdomain.com',  // YOUR domain
   openGraph: {
-    locale: 'en_US',  // or 'ko_KR', 'ja_JP', etc.
+    locale: 'en_US',  // Your locale
     siteName: 'Your Blog Name',
-    defaultImage: '/og-image.jpg',  // Your default OG image
   }
 }
-```
 
-3. **Social Links** (Optional):
-```typescript
+// 3. Social Links (Optional)
 socialLinks: {
   github: 'https://github.com/yourusername',
-  linkedin: 'https://linkedin.com/in/yourusername',
-  medium: 'https://yourusername.medium.com',
+  linkedin: '',  // Optional
+  medium: '',    // Optional
 }
-```
-
-4. **Analytics** (Optional):
 ```typescript
 seo: {
   googleAnalytics: {
@@ -177,66 +198,99 @@ See [THEME_CONFIG.md](THEME_CONFIG.md) for complete configuration options.
 Create new pages by adding files to the `app/` directory:
 
 ```
-app/
-  about/
-    page.tsx    # Creates /about page
-  contact/
-    page.tsx    # Creates /contact page
+
+**See [FORK_SETUP.md](FORK_SETUP.md) for complete configuration instructions** including:
+- Google Analytics setup
+- Google Search Console setup
+- Giscus comments integration
+- Google AdSense setup
+- Customizing colors, fonts, and layout
+
+### Template Configuration File
+
+A template configuration file is available at `config/theme.config.template.ts` with all options documented. Use it as a reference when customizing your blog.
+
+## 🎨 Customization
+
+### Colors and Theme
+
+Edit `config/theme.config.ts`:
+
+```typescript
+colors: {
+  light: {
+    background: {
+      primary: 'from-white via-gray-50 to-gray-100',
+    },
+    accent: {
+      primary: 'bg-black text-white',
+    }
+  }
+}
 ```
+
+### Typography
+
+```typescript
+typography: {
+  fontSize: {
+    title: 'text-4xl',   // Larger titles
+    body: 'text-lg',     // Larger body text
+  }
+}
+```
+
+### Post Content Width
+
+```typescript
+spacing: {
+  postWidth: 'max-w-5xl',  // Wider posts
+}
+```
+
+**See [THEME_CONFIG.md](THEME_CONFIG.md) for all customization options.**
+
+## 🌟 Advanced Features
 
 ### RSS Feed
 
-Your blog automatically generates an RSS feed at `/feed.xml`. Readers can subscribe to your blog using any RSS reader by adding:
+Automatic RSS feed at `/feed.xml` - configure in `config/theme.config.ts`:
 
-```
-https://yourdomain.com/feed.xml
-```
-
-The RSS feed includes:
-- Post titles and links
-- Publication dates
-- Post excerpts
-- Tags as categories
-- Automatic updates when you publish new posts
-
-**Configuration**: Edit `config/theme.config.ts` to customize RSS settings:
 ```typescript
 rss: {
-  enabled: true,        // Enable/disable RSS feed
-  maxItems: 50,        // Max posts in feed (0 = all)
-  cacheMaxAge: 3600,   // Cache duration in seconds
+  enabled: true,
+  maxItems: 50,
+  cacheMaxAge: 3600,
 }
 ```
 
-### Reading Progress Indicator
+### Reading Progress
 
-Posts include an enhanced reading progress indicator with:
-- **Top Progress Bar**: Ultra-thin bar showing reading progress
-- **Floating Indicator**: Circular progress widget (bottom-right) with:
-  - Real-time percentage
-  - Time remaining calculation
-  - Hover tooltip with detailed info
+Visual reading progress with:
+- Top progress bar
+- Floating circular indicator
+- Time remaining estimate
 
-**Configuration**: Edit `config/theme.config.ts` to customize:
-```typescript
-readingProgress: {
-  enabled: true,                    // Enable/disable feature
-  showTopBar: true,                 // Show top progress bar
-  showFloatingIndicator: true,      // Show floating indicator
-  floatingIndicatorThreshold: 100,  // Show after scrolling (px)
-  hideWhenCompleteThreshold: 99,    // Hide when % complete
-}
+Configure in `config/theme.config.ts`.
+
+### Comments
+
+GitHub Discussions-based comments with Giscus. See [FORK_SETUP.md](FORK_SETUP.md) for setup.
+
+### Categories and Tags
+
+Automatic category and tag collection from posts. Add to post frontmatter:
+
+```markdown
+---
+category: "Tutorial"
+tags: ["nextjs", "react"]
+---
 ```
 
-**Customize Text**: Change language/text in `config/theme.config.ts`:
-```typescript
-text: {
-  readingProgress: {
-    minutesRemaining: '분 남음',  // Minutes remaining text
-    readingComplete: '읽기 완료!',  // Complete text
-    minutesRead: '분',            // Minutes unit
-  }
-}
+### Adding Pages
+
+Create new pages in `app/` directory:
 ```
 
 ## 📁 Project Structure
