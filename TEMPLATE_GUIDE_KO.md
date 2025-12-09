@@ -296,11 +296,11 @@ graph TD
 
 더 자세한 내용은 다음 문서를 참고하세요:
 
-- **[POST_GUIDE.md](POST_GUIDE.md)** - 포스트 작성 완벽 가이드 (영문)
-- **[IMAGE_GUIDE.md](IMAGE_GUIDE.md)** - 이미지 사용 가이드 (영문)
-- **[THEME_CONFIG.md](THEME_CONFIG.md)** - 테마 커스터마이징 (영문)
-- **[FORK_SETUP.md](FORK_SETUP.md)** - 블로그 설정 가이드 (영문)
-- **[DEPLOYMENT-KO.md](DEPLOYMENT-KO.md)** - 배포 가이드 (한국어)
+- **[POST_GUIDE.md](/POST_GUIDE.md)** - 포스트 작성 완벽 가이드 (영문)
+- **[IMAGE_GUIDE.md](/IMAGE_GUIDE.md)** - 이미지 사용 가이드 (영문)
+- **[THEME_CONFIG.md](/THEME_CONFIG.md)** - 테마 커스터마이징 (영문)
+- **[FORK_SETUP.md](/FORK_SETUP.md)** - 블로그 설정 가이드 (영문)
+- **[DEPLOYMENT-KO.md](/DEPLOYMENT-KO.md)** - 배포 가이드 (한국어)
 
 ## 💡 팁
 

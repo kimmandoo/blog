@@ -106,8 +106,8 @@ greet("독자")
 이제 블로그 포스트를 작성할 준비가 되었습니다!
 
 더 자세한 내용은 다음 문서를 참고하세요:
-- [POST_GUIDE.md](../POST_GUIDE.md) - 포스트 작성 완벽 가이드
-- [IMAGE_GUIDE.md](../IMAGE_GUIDE.md) - 이미지 사용 가이드
-- [THEME_CONFIG.md](../THEME_CONFIG.md) - 테마 커스터마이징 가이드
+- [POST_GUIDE.md](/POST_GUIDE.md) - 포스트 작성 완벽 가이드
+- [IMAGE_GUIDE.md](/IMAGE_GUIDE.md) - 이미지 사용 가이드
+- [THEME_CONFIG.md](/THEME_CONFIG.md) - 테마 커스터마이징 가이드
 
 행복한 블로깅 되세요! 🚀

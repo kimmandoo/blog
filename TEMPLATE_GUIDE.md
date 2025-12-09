@@ -296,13 +296,13 @@ graph TD
 
 For more details, see:
 
-- **[POST_GUIDE.md](POST_GUIDE.md)** - Complete post writing guide
-- **[IMAGE_GUIDE.md](IMAGE_GUIDE.md)** - Image usage guide
-- **[THEME_CONFIG.md](THEME_CONFIG.md)** - Theme customization
-- **[FORK_SETUP.md](FORK_SETUP.md)** - Blog setup guide
-- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Deployment guide
-- **[DEPLOYMENT-KO.md](DEPLOYMENT-KO.md)** - Deployment guide (Korean)
-- **[TEMPLATE_GUIDE_KO.md](TEMPLATE_GUIDE_KO.md)** - Template guide (Korean)
+- **[POST_GUIDE.md](/POST_GUIDE.md)** - Complete post writing guide
+- **[IMAGE_GUIDE.md](/IMAGE_GUIDE.md)** - Image usage guide
+- **[THEME_CONFIG.md](/THEME_CONFIG.md)** - Theme customization
+- **[FORK_SETUP.md](/FORK_SETUP.md)** - Blog setup guide
+- **[DEPLOYMENT.md](/DEPLOYMENT.md)** - Deployment guide
+- **[DEPLOYMENT-KO.md](/DEPLOYMENT-KO.md)** - Deployment guide (Korean)
+- **[TEMPLATE_GUIDE_KO.md](/TEMPLATE_GUIDE_KO.md)** - Template guide (Korean)
 
 ## 💡 Tips
 
