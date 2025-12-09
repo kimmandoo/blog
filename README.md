@@ -38,10 +38,17 @@ A clean, minimal blog built with Next.js, Tailwind CSS, and deployed on Vercel. 
 
 ## 📚 Documentation
 
+### Getting Started
+- **[TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md)** - Blog template guide (English)
+- **[TEMPLATE_GUIDE_KO.md](TEMPLATE_GUIDE_KO.md)** - 블로그 템플릿 가이드 (한국어)
 - **[FORK_SETUP.md](FORK_SETUP.md)** - Complete guide to fork and customize this blog
+
+### Writing Content
 - **[POST_GUIDE.md](POST_GUIDE.md)** - How to write posts with all frontmatter options
-- **[THEME_CONFIG.md](THEME_CONFIG.md)** - Customize colors, fonts, and layout
 - **[IMAGE_GUIDE.md](IMAGE_GUIDE.md)** - Adding and optimizing images
+
+### Customization & Deployment
+- **[THEME_CONFIG.md](THEME_CONFIG.md)** - Customize colors, fonts, and layout
 - **[DEPLOYMENT.md](DEPLOYMENT.md)** - Deployment instructions (English)
 - **[DEPLOYMENT-KO.md](DEPLOYMENT-KO.md)** - 배포 가이드 (한국어)
 
@@ -65,7 +72,29 @@ Visit [http://localhost:3000](http://localhost:3000)
 
 ## ✍️ Writing Posts
 
-### Create a New Post
+### 🎯 Quick Start with Templates
+
+We provide ready-to-use templates to get you started quickly:
+
+**Korean Template** (한국어):
+```bash
+cp posts/my-first-post.md posts/2025-01-20-my-post.md
+```
+
+**English Templates**:
+```bash
+# Basic template
+cp posts/samples/template-basic.md posts/my-new-post.md
+
+# Complete template with all features
+cp posts/samples/template-complete.md posts/my-complete-post.md
+```
+
+**📖 Template Guides:**
+- **[TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md)** - Complete template usage guide (English)
+- **[TEMPLATE_GUIDE_KO.md](TEMPLATE_GUIDE_KO.md)** - 템플릿 사용 가이드 (한국어)
+
+### Create a New Post from Scratch
 
 Create a `.md` file in `posts/` directory:
 
@@ -321,6 +350,7 @@ blog/
 │   └── readingTime.ts      # Reading time calculation
 ├── posts/                   # Your blog posts (*.md files)
 │   ├── samples/            # Example posts and templates
+│   ├── my-first-post.md    # Korean template (starter)
 │   └── your-post.md        # Your posts go here
 ├── public/                  # Static assets
 │   ├── images/             # Images for posts
@@ -328,6 +358,8 @@ blog/
 │   └── ...                 # Other static files
 ├── FORK_SETUP.md           # Fork setup guide
 ├── POST_GUIDE.md           # Post writing guide
+├── TEMPLATE_GUIDE.md       # Template usage guide (English)
+├── TEMPLATE_GUIDE_KO.md    # Template usage guide (Korean)
 ├── THEME_CONFIG.md         # Theme customization guide
 ├── IMAGE_GUIDE.md          # Image usage guide
 ├── README.md               # This file
@@ -350,6 +382,8 @@ blog/
 
 | Document | Description |
 |----------|-------------|
+| **[TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md)** | Blog template usage guide (English) |
+| **[TEMPLATE_GUIDE_KO.md](TEMPLATE_GUIDE_KO.md)** | 블로그 템플릿 가이드 (한국어) |
 | **[FORK_SETUP.md](FORK_SETUP.md)** | Complete guide to fork and customize this blog |
 | **[POST_GUIDE.md](POST_GUIDE.md)** | How to write posts with all features |
 | **[THEME_CONFIG.md](THEME_CONFIG.md)** | Customize colors, fonts, layout |
