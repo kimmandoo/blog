@@ -20,13 +20,23 @@ A clean, minimal blog built with Next.js, Tailwind CSS, and deployed on Vercel. 
 - 📖 **Reading Progress**: Progress bar and time estimate
 - 🔍 **Search & Filter**: Easy content discovery
 
-## 🍴 Fork This Blog
+## 🎯 Use This Template / Fork This Blog
 
-**Want your own blog?** Fork this repository and make it yours in 5 minutes!
+**Want your own blog?** Create it in 5 minutes using this template!
 
-👉 **See the complete setup guide:** [FORK_SETUP.md](FORK_SETUP.md)
+### 🌟 Option 1: Use as Template (Recommended)
 
-### Quick Fork Steps:
+Start with a clean repository, perfect for your own blog:
+
+1. Click the **"Use this template"** button at the top of this page
+2. Create your new repository
+3. Clone and customize: See **[TEMPLATE_SETUP.md](TEMPLATE_SETUP.md)** for complete guide
+
+**Benefits**: Clean git history, independent repository, perfect for personal blogs
+
+### 🍴 Option 2: Fork This Repository
+
+Contribute improvements or stay connected to updates:
 
 1. Click the "Fork" button above
 2. Clone your fork: `git clone https://github.com/YOUR_USERNAME/blog.git`
@@ -34,11 +44,14 @@ A clean, minimal blog built with Next.js, Tailwind CSS, and deployed on Vercel. 
 4. Update configuration: Edit `config/theme.config.ts` with your info
 5. Deploy to Vercel: [vercel.com](https://vercel.com) → Import your repo → Deploy
 
+**See complete setup guide:** [FORK_SETUP.md](FORK_SETUP.md)
+
 **Done!** 🎉 Your blog is live.
 
 ## 📚 Documentation
 
 ### Getting Started
+- **[TEMPLATE_SETUP.md](TEMPLATE_SETUP.md)** - 🌟 **Use this template** - Complete guide for template repository (템플릿 저장소 가이드)
 - **[TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md)** - Blog template guide (English)
 - **[TEMPLATE_GUIDE_KO.md](TEMPLATE_GUIDE_KO.md)** - 블로그 템플릿 가이드 (한국어)
 - **[FORK_SETUP.md](FORK_SETUP.md)** - Complete guide to fork and customize this blog
@@ -358,6 +371,7 @@ blog/
 │   └── ...                 # Other static files
 ├── FORK_SETUP.md           # Fork setup guide
 ├── POST_GUIDE.md           # Post writing guide
+├── TEMPLATE_SETUP.md       # Template repository setup guide
 ├── TEMPLATE_GUIDE.md       # Template usage guide (English)
 ├── TEMPLATE_GUIDE_KO.md    # Template usage guide (Korean)
 ├── THEME_CONFIG.md         # Theme customization guide
@@ -382,6 +396,7 @@ blog/
 
 | Document | Description |
 |----------|-------------|
+| **[TEMPLATE_SETUP.md](TEMPLATE_SETUP.md)** | 🌟 **Complete guide for using as template repository** (템플릿 저장소 사용 가이드) |
 | **[TEMPLATE_GUIDE.md](TEMPLATE_GUIDE.md)** | Blog template usage guide (English) |
 | **[TEMPLATE_GUIDE_KO.md](TEMPLATE_GUIDE_KO.md)** | 블로그 템플릿 가이드 (한국어) |
 | **[FORK_SETUP.md](FORK_SETUP.md)** | Complete guide to fork and customize this blog |
