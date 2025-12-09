@@ -299,7 +299,7 @@ You can create multiple blogs from the same template:
 ## 📚 추가 리소스 (Additional Resources)
 
 - [GitHub Template Repository 문서](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-template-repository)
-- [Vercel 배포 가이드](/DEPLOYMENT.md)
+- [Vercel 배포 가이드](DEPLOYMENT.md)
 - [Next.js 문서](https://nextjs.org/docs)
 - [Tailwind CSS 문서](https://tailwindcss.com/docs)
 
