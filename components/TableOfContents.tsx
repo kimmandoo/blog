@@ -42,12 +42,12 @@ export function TableOfContents({ items }: TOCProps) {
   }
 
   return (
-    <nav>
-      <div className={`${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} ${themeConfig.borderRadius.card} ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border p-6 shadow-md`}>
-        <h3 className={`text-sm font-bold uppercase tracking-wider ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} mb-4`}>
-          Table of Contents
+    <nav className="sticky top-24">
+      <div className={`${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} border ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} p-5`}>
+        <h3 className={`text-xs font-semibold ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} mb-4 pb-2 border-b ${themeConfig.colors.light.border.secondary} ${themeConfig.colors.dark.border.secondary}`}>
+          목차
         </h3>
-        <ul className="space-y-2">
+        <ul className="space-y-1.5">
           {items.map((item) => (
             <li
               key={item.id}
@@ -55,10 +55,10 @@ export function TableOfContents({ items }: TOCProps) {
             >
               <a
                 href={`#${item.id}`}
-                className={`block text-sm ${themeConfig.animations.transition} ${
+                className={`block text-sm leading-relaxed ${themeConfig.animations.transition} ${
                   activeId === item.id
-                    ? `${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} font-semibold`
-                    : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:text-black dark:hover:text-white`
+                    ? `${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} font-semibold border-l-2 border-black dark:border-white pl-3 -ml-3`
+                    : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:text-black dark:hover:text-white hover:translate-x-1`
                 }`}
                 onClick={(e) => {
                   e.preventDefault();
