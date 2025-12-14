@@ -38,7 +38,10 @@ val locationFlow = callbackFlow {
 
 ## callbackFlow 구조
 
-리스너 등록 - 데이터 전달 - 종료 처리로 구성된다. 특히 종료처리는 `awaitClose`로 되는데, flow가 닫힐 때 리스너를 해제하도록 하고, flow를 구독중일 때 suspend를 먹여 callback을 받는 flow가 닫히지 않도록 해주는 역할을 한다.
+리스너 등록 - 데이터 전달 - 종료 처리로 구성된다. 
+
+
+특히 종료처리는 `awaitClose`로 되는데, flow가 닫힐 때 리스너를 해제하도록 하고, flow를 구독중일 때 suspend를 먹여 callback을 받는 flow가 닫히지 않도록 해주는 역할을 한다.
 
 ```kotlin
 fun getLocationFlow(): Flow<String> = callbackFlow {
@@ -61,7 +64,33 @@ fun getLocationFlow(): Flow<String> = callbackFlow {
 }
 ```
 
+awaitClose는 suspendCancellableCoroutine으로 되어있다. awaitClose를 안달아두면 코드 실행이 다 됐다고 판단해서, 데이터를 trySend에서 보낼 flow가 죽어버린다.
+
+```kotlin
+public suspend fun ProducerScope<*>.awaitClose(block: () -> Unit = {}) {
+    check(kotlin.coroutines.coroutineContext[Job] === this) { "awaitClose() can only be invoked from the producer context" }
+    try {
+        suspendCancellableCoroutine<Unit> { cont ->
+            invokeOnClose {
+                cont.resume(Unit)
+            }
+        }
+    } finally {
+        block()
+    }
+}
+```
+
+suspendCancellableCoroutine은 현재 코루틴을 '일시 중지(Suspend)' 시키고 누군가 `cont.resume()`을 호출해서 깨워줄 때까지 멈춰 세우는데, 채널이 취소되거나 닫히면 cont.resume이 호출돼서 awaitClose가 실행되어 callbackFlow도 종료된다.
+
+
 ### 왜 emit이 아니라 trySend인가?
+
+```kotlin
+public fun <T> callbackFlow(@BuilderInference block: suspend ProducerScope<T>.() -> Unit): Flow<T> = CallbackFlowBuilder(block)
+public fun trySend(element: E): ChannelResult<Unit>
+public suspend fun emit(value: T)
+```
 
 일단 emit은 suspend 함수고, trySend는 일반 함수다. 콜백함수는 suspend가 아니기 때문에, emit을 사용하기 부적절하다는 점이 첫번째로 알고 들어가야하는 부분이다.
 
