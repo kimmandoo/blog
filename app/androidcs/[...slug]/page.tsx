@@ -1,13 +1,16 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Metadata } from 'next';
-import { getAndroidCSData, getAllAndroidCSSlugs } from '@/lib/androidcs';
+import { getAndroidCSData, getAllAndroidCSSlugs, getSortedAndroidCSData } from '@/lib/androidcs';
 import { format } from 'date-fns';
 import { CodeBlockEnhancer } from '@/components/CodeBlock';
 import { MermaidRenderer } from '@/components/MermaidRenderer';
 import { TableOfContents } from '@/components/TableOfContents';
 import { ReadingProgressBar } from '@/components/ReadingProgressBar';
+import { Comments } from '@/components/Comments';
 import { themeConfig } from '@/config/theme.config';
+import { Navigation } from '@/components/Navigation';
+import { AndroidCSSidebar } from '@/components/AndroidCSSidebar';
 
 export async function generateStaticParams() {
   const items = getAllAndroidCSSlugs();
@@ -80,62 +83,90 @@ export default async function AndroidCSPost({ params }: { params: Promise<{ slug
     notFound();
   }
 
+  const allItems = getSortedAndroidCSData();
+
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${themeConfig.colors.light.background.primary} ${themeConfig.colors.dark.background.primary}`}>
+    <div className="min-h-screen bg-white dark:bg-gray-950">
       {/* Reading Progress Bar */}
       <ReadingProgressBar readingTime={item.readingTime} />
       
-      <main className="mx-auto px-6 py-16">
-        <div className={`${themeConfig.spacing.container} mx-auto mb-12`}>
-          <Link 
-            href="/androidcs"
-            className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all group"
-          >
-            <svg 
-              className={`w-5 h-5 mr-2 group-hover:-translate-x-1 ${themeConfig.animations.transition}`} 
-              fill="none" 
-              strokeWidth="2" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path d="M19 12H5M5 12l7 7M5 12l7-7" />
-            </svg>
-            <span className="font-medium">Back to AndroidCS</span>
-          </Link>
+      {/* Top Navigation Bar */}
+      <div className="sticky top-0 z-50 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
+        <div className="max-w-screen-2xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-8">
+              <Link href="/" className="flex items-center gap-2">
+                <span className={`text-xl font-bold ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary}`}>
+                  {themeConfig.site.title}
+                </span>
+              </Link>
+              <Navigation />
+            </div>
+          </div>
         </div>
+      </div>
 
-        {/* Content layout with ToC positioned absolutely to not affect content width */}
-        <div className={`relative ${themeConfig.spacing.postWidth} mx-auto`}>
-          {/* Main content area - always centered with same width */}
-          <article>
-            <header className={`pb-8 mb-8 ${themeConfig.colors.light.border.secondary} ${themeConfig.colors.dark.border.secondary} border-b`}>
-              <div className="flex flex-wrap items-center gap-3 mb-4">
-                <time className={`text-sm ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
-                  {format(new Date(item.date), 'yyyy.MM.dd')}
-                </time>
-                {item.readingTime && (
-                  <span className={`text-sm ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
-                    · {item.readingTime} min read
-                  </span>
-                )}
-                {item.category && (
-                  <span className={`text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary}`}>
-                    {item.category}
-                  </span>
-                )}
-              </div>
-              <h1 className={`text-3xl md:text-4xl font-bold ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} mb-4 leading-tight`}>
+      {/* GitBook-style Layout */}
+      <div className="flex max-w-screen-2xl mx-auto">
+        {/* Left Sidebar - Navigation */}
+        <AndroidCSSidebar items={allItems} currentSlug={slugString} />
+
+        {/* Main Content Area */}
+        <main className="flex-1 min-w-0 lg:flex lg:gap-8">
+          {/* Article Content */}
+          <article className="flex-1 min-w-0 px-8 py-12 max-w-4xl mx-auto lg:mx-0">
+            {/* Breadcrumb */}
+            <nav className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-8">
+              <Link href="/androidcs" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                AndroidCS
+              </Link>
+              <svg className="w-4 h-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M9 5l7 7-7 7" />
+              </svg>
+              {item.category && (
+                <>
+                  <span>{item.category}</span>
+                  <svg className="w-4 h-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 5l7 7-7 7" />
+                  </svg>
+                </>
+              )}
+              <span className="text-gray-900 dark:text-gray-100">{item.title}</span>
+            </nav>
+
+            {/* Header */}
+            <header className="mb-12">
+              <h1 className={`text-4xl md:text-5xl font-bold ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} mb-6 leading-tight`}>
                 {item.title}
               </h1>
+              
               {item.excerpt && (
-                <p className={`text-lg ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} leading-relaxed`}>
+                <p className={`text-xl ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} leading-relaxed mb-6`}>
                   {item.excerpt}
                 </p>
               )}
+              
+              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                <time className="flex items-center gap-1.5">
+                  <svg className="w-4 h-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  {format(new Date(item.date), 'yyyy년 MM월 dd일')}
+                </time>
+                {item.readingTime && (
+                  <span className="flex items-center gap-1.5">
+                    <svg className="w-4 h-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {item.readingTime}분 읽기
+                  </span>
+                )}
+              </div>
+              
               {item.tags && item.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-4">
                   {item.tags.map((tag) => (
-                    <span key={tag} className={`text-sm ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
+                    <span key={tag} className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
                       #{tag}
                     </span>
                   ))}
@@ -143,7 +174,8 @@ export default async function AndroidCSPost({ params }: { params: Promise<{ slug
               )}
             </header>
 
-            <div className="py-8">
+            {/* Content */}
+            <div className="pb-12 border-b border-gray-200 dark:border-gray-800">
               <CodeBlockEnhancer />
               <MermaidRenderer />
               
@@ -154,47 +186,39 @@ export default async function AndroidCSPost({ params }: { params: Promise<{ slug
                   prose-h2:${themeConfig.prose.h2} prose-h2:mb-4 prose-h2:mt-10 prose-h2:pb-2 prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-gray-800
                   prose-h3:${themeConfig.prose.h3} prose-h3:mb-3 prose-h3:mt-8
                   prose-p:${themeConfig.prose.paragraphColor.light} dark:prose-p:${themeConfig.prose.paragraphColor.dark} prose-p:leading-relaxed prose-p:mb-6
-                  prose-a:text-black dark:prose-a:text-white prose-a:font-medium prose-a:no-underline prose-a:border-b prose-a:border-gray-400 dark:prose-a:border-gray-600 hover:prose-a:border-black dark:hover:prose-a:border-white prose-a:transition-colors
+                  prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:font-medium prose-a:no-underline hover:prose-a:underline prose-a:transition-colors
                   prose-strong:text-black dark:prose-strong:text-white prose-strong:font-bold
-                  prose-code:text-black dark:prose-code:text-white prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-code:font-mono prose-code:text-sm
+                  prose-code:text-pink-600 dark:prose-code:text-pink-400 prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-code:font-mono prose-code:text-sm
                   prose-pre:bg-gray-900 dark:prose-pre:bg-gray-950 prose-pre:border prose-pre:border-gray-800 dark:prose-pre:border-gray-700 prose-pre:rounded-lg prose-pre:p-4
-                  prose-blockquote:border-l-2 prose-blockquote:border-gray-300 dark:prose-blockquote:border-gray-700 prose-blockquote:text-gray-600 dark:prose-blockquote:text-gray-400 prose-blockquote:pl-4 prose-blockquote:italic
+                  prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:bg-blue-50 dark:prose-blockquote:bg-blue-900/10 prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300 prose-blockquote:pl-4 prose-blockquote:py-2 prose-blockquote:italic
                   prose-hr:border-gray-200 dark:prose-hr:border-gray-800 prose-hr:my-8
                   prose-ul:${themeConfig.prose.listColor.light} dark:prose-ul:${themeConfig.prose.listColor.dark} prose-ul:list-disc prose-ul:pl-6
                   prose-ol:${themeConfig.prose.listColor.light} dark:prose-ol:${themeConfig.prose.listColor.dark} prose-ol:list-decimal prose-ol:pl-6
                   prose-li:${themeConfig.prose.listColor.light} dark:prose-li:${themeConfig.prose.listColor.dark} prose-li:mb-2
-                  prose-img:rounded-lg prose-img:mx-auto prose-img:block`}
+                  prose-img:rounded-lg prose-img:border prose-img:border-gray-200 dark:prose-img:border-gray-800 prose-img:mx-auto prose-img:block`}
                 dangerouslySetInnerHTML={{ __html: item.content || '' }}
               />
             </div>
+
+            {/* Comments Section */}
+            <div className="mt-12">
+              <Comments />
+            </div>
           </article>
 
-          {/* Table of Contents Sidebar - Fixed position to not affect content width */}
+          {/* Right Sidebar - Table of Contents (Desktop only) */}
           {item.toc && item.toc.length > 0 && (
-            <aside className="hidden xl:block fixed right-8 top-24 w-56">
+            <aside className="hidden xl:block sticky top-[73px] h-[calc(100vh-73px)] w-64 py-12 pr-8 overflow-y-auto">
+              <div className="mb-4">
+                <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider mb-3">
+                  이 페이지에서
+                </h4>
+              </div>
               <TableOfContents items={item.toc} />
             </aside>
           )}
-        </div>
-
-        <div className={`${themeConfig.spacing.container} mx-auto px-6 mt-12 text-center`}>
-          <Link 
-            href="/androidcs"
-            className={`inline-flex items-center px-6 py-3 ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:${themeConfig.colors.light.text.primary} hover:${themeConfig.colors.dark.text.primary} ${themeConfig.animations.transition}`}
-          >
-            <svg 
-              className="w-5 h-5 mr-2" 
-              fill="none" 
-              strokeWidth="2" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path d="M19 12H5M5 12l7 7M5 12l7-7" />
-            </svg>
-            Back to AndroidCS
-          </Link>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }
