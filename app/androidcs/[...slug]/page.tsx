@@ -102,7 +102,7 @@ export default async function AndroidCSPost({ params }: { params: Promise<{ slug
             </Link>
             <span className="text-gray-300 dark:text-gray-700">|</span>
             <Link href="/androidcs" className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
-              AndroidCS
+              Android
             </Link>
           </div>
           
@@ -131,7 +131,7 @@ export default async function AndroidCSPost({ params }: { params: Promise<{ slug
             {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-8">
               <Link href="/androidcs" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                AndroidCS
+                Android
               </Link>
               <svg className="w-4 h-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
                 <path d="M9 5l7 7-7 7" />
