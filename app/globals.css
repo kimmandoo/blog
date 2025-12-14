@@ -9,9 +9,15 @@
   --foreground: #171717;
   
   /* Code block configuration variables */
+  --code-block-bg: linear-gradient(135deg, #1e1e2e 0%, #181825 100%);
   --code-block-text: #e6e6e6;
   --code-block-border: rgba(255, 255, 255, 0.1);
   --code-block-radius: 0.75rem;
+  
+  /* Line number configuration variables */
+  --code-line-number-color: #6c7086;
+  --code-line-number-bg: rgba(0, 0, 0, 0.2);
+  --code-line-number-border: rgba(255, 255, 255, 0.1);
   
   /* Inline code configuration variables */
   --inline-code-bg: #f1f5f9;
@@ -29,6 +35,14 @@ html.dark {
   --background: #0a0a0a;
   --foreground: #ededed;
   
+  /* Dark mode code blocks */
+  --code-block-bg: linear-gradient(135deg, #1e1e2e 0%, #181825 100%);
+  --code-block-text: #e6e6e6;
+  --code-block-border: rgba(255, 255, 255, 0.1);
+  --code-line-number-color: #6c7086;
+  --code-line-number-bg: rgba(0, 0, 0, 0.2);
+  --code-line-number-border: rgba(255, 255, 255, 0.1);
+  
   /* Dark mode inline code */
   --inline-code-bg: #334155;
   --inline-code-text: #f1f5f9;
@@ -40,6 +54,14 @@ html.dark {
   html:not(.light):not(.dark) {
     --background: #0a0a0a;
     --foreground: #ededed;
+    
+    /* Dark mode code blocks */
+    --code-block-bg: linear-gradient(135deg, #1e1e2e 0%, #181825 100%);
+    --code-block-text: #e6e6e6;
+    --code-block-border: rgba(255, 255, 255, 0.1);
+    --code-line-number-color: #6c7086;
+    --code-line-number-bg: rgba(0, 0, 0, 0.2);
+    --code-line-number-border: rgba(255, 255, 255, 0.1);
     
     /* Dark mode inline code */
     --inline-code-bg: #334155;
