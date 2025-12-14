@@ -21,7 +21,7 @@ export default async function AndroidCSPage() {
             </Link>
             <span className="text-gray-300 dark:text-gray-700">|</span>
             <Link href="/androidcs" className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
-              AndroidCS
+              Android
             </Link>
           </div>
           
@@ -48,10 +48,10 @@ export default async function AndroidCSPage() {
           <div className="max-w-4xl mx-auto">
             <div className="mb-12">
               <h1 className={`text-4xl font-bold ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} mb-4`}>
-                안드로이드 CS 지식
+                안드로이드
               </h1>
               <p className={`text-lg ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary}`}>
-                안드로이드 개발에 필요한 CS 지식을 체계적으로 정리한 문서입니다.
+                안드로이드 개발에 필요한 지식을 개인적으로 정리한 장소입니다.
               </p>
             </div>
 

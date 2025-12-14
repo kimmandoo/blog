@@ -40,7 +40,7 @@ export function Navigation() {
               : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:bg-gray-100 dark:hover:bg-gray-800`
           }`}
         >
-          AndroidCS
+          Android
         </Link>
       </div>
     </nav>
