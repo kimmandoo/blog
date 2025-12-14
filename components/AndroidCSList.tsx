@@ -22,8 +22,8 @@ export function AndroidCSList({ items }: AndroidCSListProps) {
     const query = searchQuery.toLowerCase();
     return items.filter(item => {
       const titleMatch = item.title.toLowerCase().includes(query);
-      const excerptMatch = item.excerpt?.toLowerCase().includes(query);
-      const categoryMatch = item.category?.toLowerCase().includes(query);
+      const excerptMatch = item.excerpt?.toLowerCase()?.includes(query);
+      const categoryMatch = item.category?.toLowerCase()?.includes(query);
       const tagsMatch = item.tags?.some(tag => tag.toLowerCase().includes(query));
       
       return titleMatch || excerptMatch || categoryMatch || tagsMatch;
@@ -42,7 +42,7 @@ export function AndroidCSList({ items }: AndroidCSListProps) {
           {searchQuery ? (
             <>
               <p className={`${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} mb-6`}>
-                No documents found matching &quot;{searchQuery}&quot;
+                No documents found matching "{searchQuery}"
               </p>
               <button 
                 onClick={() => setSearchQuery('')}
