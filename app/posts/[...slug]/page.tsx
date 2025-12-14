@@ -170,7 +170,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
             )}
           </header>
 
-          <div className="py-8">
+          <div>
             <CodeBlockEnhancer />
             <MermaidRenderer />
             
