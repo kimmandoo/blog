@@ -2,7 +2,11 @@
 
 import { useTheme } from './ThemeProvider';
 
-export function ThemeToggle() {
+interface ThemeToggleProps {
+  inline?: boolean;
+}
+
+export function ThemeToggle({ inline = false }: ThemeToggleProps) {
   const { theme, setTheme, resolvedTheme } = useTheme();
 
   const cycleTheme = () => {
@@ -16,10 +20,14 @@ export function ThemeToggle() {
     }
   };
 
+  const buttonClasses = inline
+    ? "relative p-2 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300"
+    : "fixed top-6 right-6 z-50 p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 hover:scale-110 transition-all duration-300";
+
   return (
     <button
       onClick={cycleTheme}
-      className="fixed top-6 right-6 z-50 p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 hover:scale-110 transition-all duration-300"
+      className={buttonClasses}
       aria-label={`Current theme: ${theme}. Click to switch.`}
       title={`Theme: ${theme} (${resolvedTheme})`}
     >

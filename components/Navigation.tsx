@@ -27,7 +27,7 @@ export function Navigation() {
           className={`px-4 py-2 rounded-lg font-medium transition-all ${
             isActive(ROUTES.HOME) && !pathname.startsWith(ROUTES.ANDROIDCS)
               ? `${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary}`
-              : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:${themeConfig.colors.light.text.primary} hover:${themeConfig.colors.dark.text.primary}`
+              : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:bg-gray-100 dark:hover:bg-gray-800`
           }`}
         >
           Blog
@@ -37,7 +37,7 @@ export function Navigation() {
           className={`px-4 py-2 rounded-lg font-medium transition-all ${
             isActive(ROUTES.ANDROIDCS)
               ? `${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary}`
-              : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:${themeConfig.colors.light.text.primary} hover:${themeConfig.colors.dark.text.primary}`
+              : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:bg-gray-100 dark:hover:bg-gray-800`
           }`}
         >
           AndroidCS
