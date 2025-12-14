@@ -43,7 +43,7 @@ export function AndroidCSSidebar({ items, currentSlug }: AndroidCSSidebarProps) 
       {/* Sidebar */}
       <aside 
         className={`
-          fixed lg:sticky top-[73px] left-0 h-[calc(100vh-73px)] 
+          fixed lg:sticky top-[64px] left-0 h-[calc(100vh-64px)] 
           w-72 bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800
           overflow-y-auto transition-transform duration-300 z-40
           ${isCollapsed ? '-translate-x-full lg:translate-x-0' : 'translate-x-0'}

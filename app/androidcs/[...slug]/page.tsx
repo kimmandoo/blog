@@ -9,7 +9,6 @@ import { TableOfContents } from '@/components/TableOfContents';
 import { ReadingProgressBar } from '@/components/ReadingProgressBar';
 import { Comments } from '@/components/Comments';
 import { themeConfig } from '@/config/theme.config';
-import { Navigation } from '@/components/Navigation';
 import { AndroidCSSidebar } from '@/components/AndroidCSSidebar';
 
 export async function generateStaticParams() {
@@ -90,19 +89,32 @@ export default async function AndroidCSPost({ params }: { params: Promise<{ slug
       {/* Reading Progress Bar */}
       <ReadingProgressBar readingTime={item.readingTime} />
       
-      {/* Top Navigation Bar */}
-      <div className="sticky top-0 z-50 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
-        <div className="max-w-screen-2xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-8">
-              <Link href="/" className="flex items-center gap-2">
-                <span className={`text-xl font-bold ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary}`}>
-                  {themeConfig.site.title}
-                </span>
-              </Link>
-              <Navigation />
-            </div>
+      {/* GitBook-style Top Bar - Simpler and cleaner */}
+      <div className="sticky top-0 z-50 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800">
+        <div className="h-16 px-6 flex items-center justify-between max-w-screen-2xl mx-auto">
+          {/* Left: Logo and Title */}
+          <div className="flex items-center gap-4">
+            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                {themeConfig.site.title}
+              </span>
+            </Link>
+            <span className="text-gray-300 dark:text-gray-700">|</span>
+            <Link href="/androidcs" className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
+              AndroidCS
+            </Link>
           </div>
+          
+          {/* Right: Navigation Link */}
+          <Link 
+            href="/" 
+            className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors flex items-center gap-1"
+          >
+            <svg className="w-4 h-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Blog
+          </Link>
         </div>
       </div>
 
@@ -208,7 +220,7 @@ export default async function AndroidCSPost({ params }: { params: Promise<{ slug
 
           {/* Right Sidebar - Table of Contents (Desktop only) */}
           {item.toc && item.toc.length > 0 && (
-            <aside className="hidden xl:block sticky top-[73px] h-[calc(100vh-73px)] w-64 py-12 pr-8 overflow-y-auto">
+            <aside className="hidden xl:block sticky top-[64px] h-[calc(100vh-64px)] w-64 py-12 pr-8 overflow-y-auto">
               <div className="mb-4">
                 <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider mb-3">
                   이 페이지에서
