@@ -1,6 +1,7 @@
 import { getSortedPostsData, getAllCategories, getAllTags } from '@/lib/posts';
 import { PostList } from '@/components/PostList';
 import { themeConfig } from '@/config/theme.config';
+import { Navigation } from '@/components/Navigation';
 
 export default async function Home({
   searchParams,
@@ -36,6 +37,8 @@ export default async function Home({
             {themeConfig.site.tagline}
           </p>
         </header>
+
+        <Navigation />
 
         <PostList 
           initialPosts={posts}
