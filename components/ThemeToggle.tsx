@@ -1,6 +1,7 @@
 'use client';
 
 import { useTheme } from './ThemeProvider';
+import { usePathname } from 'next/navigation';
 
 interface ThemeToggleProps {
   inline?: boolean;
@@ -8,6 +9,13 @@ interface ThemeToggleProps {
 
 export function ThemeToggle({ inline = false }: ThemeToggleProps) {
   const { theme, setTheme, resolvedTheme } = useTheme();
+  const pathname = usePathname();
+  
+  // Hide the floating button on AndroidCS pages
+  const isAndroidCSPage = pathname?.startsWith('/androidcs');
+  if (!inline && isAndroidCSPage) {
+    return null;
+  }
 
   const cycleTheme = () => {
     // Cycle: light -> dark -> system -> light
