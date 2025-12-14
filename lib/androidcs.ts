@@ -108,7 +108,20 @@ export function getAllAndroidCSSlugs() {
 }
 
 export async function getAndroidCSData(slug: string): Promise<AndroidCSData> {
+  // Validate slug to prevent path traversal
+  if (slug.includes('..') || path.isAbsolute(slug)) {
+    throw new Error('Invalid slug');
+  }
+  
   const fullPath = path.join(androidcsDirectory, `${slug}.md`);
+  
+  // Verify the resolved path is still within androidcsDirectory
+  const resolvedPath = path.resolve(fullPath);
+  const resolvedBaseDir = path.resolve(androidcsDirectory);
+  if (!resolvedPath.startsWith(resolvedBaseDir)) {
+    throw new Error('Invalid slug');
+  }
+  
   const fileContents = fs.readFileSync(fullPath, 'utf8');
   const matterResult = matter(fileContents);
 

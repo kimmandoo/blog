@@ -4,12 +4,17 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { themeConfig } from '@/config/theme.config';
 
+const ROUTES = {
+  HOME: '/',
+  ANDROIDCS: '/androidcs',
+} as const;
+
 export function Navigation() {
   const pathname = usePathname();
   
   const isActive = (path: string) => {
-    if (path === '/') {
-      return pathname === '/';
+    if (path === ROUTES.HOME) {
+      return pathname === ROUTES.HOME;
     }
     return pathname.startsWith(path);
   };
@@ -18,9 +23,9 @@ export function Navigation() {
     <nav className="mb-8">
       <div className="flex gap-6 justify-center">
         <Link 
-          href="/"
+          href={ROUTES.HOME}
           className={`px-4 py-2 rounded-lg font-medium transition-all ${
-            isActive('/') && !pathname.startsWith('/androidcs')
+            isActive(ROUTES.HOME) && !pathname.startsWith(ROUTES.ANDROIDCS)
               ? `${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary}`
               : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:${themeConfig.colors.light.text.primary} hover:${themeConfig.colors.dark.text.primary}`
           }`}
@@ -28,9 +33,9 @@ export function Navigation() {
           Blog
         </Link>
         <Link 
-          href="/androidcs"
+          href={ROUTES.ANDROIDCS}
           className={`px-4 py-2 rounded-lg font-medium transition-all ${
-            isActive('/androidcs')
+            isActive(ROUTES.ANDROIDCS)
               ? `${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary}`
               : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:${themeConfig.colors.light.text.primary} hover:${themeConfig.colors.dark.text.primary}`
           }`}
