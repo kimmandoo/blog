@@ -14,6 +14,8 @@ import { calculateReadingTime } from './readingTime';
 import GithubSlugger from 'github-slugger';
 
 const androidcsDirectory = path.join(process.cwd(), 'android-cs');
+const androidcsPostsDirectory = path.join(androidcsDirectory, 'posts');
+export const androidcsImagesDirectory = path.join(androidcsDirectory, 'images');
 
 export interface TOCItem {
   id: string;
@@ -34,13 +36,19 @@ export interface AndroidCSData {
   readingTime?: number;
 }
 
-// Helper function to recursively find all markdown files
+// Helper function to recursively find all markdown files, excluding images directory
 function getAllMarkdownFiles(dir: string, baseDir: string = dir): string[] {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   const files: string[] = [];
 
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
+    
+    // Skip images directory
+    if (entry.isDirectory() && entry.name === 'images') {
+      continue;
+    }
+    
     if (entry.isDirectory()) {
       files.push(...getAllMarkdownFiles(fullPath, baseDir));
     } else if (entry.name.endsWith('.md')) {
@@ -53,14 +61,19 @@ function getAllMarkdownFiles(dir: string, baseDir: string = dir): string[] {
 }
 
 export function getSortedAndroidCSData(): AndroidCSData[] {
-  const fileNames = fs.existsSync(androidcsDirectory) 
-    ? getAllMarkdownFiles(androidcsDirectory)
+  // Check for posts directory first, fallback to root android-cs directory
+  const searchDirectory = fs.existsSync(androidcsPostsDirectory) 
+    ? androidcsPostsDirectory 
+    : androidcsDirectory;
+    
+  const fileNames = fs.existsSync(searchDirectory) 
+    ? getAllMarkdownFiles(searchDirectory)
     : [];
   
   const allData = fileNames
     .map(fileName => {
       const slug = fileName.replace(/\.md$/, '').replace(/\\/g, '/');
-      const fullPath = path.join(androidcsDirectory, fileName);
+      const fullPath = path.join(searchDirectory, fileName);
       const fileContents = fs.readFileSync(fullPath, 'utf8');
       const matterResult = matter(fileContents);
       const readingTime = calculateReadingTime(matterResult.content);
@@ -89,13 +102,18 @@ export function getSortedAndroidCSData(): AndroidCSData[] {
 }
 
 export function getAllAndroidCSSlugs() {
-  const fileNames = fs.existsSync(androidcsDirectory)
-    ? getAllMarkdownFiles(androidcsDirectory)
+  // Check for posts directory first, fallback to root android-cs directory
+  const searchDirectory = fs.existsSync(androidcsPostsDirectory) 
+    ? androidcsPostsDirectory 
+    : androidcsDirectory;
+    
+  const fileNames = fs.existsSync(searchDirectory)
+    ? getAllMarkdownFiles(searchDirectory)
     : [];
   
   return fileNames
     .filter(fileName => {
-      const fullPath = path.join(androidcsDirectory, fileName);
+      const fullPath = path.join(searchDirectory, fileName);
       const fileContents = fs.readFileSync(fullPath, 'utf8');
       const matterResult = matter(fileContents);
       return !matterResult.data.draft;
@@ -113,11 +131,16 @@ export async function getAndroidCSData(slug: string): Promise<AndroidCSData> {
     throw new Error('Invalid slug');
   }
   
-  const fullPath = path.join(androidcsDirectory, `${slug}.md`);
+  // Check for posts directory first, fallback to root android-cs directory
+  const searchDirectory = fs.existsSync(androidcsPostsDirectory) 
+    ? androidcsPostsDirectory 
+    : androidcsDirectory;
   
-  // Verify the resolved path is still within androidcsDirectory
+  const fullPath = path.join(searchDirectory, `${slug}.md`);
+  
+  // Verify the resolved path is still within search directory
   const resolvedPath = path.resolve(fullPath);
-  const resolvedBaseDir = path.resolve(androidcsDirectory);
+  const resolvedBaseDir = path.resolve(searchDirectory);
   if (!resolvedPath.startsWith(resolvedBaseDir)) {
     throw new Error('Invalid slug');
   }
