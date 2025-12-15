@@ -19,27 +19,48 @@ export function AndroidCSStats({ items }: AndroidCSStatsProps) {
     }
   });
 
-  // Sort tags by count and get top tags
-  const sortedTags = Object.entries(tagCounts)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5);
-
+  // Sort all tags by count
+  const sortedTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
   const totalTaggedPosts = Object.values(tagCounts).reduce((sum, count) => sum + count, 0);
 
+  // Extended color palette for all tags
   const colors = [
-    { bg: 'bg-blue-500', text: 'text-blue-600 dark:text-blue-400' },
-    { bg: 'bg-green-500', text: 'text-green-600 dark:text-green-400' },
-    { bg: 'bg-purple-500', text: 'text-purple-600 dark:text-purple-400' },
-    { bg: 'bg-orange-500', text: 'text-orange-600 dark:text-orange-400' },
-    { bg: 'bg-pink-500', text: 'text-pink-600 dark:text-pink-400' },
+    '#3B82F6', // blue
+    '#10B981', // green
+    '#A855F7', // purple
+    '#F59E0B', // orange
+    '#EC4899', // pink
+    '#14B8A6', // teal
+    '#F43F5E', // rose
+    '#8B5CF6', // violet
+    '#06B6D4', // cyan
+    '#EAB308', // yellow
+    '#6366F1', // indigo
+    '#84CC16', // lime
   ];
+
+  // Create pie chart segments
+  const segments = sortedTags.map(([tag, count], index) => {
+    const percentage = totalTaggedPosts > 0 ? (count / totalTaggedPosts) * 100 : 0;
+    const color = colors[index % colors.length];
+    return { tag, count, percentage, color };
+  });
+
+  // Calculate cumulative percentages for pie chart using reduce
+  const pieSegments = segments.reduce((acc, segment) => {
+    const startPercentage = acc.length > 0 
+      ? acc[acc.length - 1].startPercentage + acc[acc.length - 1].percentage
+      : 0;
+    acc.push({ ...segment, startPercentage });
+    return acc;
+  }, [] as Array<{ tag: string; count: number; percentage: number; color: string; startPercentage: number }>);
 
   return (
     <div className="mt-6 p-5 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
-      <div className="flex items-center justify-between gap-6 flex-wrap">
-        {/* Tag Distribution */}
-        <div className="flex-1 min-w-[200px]">
-          <div className="flex items-center gap-2 mb-3">
+      <div className="flex items-center justify-between gap-8 flex-wrap">
+        {/* Pie Chart */}
+        <div className="flex-1 min-w-[280px]">
+          <div className="flex items-center gap-2 mb-4">
             <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
               <path d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
             </svg>
@@ -47,24 +68,53 @@ export function AndroidCSStats({ items }: AndroidCSStatsProps) {
               태그별 문서 비율
             </h3>
           </div>
-          <div className="space-y-2">
-            {sortedTags.map(([tag, count], index) => {
-              const percentage = totalTaggedPosts > 0 ? (count / totalTaggedPosts) * 100 : 0;
-              return (
-                <div key={tag}>
-                  <div className="flex items-center justify-between text-xs mb-1">
-                    <span className="text-gray-700 dark:text-gray-300 font-medium">#{tag}</span>
-                    <span className={`font-semibold ${colors[index].text}`}>{count}개 ({percentage.toFixed(0)}%)</span>
-                  </div>
-                  <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full ${colors[index].bg} rounded-full transition-all duration-500`}
-                      style={{ width: `${percentage}%` }}
-                    />
-                  </div>
+          
+          <div className="flex items-center gap-6">
+            {/* Pie Chart SVG */}
+            <svg viewBox="0 0 200 200" className="w-40 h-40 flex-shrink-0">
+              {pieSegments.map((segment, index) => {
+                const startAngle = (segment.startPercentage / 100) * 360 - 90;
+                const endAngle = ((segment.startPercentage + segment.percentage) / 100) * 360 - 90;
+                
+                const startRad = (startAngle * Math.PI) / 180;
+                const endRad = (endAngle * Math.PI) / 180;
+                
+                const x1 = 100 + 90 * Math.cos(startRad);
+                const y1 = 100 + 90 * Math.sin(startRad);
+                const x2 = 100 + 90 * Math.cos(endRad);
+                const y2 = 100 + 90 * Math.sin(endRad);
+                
+                const largeArc = segment.percentage > 50 ? 1 : 0;
+                
+                return (
+                  <path
+                    key={index}
+                    d={`M 100 100 L ${x1} ${y1} A 90 90 0 ${largeArc} 1 ${x2} ${y2} Z`}
+                    fill={segment.color}
+                    opacity="0.9"
+                    className="hover:opacity-100 transition-opacity"
+                  />
+                );
+              })}
+            </svg>
+
+            {/* Legend */}
+            <div className="flex-1 grid grid-cols-1 gap-2 max-h-40 overflow-y-auto">
+              {segments.map((segment, index) => (
+                <div key={index} className="flex items-center gap-2 text-xs">
+                  <div
+                    className="w-3 h-3 rounded-sm flex-shrink-0"
+                    style={{ backgroundColor: segment.color }}
+                  />
+                  <span className="text-gray-700 dark:text-gray-300 font-medium truncate">
+                    #{segment.tag}
+                  </span>
+                  <span className="text-gray-500 dark:text-gray-400 ml-auto whitespace-nowrap">
+                    {segment.count}개 ({segment.percentage.toFixed(0)}%)
+                  </span>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
         </div>
 
