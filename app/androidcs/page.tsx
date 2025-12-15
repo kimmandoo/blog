@@ -4,6 +4,7 @@ import { themeConfig } from '@/config/theme.config';
 import { AndroidCSSidebar } from '@/components/AndroidCSSidebar';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { AndroidCSList } from '@/components/AndroidCSList';
+import { AndroidCSStats } from '@/components/AndroidCSStats';
 
 export default async function AndroidCSPage() {
   const allItems = getSortedAndroidCSData();
@@ -55,41 +56,8 @@ export default async function AndroidCSPage() {
                 안드로이드 개발에 필요한 지식을 개인적으로 정리한 장소입니다.
               </p>
 
-              {/* Statistics Cards */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-                <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
-                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                    {allItems.length}
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    전체 문서
-                  </div>
-                </div>
-                <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
-                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                    {new Set(allItems.map(item => item.category)).size}
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    카테고리
-                  </div>
-                </div>
-                <div className="p-4 rounded-lg bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800">
-                  <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                    {allItems.reduce((sum, item) => sum + (item.tags?.length || 0), 0)}
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    태그
-                  </div>
-                </div>
-                <div className="p-4 rounded-lg bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800">
-                  <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
-                    {allItems.reduce((sum, item) => sum + (item.readingTime || 0), 0)}
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    총 읽기 시간(분)
-                  </div>
-                </div>
-              </div>
+              {/* Statistics Dashboard */}
+              <AndroidCSStats items={allItems} />
             </div>
 
             <AndroidCSList items={allItems} />

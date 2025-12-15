@@ -818,3 +818,17 @@ html.dark .mermaid-container {
   max-width: 100%;
   height: auto;
 }
+
+/* Shimmer animation for stats bars */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
