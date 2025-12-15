@@ -12,7 +12,7 @@ interface AndroidCSSidebarProps {
 
 export function AndroidCSSidebar({ items, currentSlug }: AndroidCSSidebarProps) {
   const pathname = usePathname();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   
   // Group items by category
   const groupedItems = items.reduce((acc, item) => {
