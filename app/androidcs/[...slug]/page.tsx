@@ -201,7 +201,7 @@ export default async function AndroidCSPost({ params }: { params: Promise<{ slug
                   prose-h3:${themeConfig.prose.h3} prose-h3:mb-3 prose-h3:mt-8
                   prose-p:${themeConfig.prose.paragraphColor.light} dark:prose-p:${themeConfig.prose.paragraphColor.dark} prose-p:leading-relaxed prose-p:mb-6
                   prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:font-medium prose-a:no-underline hover:prose-a:underline prose-a:transition-colors
-                  prose-strong:text-black dark:prose-strong:text-white prose-strong:font-bold
+                  prose-strong:text-black dark:prose-strong:text-white prose-strong:font-extrabold
                   prose-code:text-pink-600 dark:prose-code:text-pink-400 prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-code:font-mono prose-code:text-sm
                   prose-pre:bg-gray-900 dark:prose-pre:bg-gray-950 prose-pre:border prose-pre:border-gray-800 dark:prose-pre:border-gray-700 prose-pre:rounded-lg prose-pre:p-4
                   prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:bg-blue-50 dark:prose-blockquote:bg-blue-900/10 prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300 prose-blockquote:pl-4 prose-blockquote:py-2 prose-blockquote:italic
