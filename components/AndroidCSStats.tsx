@@ -165,17 +165,17 @@ export function AndroidCSStats({ items }: AndroidCSStatsProps) {
         </div>
 
         {/* Reading Time */}
-        <div className="flex flex-col items-center justify-center p-6 rounded-xl bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 shadow-lg min-w-[160px] transform transition-transform hover:scale-105">
-          <div className="p-3 rounded-full bg-white/20 backdrop-blur-sm mb-3">
-            <svg className="w-8 h-8 text-white" fill="none" strokeWidth="2.5" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="flex flex-col items-center justify-center p-6 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-sm min-w-[160px] hover:shadow-md transition-shadow">
+          <div className="p-3 rounded-full bg-gray-100 dark:bg-gray-800 mb-3">
+            <svg className="w-7 h-7 text-gray-600 dark:text-gray-400" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
               <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
           <div className="text-center">
-            <div className="text-4xl font-bold text-white mb-1 drop-shadow-lg">
+            <div className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-1">
               {totalReadingTime}
             </div>
-            <div className="text-sm text-white/90 font-medium">
+            <div className="text-sm text-gray-500 dark:text-gray-400 font-medium">
               총 읽기 시간(분)
             </div>
           </div>
