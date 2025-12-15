@@ -1,12 +1,14 @@
 'use client';
 
 import { AndroidCSData } from '@/lib/androidcs';
+import { useState } from 'react';
 
 interface AndroidCSStatsProps {
   items: AndroidCSData[];
 }
 
 export function AndroidCSStats({ items }: AndroidCSStatsProps) {
+  const [hoveredSegment, setHoveredSegment] = useState<{ tag: string; count: number; percentage: number } | null>(null);
   const totalReadingTime = items.reduce((sum, item) => sum + (item.readingTime || 0), 0);
 
   // Count posts per tag
@@ -69,9 +71,9 @@ export function AndroidCSStats({ items }: AndroidCSStatsProps) {
             </h3>
           </div>
           
-          <div className="flex items-center gap-6">
+          <div className="flex items-center justify-center relative">
             {/* Pie Chart SVG */}
-            <svg viewBox="0 0 200 200" className="w-40 h-40 flex-shrink-0">
+            <svg viewBox="0 0 200 200" className="w-52 h-52">
               {pieSegments.map((segment, index) => {
                 const startAngle = (segment.startPercentage / 100) * 360 - 90;
                 const endAngle = ((segment.startPercentage + segment.percentage) / 100) * 360 - 90;
@@ -91,30 +93,26 @@ export function AndroidCSStats({ items }: AndroidCSStatsProps) {
                     key={index}
                     d={`M 100 100 L ${x1} ${y1} A 90 90 0 ${largeArc} 1 ${x2} ${y2} Z`}
                     fill={segment.color}
-                    opacity="0.9"
-                    className="hover:opacity-100 transition-opacity"
+                    opacity="0.85"
+                    className="hover:opacity-100 transition-opacity cursor-pointer"
+                    onMouseEnter={() => setHoveredSegment({ tag: segment.tag, count: segment.count, percentage: segment.percentage })}
+                    onMouseLeave={() => setHoveredSegment(null)}
                   />
                 );
               })}
             </svg>
 
-            {/* Legend */}
-            <div className="flex-1 grid grid-cols-1 gap-2 max-h-40 overflow-y-auto">
-              {segments.map((segment, index) => (
-                <div key={index} className="flex items-center gap-2 text-xs">
-                  <div
-                    className="w-3 h-3 rounded-sm flex-shrink-0"
-                    style={{ backgroundColor: segment.color }}
-                  />
-                  <span className="text-gray-700 dark:text-gray-300 font-medium truncate">
-                    #{segment.tag}
-                  </span>
-                  <span className="text-gray-500 dark:text-gray-400 ml-auto whitespace-nowrap">
-                    {segment.count}개 ({segment.percentage.toFixed(0)}%)
-                  </span>
+            {/* Tooltip */}
+            {hoveredSegment && (
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                <div className="bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-4 py-3 rounded-lg shadow-lg text-center min-w-[160px]">
+                  <div className="font-semibold text-sm mb-1">#{hoveredSegment.tag}</div>
+                  <div className="text-xs">
+                    {hoveredSegment.count}개 ({hoveredSegment.percentage.toFixed(1)}%)
+                  </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
           </div>
         </div>
 
