@@ -222,11 +222,6 @@ export default async function AndroidCSPost({ params }: { params: Promise<{ slug
           {/* Right Sidebar - Table of Contents (Desktop only) */}
           {item.toc && item.toc.length > 0 && (
             <aside className="hidden xl:block sticky top-[64px] h-[calc(100vh-64px)] w-64 py-12 pr-8 overflow-y-auto">
-              <div className="mb-4">
-                <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider mb-3">
-                  이 페이지에서
-                </h4>
-              </div>
               <TableOfContents items={item.toc} />
             </aside>
           )}
