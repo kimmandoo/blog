@@ -13,6 +13,7 @@ interface AndroidCSSidebarProps {
 export function AndroidCSSidebar({ items, currentSlug }: AndroidCSSidebarProps) {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
   
   // Group items by category
   const groupedItems = items.reduce((acc, item) => {
@@ -23,6 +24,13 @@ export function AndroidCSSidebar({ items, currentSlug }: AndroidCSSidebarProps) 
     acc[category].push(item);
     return acc;
   }, {} as Record<string, AndroidCSData[]>);
+
+  const toggleCategory = (category: string) => {
+    setCollapsedCategories(prev => ({
+      ...prev,
+      [category]: !prev[category]
+    }));
+  };
 
   return (
     <>
@@ -67,40 +75,64 @@ export function AndroidCSSidebar({ items, currentSlug }: AndroidCSSidebarProps) 
           </div>
 
           {/* Navigation by Category */}
-          <nav className="space-y-6">
-            {Object.entries(groupedItems).map(([category, categoryItems]) => (
-              <div key={category}>
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3 px-3">
-                  {category}
-                </h3>
-                <ul className="space-y-1">
-                  {categoryItems.map((item) => {
-                    const itemPath = `/androidcs/${item.slug}`;
-                    const isActive = pathname === itemPath || currentSlug === item.slug;
-                    
-                    return (
-                      <li key={item.slug}>
-                        <Link
-                          href={itemPath}
-                          className={`block px-3 py-2 rounded-lg text-sm transition-colors ${
-                            isActive
-                              ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium'
-                              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2">
-                            <svg className="w-4 h-4 flex-shrink-0" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
-                              <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            <span className="truncate">{item.title}</span>
-                          </div>
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            ))}
+          <nav className="space-y-4">
+            {Object.entries(groupedItems).map(([category, categoryItems]) => {
+              const isCategoryCollapsed = collapsedCategories[category];
+              
+              return (
+                <div key={category}>
+                  <button
+                    onClick={() => toggleCategory(category)}
+                    className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span>{category}</span>
+                      <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full">
+                        {categoryItems.length}
+                      </span>
+                    </div>
+                    <svg 
+                      className={`w-4 h-4 transition-transform ${isCategoryCollapsed ? '' : 'rotate-180'}`}
+                      fill="none" 
+                      strokeWidth="2" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  
+                  {!isCategoryCollapsed && (
+                    <ul className="space-y-1 mt-2">
+                      {categoryItems.map((item) => {
+                        const itemPath = `/androidcs/${item.slug}`;
+                        const isActive = pathname === itemPath || currentSlug === item.slug;
+                        
+                        return (
+                          <li key={item.slug}>
+                            <Link
+                              href={itemPath}
+                              className={`block px-3 py-2 rounded-lg text-sm transition-colors ${
+                                isActive
+                                  ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium'
+                                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2">
+                                <svg className="w-4 h-4 flex-shrink-0" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <span className="truncate">{item.title}</span>
+                              </div>
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </div>
+              );
+            })}
           </nav>
         </div>
       </aside>

@@ -10,6 +10,7 @@ import { ReadingProgressBar } from '@/components/ReadingProgressBar';
 import { Comments } from '@/components/Comments';
 import { themeConfig } from '@/config/theme.config';
 import { AndroidCSSidebar } from '@/components/AndroidCSSidebar';
+import { AndroidCSNavigation } from '@/components/AndroidCSNavigation';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
 export async function generateStaticParams() {
@@ -212,6 +213,9 @@ export default async function AndroidCSPost({ params }: { params: Promise<{ slug
                 dangerouslySetInnerHTML={{ __html: item.content || '' }}
               />
             </div>
+
+            {/* Previous/Next Navigation */}
+            <AndroidCSNavigation allItems={allItems} currentSlug={slugString} />
 
             {/* Comments Section */}
             <div className="mt-12">
