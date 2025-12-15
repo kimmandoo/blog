@@ -40,7 +40,7 @@ export function AndroidCSNavigation({ allItems, currentSlug }: AndroidCSNavigati
           )}
         </Link>
       ) : (
-        <div /> // Empty space to maintain grid layout
+        <div className="hidden md:block" aria-hidden="true"></div>
       )}
 
       {nextItem ? (
@@ -64,7 +64,7 @@ export function AndroidCSNavigation({ allItems, currentSlug }: AndroidCSNavigati
           )}
         </Link>
       ) : (
-        <div /> // Empty space to maintain grid layout
+        <div className="hidden md:block" aria-hidden="true"></div>
       )}
     </nav>
   );
