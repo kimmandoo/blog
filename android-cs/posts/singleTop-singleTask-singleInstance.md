@@ -1,5 +1,5 @@
 ---
-title: Android Launch 모드들 - singleTop, singleTask, singleInstance
+title: launchMode 이해하기- singleTop, singleTask, singleInstance
 date: 2025-12-16
 category: Android
 tags: [android]
