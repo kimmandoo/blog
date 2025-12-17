@@ -79,7 +79,7 @@ export function getSortedPSData(): PSData[] {
         draft: matterResult.data.draft || false,
         readingTime,
         modifiedTime,
-        ...(matterResult.data as Omit<PSData, 'slug' | 'title' | 'date' | 'excerpt' | 'category' | 'tags' | 'draft' | 'readingTime'>),
+        ...(matterResult.data as Omit<PSData, 'slug' | 'title' | 'date' | 'excerpt' | 'category' | 'tags' | 'draft' | 'readingTime' | 'modifiedTime'>),
       };
     })
     .filter(item => !item.draft);
