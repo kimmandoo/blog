@@ -89,8 +89,8 @@ export function getSortedPostsData(): PostData[] {
         ...(matterResult.data as Omit<PostData, 'slug' | 'title' | 'date' | 'excerpt' | 'category' | 'tags' | 'draft' | 'readingTime'>),
       };
     })
-    // Filter out draft posts
-    .filter(post => !post.draft);
+    // Filter out draft posts and PS posts
+    .filter(post => !post.draft && post.category !== 'PS');
 
   // Sort posts by date
   return allPostsData.sort((a, b) => {
@@ -109,11 +109,11 @@ export function getAllPostSlugs() {
   
   return fileNames
     .filter(fileName => {
-      // Check if post is draft
+      // Check if post is draft or PS post
       const fullPath = path.join(postsDirectory, fileName);
       const fileContents = fs.readFileSync(fullPath, 'utf8');
       const matterResult = matter(fileContents);
-      return !matterResult.data.draft;
+      return !matterResult.data.draft && matterResult.data.category !== 'PS';
     })
     .map(fileName => {
       return {

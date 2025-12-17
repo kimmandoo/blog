@@ -16,6 +16,7 @@ interface PostListProps {
   allTags: string[];
   selectedCategory?: string;
   selectedTag?: string;
+  basePath?: string; // Optional base path, defaults to '/posts'
 }
 
 export function PostList({ 
@@ -23,7 +24,8 @@ export function PostList({
   allCategories, 
   allTags,
   selectedCategory,
-  selectedTag 
+  selectedTag,
+  basePath = '/posts'
 }: PostListProps) {
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -180,7 +182,7 @@ export function PostList({
         ) : (
           filteredPosts.map((post) => (
             <article key={post.slug} className="group">
-              <Link href={`/posts/${post.slug}`}>
+              <Link href={`${basePath}/${post.slug}`}>
                 <div className={`py-6 px-4 -mx-4 rounded-lg ${themeConfig.animations.transition} hover:bg-gray-50 dark:hover:bg-gray-900/50`}>
                   <div className="flex items-start gap-4">
                     {/* Left accent bar */}

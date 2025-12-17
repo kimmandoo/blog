@@ -9,9 +9,10 @@ interface PostNavigationProps {
     slug: string;
     title: string;
   } | null;
+  basePath?: string; // Optional base path, defaults to '/posts'
 }
 
-export function PostNavigation({ previousPost, nextPost }: PostNavigationProps) {
+export function PostNavigation({ previousPost, nextPost, basePath = '/posts' }: PostNavigationProps) {
   if (!previousPost && !nextPost) return null;
 
   return (
@@ -20,7 +21,7 @@ export function PostNavigation({ previousPost, nextPost }: PostNavigationProps) 
       <div className={previousPost ? '' : 'sm:col-start-2'}>
         {previousPost && (
           <Link 
-            href={`/posts/${previousPost.slug}`}
+            href={`${basePath}/${previousPost.slug}`}
             className="group flex flex-col p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-all"
           >
             <span className="text-xs text-gray-500 dark:text-gray-400 mb-1 flex items-center gap-1">
@@ -40,7 +41,7 @@ export function PostNavigation({ previousPost, nextPost }: PostNavigationProps) 
       <div className="text-right">
         {nextPost && (
           <Link 
-            href={`/posts/${nextPost.slug}`}
+            href={`${basePath}/${nextPost.slug}`}
             className="group flex flex-col p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-all items-end"
           >
             <span className="text-xs text-gray-500 dark:text-gray-400 mb-1 flex items-center gap-1">
