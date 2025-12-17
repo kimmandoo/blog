@@ -15,6 +15,10 @@ export default async function Home({
   
   // Filter posts based on category or tag
   const posts = allPosts.filter(post => {
+    // Exclude LeetCode posts from main blog
+    if (post.category === 'LeetCode') {
+      return false;
+    }
     if (selectedCategory && post.category !== selectedCategory) {
       return false;
     }
