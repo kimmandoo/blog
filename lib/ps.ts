@@ -32,6 +32,7 @@ export interface PSData {
   toc?: TOCItem[];
   draft?: boolean;
   readingTime?: number;
+  modifiedTime?: number;
 }
 
 // Helper function to recursively find all markdown files
@@ -91,7 +92,7 @@ export function getSortedPSData(): PSData[] {
       return -1;
     }
     // If dates are equal, sort by file modification time (newer first)
-    return (b as { modifiedTime: number }).modifiedTime - (a as { modifiedTime: number }).modifiedTime;
+    return (b.modifiedTime || 0) - (a.modifiedTime || 0);
   });
 }
 
