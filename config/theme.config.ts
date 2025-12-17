@@ -294,6 +294,34 @@ export const themeConfig = {
     medium: 'https://kimmandoo.medium.com/',
   },
 
+  // Problem Solving Sites
+  problemSolvingSites: [
+    {
+      name: 'LeetCode',
+      url: 'https://leetcode.com/u/kimmandoo/',
+      description: '글로벌 코딩 테스트 플랫폼',
+      icon: '🔢',
+    },
+    {
+      name: '백준 Online Judge',
+      url: 'https://www.acmicpc.net/',
+      description: '한국 대표 알고리즘 문제 사이트',
+      icon: '🏆',
+    },
+    {
+      name: '프로그래머스',
+      url: 'https://programmers.co.kr/',
+      description: '코딩 테스트 연습 플랫폼',
+      icon: '💻',
+    },
+    {
+      name: 'Codeforces',
+      url: 'https://codeforces.com/',
+      description: '경쟁 프로그래밍 플랫폼',
+      icon: '⚔️',
+    },
+  ],
+
   // RSS Feed configuration
   rss: {
     // Enable/disable RSS feed generation at /feed.xml
