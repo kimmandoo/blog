@@ -65,6 +65,8 @@ export function getSortedPSData(): PSData[] {
       const fileContents = fs.readFileSync(fullPath, 'utf8');
       const matterResult = matter(fileContents);
       const readingTime = calculateReadingTime(matterResult.content);
+      const stats = fs.statSync(fullPath);
+      const modifiedTime = stats.mtime.getTime();
 
       return {
         slug,
@@ -75,17 +77,21 @@ export function getSortedPSData(): PSData[] {
         tags: matterResult.data.tags || [],
         draft: matterResult.data.draft || false,
         readingTime,
+        modifiedTime,
         ...(matterResult.data as Omit<PSData, 'slug' | 'title' | 'date' | 'excerpt' | 'category' | 'tags' | 'draft' | 'readingTime'>),
       };
     })
     .filter(item => !item.draft);
 
   return allData.sort((a, b) => {
+    // First, sort by date (newer first)
     if (a.date < b.date) {
       return 1;
-    } else {
+    } else if (a.date > b.date) {
       return -1;
     }
+    // If dates are equal, sort by file modification time (newer first)
+    return (b as { modifiedTime: number }).modifiedTime - (a as { modifiedTime: number }).modifiedTime;
   });
 }
 
