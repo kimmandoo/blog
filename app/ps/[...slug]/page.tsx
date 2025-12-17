@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Metadata } from 'next';
-import { getLeetCodeData, getAllLeetCodeSlugs, getAdjacentLeetCode } from '@/lib/leetcode';
+import { getPSData, getAllPSSlugs, getAdjacentPS } from '@/lib/ps';
 import { format } from 'date-fns';
 import { Comments } from '@/components/Comments';
 import { CodeBlockEnhancer } from '@/components/CodeBlock';
@@ -13,7 +13,7 @@ import { PostNavigation } from '@/components/PostNavigation';
 import { themeConfig } from '@/config/theme.config';
 
 export async function generateStaticParams() {
-  const items = getAllLeetCodeSlugs();
+  const items = getAllPSSlugs();
   return items.map((item) => ({
     slug: item.slug.split('/'),
   }));
@@ -25,8 +25,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { seo, site } = themeConfig;
   
   try {
-    const item = await getLeetCodeData(slugString);
-    const itemUrl = `${seo.siteUrl}/leetcode/${slugString}`;
+    const item = await getPSData(slugString);
+    const itemUrl = `${seo.siteUrl}/ps/${slugString}`;
     
     const ogImageUrl = seo.openGraph.defaultImage.startsWith('http://') || seo.openGraph.defaultImage.startsWith('https://')
       ? seo.openGraph.defaultImage
@@ -72,22 +72,22 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
-export default async function LeetCodePost({ params }: { params: Promise<{ slug: string[] }> }) {
+export default async function PSPost({ params }: { params: Promise<{ slug: string[] }> }) {
   const { slug } = await params;
   const slugString = slug.join('/');
   
   let item;
   try {
-    item = await getLeetCodeData(slugString);
+    item = await getPSData(slugString);
   } catch {
     notFound();
   }
 
   // Get adjacent posts for navigation
-  const { previous: previousItem, next: nextItem } = getAdjacentLeetCode(slugString);
+  const { previous: previousItem, next: nextItem } = getAdjacentPS(slugString);
   
   // Generate full URL for sharing
-  const itemUrl = `${themeConfig.seo.siteUrl}/leetcode/${slugString}`;
+  const itemUrl = `${themeConfig.seo.siteUrl}/ps/${slugString}`;
 
   return (
     <div className={`min-h-screen bg-gradient-to-br ${themeConfig.colors.light.background.primary} ${themeConfig.colors.dark.background.primary}`}>
@@ -97,7 +97,7 @@ export default async function LeetCodePost({ params }: { params: Promise<{ slug:
       <main className="mx-auto px-6 py-16">
         <div className={`${themeConfig.spacing.container} mx-auto mb-12`}>
           <Link 
-            href="/leetcode"
+            href="/ps"
             className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all group"
           >
             <svg 
@@ -109,7 +109,7 @@ export default async function LeetCodePost({ params }: { params: Promise<{ slug:
             >
               <path d="M19 12H5M5 12l7 7M5 12l7-7" />
             </svg>
-            <span className="font-medium">Back to LeetCode</span>
+            <span className="font-medium">Back to PS</span>
           </Link>
         </div>
 
@@ -186,7 +186,7 @@ export default async function LeetCodePost({ params }: { params: Promise<{ slug:
           <PostNavigation 
             previousPost={previousItem ? { slug: previousItem.slug, title: previousItem.title } : null}
             nextPost={nextItem ? { slug: nextItem.slug, title: nextItem.title } : null}
-            basePath="/leetcode"
+            basePath="/ps"
           />
 
           {/* Comments Section */}
@@ -205,7 +205,7 @@ export default async function LeetCodePost({ params }: { params: Promise<{ slug:
 
     <div className={`${themeConfig.spacing.container} mx-auto px-6 mt-12 text-center`}>
       <Link 
-        href="/leetcode"
+        href="/ps"
         className={`inline-flex items-center px-6 py-3 ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:${themeConfig.colors.light.text.primary} hover:${themeConfig.colors.dark.text.primary} ${themeConfig.animations.transition}`}
       >
         <svg 
@@ -217,7 +217,7 @@ export default async function LeetCodePost({ params }: { params: Promise<{ slug:
         >
           <path d="M19 12H5M5 12l7 7M5 12l7-7" />
         </svg>
-        Back to LeetCode
+        Back to PS
       </Link>
     </div>
   </main>

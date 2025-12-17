@@ -13,7 +13,7 @@ import rehypeKatex from 'rehype-katex';
 import { calculateReadingTime } from './readingTime';
 import GithubSlugger from 'github-slugger';
 
-const leetcodeDirectory = path.join(process.cwd(), 'posts', 'leetcode');
+const psDirectory = path.join(process.cwd(), 'posts', 'ps');
 
 export interface TOCItem {
   id: string;
@@ -21,7 +21,7 @@ export interface TOCItem {
   level: number;
 }
 
-export interface LeetCodeData {
+export interface PSData {
   slug: string;
   title: string;
   date: string;
@@ -53,15 +53,15 @@ function getAllMarkdownFiles(dir: string, baseDir: string = dir): string[] {
   return files;
 }
 
-export function getSortedLeetCodeData(): LeetCodeData[] {
-  const fileNames = fs.existsSync(leetcodeDirectory) 
-    ? getAllMarkdownFiles(leetcodeDirectory)
+export function getSortedPSData(): PSData[] {
+  const fileNames = fs.existsSync(psDirectory) 
+    ? getAllMarkdownFiles(psDirectory)
     : [];
   
   const allData = fileNames
     .map(fileName => {
       const slug = fileName.replace(/\.md$/, '').replace(/\\/g, '/');
-      const fullPath = path.join(leetcodeDirectory, fileName);
+      const fullPath = path.join(psDirectory, fileName);
       const fileContents = fs.readFileSync(fullPath, 'utf8');
       const matterResult = matter(fileContents);
       const readingTime = calculateReadingTime(matterResult.content);
@@ -75,7 +75,7 @@ export function getSortedLeetCodeData(): LeetCodeData[] {
         tags: matterResult.data.tags || [],
         draft: matterResult.data.draft || false,
         readingTime,
-        ...(matterResult.data as Omit<LeetCodeData, 'slug' | 'title' | 'date' | 'excerpt' | 'category' | 'tags' | 'draft' | 'readingTime'>),
+        ...(matterResult.data as Omit<PSData, 'slug' | 'title' | 'date' | 'excerpt' | 'category' | 'tags' | 'draft' | 'readingTime'>),
       };
     })
     .filter(item => !item.draft);
@@ -89,14 +89,14 @@ export function getSortedLeetCodeData(): LeetCodeData[] {
   });
 }
 
-export function getAllLeetCodeSlugs() {
-  const fileNames = fs.existsSync(leetcodeDirectory)
-    ? getAllMarkdownFiles(leetcodeDirectory)
+export function getAllPSSlugs() {
+  const fileNames = fs.existsSync(psDirectory)
+    ? getAllMarkdownFiles(psDirectory)
     : [];
   
   return fileNames
     .filter(fileName => {
-      const fullPath = path.join(leetcodeDirectory, fileName);
+      const fullPath = path.join(psDirectory, fileName);
       const fileContents = fs.readFileSync(fullPath, 'utf8');
       const matterResult = matter(fileContents);
       return !matterResult.data.draft;
@@ -108,8 +108,8 @@ export function getAllLeetCodeSlugs() {
     });
 }
 
-export async function getLeetCodeData(slug: string): Promise<LeetCodeData> {
-  const fullPath = path.join(leetcodeDirectory, `${slug}.md`);
+export async function getPSData(slug: string): Promise<PSData> {
+  const fullPath = path.join(psDirectory, `${slug}.md`);
   const fileContents = fs.readFileSync(fullPath, 'utf8');
 
   const matterResult = matter(fileContents);
@@ -144,7 +144,7 @@ export async function getLeetCodeData(slug: string): Promise<LeetCodeData> {
     draft: matterResult.data.draft || false,
     toc,
     readingTime,
-    ...(matterResult.data as Omit<LeetCodeData, 'slug' | 'title' | 'date' | 'content' | 'excerpt' | 'category' | 'tags' | 'draft' | 'toc' | 'readingTime'>),
+    ...(matterResult.data as Omit<PSData, 'slug' | 'title' | 'date' | 'content' | 'excerpt' | 'category' | 'tags' | 'draft' | 'toc' | 'readingTime'>),
   };
 }
 
@@ -194,8 +194,8 @@ function extractTOC(content: string): TOCItem[] {
   return toc;
 }
 
-export function getAdjacentLeetCode(currentSlug: string): { previous: LeetCodeData | null; next: LeetCodeData | null } {
-  const items = getSortedLeetCodeData();
+export function getAdjacentPS(currentSlug: string): { previous: PSData | null; next: PSData | null } {
+  const items = getSortedPSData();
   const currentIndex = items.findIndex(item => item.slug === currentSlug);
   
   if (currentIndex === -1) {
