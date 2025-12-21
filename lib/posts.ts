@@ -92,13 +92,12 @@ export function getSortedPostsData(): PostData[] {
     // Filter out draft posts and PS posts
     .filter(post => !post.draft && post.category !== 'PS');
 
-  // Sort posts by date
+  // Sort posts by date (newest first)
+  // Convert dates to timestamps to handle both Date objects and string dates consistently
   return allPostsData.sort((a, b) => {
-    if (a.date < b.date) {
-      return 1;
-    } else {
-      return -1;
-    }
+    const dateA = new Date(a.date).getTime();
+    const dateB = new Date(b.date).getTime();
+    return dateB - dateA;
   });
 }
 
