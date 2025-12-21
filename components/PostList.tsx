@@ -95,47 +95,32 @@ export function PostList({
         </div>
       )}
 
-      {/* Categories and Tags Filter - Minimal Modern Layout */}
+      {/* Categories and Tags Filter - Ultra Minimal Layout */}
       {(allCategories.length > 0 || allTags.length > 0) && (
-        <div className="mb-6">
-          {/* Minimal Card Container */}
-          <div className="relative rounded-lg bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-800 p-6 md:p-8">
-            {/* Content */}
-            <div className="space-y-6">
-              {/* Categories Section */}
-              {allCategories.length > 0 && (
-                <div className="space-y-3">
-                  <h3 className={`text-xs font-semibold uppercase tracking-wider ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
-                    {themeConfig.text.categories}
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {allCategories.map((cat, index) => (
-                      <CategoryBadge key={cat} category={cat} index={index} size="sm" />
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {/* Divider */}
-              {allCategories.length > 0 && allTags.length > 0 && (
-                <div className="h-px bg-gray-200 dark:bg-gray-800"></div>
-              )}
-              
-              {/* Tags Section */}
-              {allTags.length > 0 && (
-                <div className="space-y-3">
-                  <h3 className={`text-xs font-semibold uppercase tracking-wider ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
-                    {themeConfig.text.tags}
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {allTags.map((tag) => (
-                      <TagBadge key={tag} tag={tag} size="sm" />
-                    ))}
-                  </div>
-                </div>
-              )}
+        <div className="mb-8 space-y-4">
+          {/* Categories Section */}
+          {allCategories.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2">
+              <span className={`text-xs font-medium uppercase tracking-wide ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} mr-1`}>
+                {themeConfig.text.categories}
+              </span>
+              {allCategories.map((cat, index) => (
+                <CategoryBadge key={cat} category={cat} index={index} size="sm" />
+              ))}
             </div>
-          </div>
+          )}
+          
+          {/* Tags Section */}
+          {allTags.length > 0 && (
+            <div className="flex flex-wrap items-center gap-1">
+              <span className={`text-xs font-medium uppercase tracking-wide ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} mr-2`}>
+                {themeConfig.text.tags}
+              </span>
+              {allTags.map((tag) => (
+                <TagBadge key={tag} tag={tag} size="sm" />
+              ))}
+            </div>
+          )}
         </div>
       )}
 
