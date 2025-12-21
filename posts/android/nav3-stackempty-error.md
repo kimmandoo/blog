@@ -1,5 +1,5 @@
 ---
-title: IllegalArgumentException: NavDisplay backstack cannot be empty
+title: navigation3의 철학으로 인해 만나게 된 backstack empty 에러
 date: 2025-12-22
 category: Andriod
 tags: [trouble-shooting, android]
