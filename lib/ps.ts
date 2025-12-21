@@ -80,12 +80,12 @@ export function getSortedPSData(): PSData[] {
     })
     .filter(item => !item.draft);
 
+  // Sort posts by date (newest first)
+  // Convert dates to timestamps to handle both Date objects and string dates consistently
   return allData.sort((a, b) => {
-    if (a.date < b.date) {
-      return 1;
-    } else {
-      return -1;
-    }
+    const dateA = new Date(a.date).getTime();
+    const dateB = new Date(b.date).getTime();
+    return dateB - dateA;
   });
 }
 
