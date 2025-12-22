@@ -41,13 +41,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/ps`,
-      lastModified: psPosts[0] ? new Date(psPosts[0].date) : now,
+      lastModified: psPosts.length > 0 ? new Date(psPosts[0].date) : now,
       changeFrequency: 'weekly',
       priority: 0.7,
     },
     {
       url: `${baseUrl}/androidcs`,
-      lastModified: androidPosts[0] ? new Date(androidPosts[0].date) : now,
+      lastModified: androidPosts.length > 0 ? new Date(androidPosts[0].date) : now,
       changeFrequency: 'weekly',
       priority: 0.7,
     },
