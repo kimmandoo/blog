@@ -10,6 +10,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const psPosts = getSortedPSData();
   const androidPosts = getSortedAndroidCSData();
   const now = new Date();
+  const getLastModified = (items: { date?: string }[]) => {
+    const date = items[0]?.date;
+    if (!date) return now;
+    const parsed = new Date(date);
+    return Number.isNaN(parsed.getTime()) ? now : parsed;
+  };
 
   const postUrls = posts.map((post) => ({
     url: `${baseUrl}/posts/${post.slug}`,
@@ -41,14 +47,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/ps`,
-      lastModified: psPosts[0]?.date ? new Date(psPosts[0].date) : now,
-      changeFrequency: 'weekly',
+      lastModified: getLastModified(psPosts),
+      changeFrequency: 'weekly' as const,
       priority: 0.7,
     },
     {
       url: `${baseUrl}/androidcs`,
-      lastModified: androidPosts[0]?.date ? new Date(androidPosts[0].date) : now,
-      changeFrequency: 'weekly',
+      lastModified: getLastModified(androidPosts),
+      changeFrequency: 'weekly' as const,
       priority: 0.7,
     },
     ...postUrls,
