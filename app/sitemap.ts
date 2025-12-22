@@ -10,30 +10,39 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const psPosts = getSortedPSData();
   const androidPosts = getSortedAndroidCSData();
   const now = new Date();
+  const parseDate = (value?: string | Date) => {
+    if (!value) return null;
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  };
   const getLastModified = (items: { date?: string }[]) => {
-    const date = items[0]?.date;
-    if (!date) return now;
-    const parsed = new Date(date);
-    return Number.isNaN(parsed.getTime()) ? now : parsed;
+    let latest: Date | null = null;
+    for (const item of items) {
+      const parsed = parseDate(item?.date);
+      if (parsed && (!latest || parsed.getTime() > latest.getTime())) {
+        latest = parsed;
+      }
+    }
+    return latest ?? now;
   };
 
   const postUrls = posts.map((post) => ({
     url: `${baseUrl}/posts/${post.slug}`,
-    lastModified: new Date(post.date),
+    lastModified: parseDate(post.date) ?? now,
     changeFrequency: 'weekly' as const,
     priority: 0.8,
   }));
 
   const psUrls = psPosts.map((post) => ({
     url: `${baseUrl}/ps/${post.slug}`,
-    lastModified: new Date(post.date),
+    lastModified: parseDate(post.date) ?? now,
     changeFrequency: 'weekly' as const,
     priority: 0.6,
   }));
 
   const androidUrls = androidPosts.map((post) => ({
     url: `${baseUrl}/androidcs/${post.slug}`,
-    lastModified: new Date(post.date),
+    lastModified: parseDate(post.date) ?? now,
     changeFrequency: 'weekly' as const,
     priority: 0.6,
   }));
