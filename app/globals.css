@@ -103,7 +103,7 @@ html.dark :not(pre) > code:hover {
   font-size: 0.875rem;
   tab-size: 2;
   white-space: pre-wrap;
-  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 /* When line numbers are present, adjust padding */
@@ -140,8 +140,8 @@ pre.has-line-numbers .hljs {
   flex: 1;
   display: inline-block;
   min-width: 0;
-  white-space: inherit;
-  word-break: inherit;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
 }
 
 /* Hover effect on code lines */
