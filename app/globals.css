@@ -102,6 +102,7 @@ html.dark :not(pre) > code:hover {
   position: relative;
   font-size: 0.875rem;
   tab-size: 2;
+  /* Wrap long code to prevent horizontal scrolling */
   white-space: pre-wrap;
   overflow-wrap: break-word;
 }
@@ -139,6 +140,7 @@ pre.has-line-numbers .hljs {
   padding-right: 1em;
   flex: 1;
   display: inline-block;
+  /* Ensure wrapped lines respect line-number layout */
   min-width: 0;
   white-space: pre-wrap;
   overflow-wrap: break-word;
