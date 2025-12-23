@@ -1,8 +1,8 @@
 ---
-title: 갤러리 이미지를 앱에서 다루기 - URI_PERMISSION
-date: 2025-12-22
+title: 외부 이미지를 앱 내부로 가져오기
+date: 2025-12-23
 category: Andriod
-tags: [trouble-shooting, android]
+tags: [trouble-shooting, android, bitmap]
 ---
 
 만들고 있는 메모장에, 본인이 원하는 이미지로 배경을 꾸밀 수 있는 기능을 넣고 있다.
@@ -170,7 +170,7 @@ suspend fun saveImageToInternalStorage(
     }
 ```
 
-## 심사를 대비하자 - 사진 선택 도구(PhotoPicker)
+## 심사 대비 - 사진 선택 도구(PhotoPicker)
 
 Android 11 이전까지만 해도 위와 같은 방식을 사용해서 이미지를 가져왔다.
 
@@ -202,7 +202,7 @@ GetContent 버전에서 contract만 `PickVisualMedia`로 바꿔주면 된다. �
 
 ## Contract?
 
-Activity Result API에서 말하는 Contract는 이름 그대로 "내가 이런 데이터를 줄 테니, 나중에 결과로 저런 데이터를 돌려줘"라고 시스템과 맺는 정규화된 약속을 의미다.
+Activity Result API에서 말하는 Contract는 이름 그대로 "내가 이런 데이터를 줄 테니, 나중에 결과로 저런 데이터를 돌려줘"라고 시스템과 맺는 정규화된 약속을 의미한다.
 
 startActivityForResult에서 조금 진화된 방식으로, requestCode랑 Intent관리가 수월해졌다.
 
@@ -213,3 +213,90 @@ override fun parseResult(resultCode: Int, intent: Intent?): ActivityResult =
 ```
 
 createIntent는 launcher.launch 때 실행되고, parseResult는 rememberLauncherForActivityResult의 onResult 람다에 사용된다.
+
+## 이미지 복사본 떠올 때 최적화하기
+
+지금 saveImageToInternalStorage를 보면, 파일스트림 열어서 원본을 그대로 복사하고 있다. 이렇게 하면 고화질 사진의 경우에도 원본을 복사하게 되면서 앱 용량이 불필요하게 커지고, 심하면 OOM이 발생할 가능성도 있기 때문에 이 부분을 개선해줘야된다.
+
+사실 coil에서 이 작업을 대신 해주기 때문에, 보여주는 용도만 쓴다면 이게 필요없는데, 나의 경우에는 복사본을 앱 내에 저장해서 가져다 쓰기 때문에 리사이징으로 최적화를 하는 것이다.
+
+https://developer.android.com/topic/performance/graphics/load-bitmap?hl=ko
+
+공식문서를 착실하게 따라가 보자.
+
+```kotlin
+fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+    val (height: Int, width: Int) = options.run { outHeight to outWidth }
+    var inSampleSize = 1
+
+    if (height > reqHeight || width > reqWidth) {
+        val halfHeight: Int = height / 2
+        val halfWidth: Int = width / 2
+
+        while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
+            inSampleSize *= 2
+        }
+    }
+
+    return inSampleSize
+}
+```
+
+공식 문서에 적혀있는 샘플링 코드다. 만약 해상도가 2048x1536이고 inSampleSize가 4로 디코딩된 이미지는 약 512x384의 비트맵을 생성하고 이걸 메모리에 올리면 1/4이 아닌 1/$2^4$ 으로 올라가게 된다.
+
+안드로이드에서 기본 비트맵 설정이 ARGB_8888인데, 각 속성은 8bits씩을 차지한다. 그래서 픽셀 하나를 표시하는 데 4byte를 사용되어 메모리는 $w*h*4byte$ 로 계산된다.
+
+options를 잘 설정하는 게 중요한데, inJustDecodeBounds 옵션을 키면 메모리에 올리지 않고 리소스의 크기만 읽어올 수 있다. 이걸 사용해서 메모리 사용량을 줄이는 것이다.
+
+```kotlin
+suspend fun saveImageToInternalStorage(
+    context: Context,
+    uri: Uri,
+    maxDimension: Int = 2560 // QHD
+): Uri? = withContext(Dispatchers.IO) {
+    try {
+        val contentResolver = context.contentResolver
+
+        val options = BitmapFactory.Options().apply {
+            inJustDecodeBounds = true
+        }
+
+        contentResolver.openInputStream(uri)?.use { inputStream ->
+            BitmapFactory.decodeStream(inputStream, null, options)
+        }
+
+        options.inSampleSize = calculateInSampleSize(options, maxDimension)
+        options.inJustDecodeBounds = false
+
+        val resizedBitmap = contentResolver.openInputStream(uri)?.use { inputStream ->
+            BitmapFactory.decodeStream(inputStream, null, options)
+        }
+
+        resizedBitmap?.let { bitmap ->
+            val directory = File(context.filesDir, "wallpapers")
+            if (!directory.exists()) directory.mkdirs()
+
+            val fileName = "wallpaper.jpg"
+            val destFile = File(directory, fileName)
+
+            FileOutputStream(destFile).use { outputStream ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
+            }
+
+            bitmap.recycle()
+            Uri.fromFile(destFile)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+```
+
+contentResolver가 넘겨주는 게 스트림(외부 데이터는 stream, 앱 내부 리소스는 resource)이라 decodeResource 대신 decodeStream을 사용한다.
+
+스트림은 한 번 읽으면 끝나기 때문에, use로 알아서 닫히도록 해줬고 크기를 잴 때와, 파일을 실제로 리사이징할 때 총 2번 스트림을 열어준다.
+
+지금 코드는 긴 변 기준으로 QHD 크기에 맞게 리사이징 하는 코드다.
+
+BitmapFactory.decodeStream은 이미지의 회전 정보(Exif)를 무시하고 원본 픽셀 데이터만 읽어오기 때문에 회전이 제대로 안먹은 이미지가 들어올 수도 있다. coil이 보여줄 때 그건 알아서 할 것 같긴 한데, 문제가 생기면 그 때 고쳐보도록 하겠다.
