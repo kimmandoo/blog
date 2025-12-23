@@ -9,9 +9,13 @@
   --foreground: #171717;
   
   /* Code block configuration variables */
+  --code-block-bg: linear-gradient(135deg, #1e1e2e 0%, #181825 100%);
   --code-block-text: #e6e6e6;
   --code-block-border: rgba(255, 255, 255, 0.1);
   --code-block-radius: 0.75rem;
+  --code-line-number-color: #6c7086;
+  --code-line-number-bg: rgba(0, 0, 0, 0.2);
+  --code-line-number-border: rgba(255, 255, 255, 0.1);
   
   /* Inline code configuration variables */
   --inline-code-bg: #f1f5f9;
@@ -93,7 +97,6 @@ html.dark :not(pre) > code:hover {
    ============================ */
 .hljs {
   display: block;
-  overflow-x: auto;
   padding: 0.25em;
   background: var(--code-block-bg);
   color: var(--code-block-text);
@@ -102,6 +105,9 @@ html.dark :not(pre) > code:hover {
   position: relative;
   font-size: 0.875rem;
   tab-size: 2;
+  /* Wrap long code to prevent horizontal scrolling */
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
 }
 
 /* When line numbers are present, adjust padding */
@@ -137,6 +143,10 @@ pre.has-line-numbers .hljs {
   padding-right: 1em;
   flex: 1;
   display: inline-block;
+  /* Ensure wrapped lines respect line-number layout */
+  min-width: 0;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
 }
 
 /* Hover effect on code lines */
