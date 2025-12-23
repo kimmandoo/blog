@@ -5,7 +5,7 @@ category: Andriod
 tags: [trouble-shooting, android, bitmap]
 ---
 
-만들고 있는 메모장에, 본인이 원하는 이미지로 배경을 꾸밀 수 있는 기능을 넣고 있다.
+사이드로 개발 중인 메모장 앱에, 본인이 원하는 이미지로 배경을 꾸밀 수 있는 기능을 넣고 있다.
 
 처음에는 uri 받아서 그걸 datastore에 특정 형식으로 저장해 꺼내쓰는 걸 생각해서 구현했으나, 아래 에러에 직면했다.
 
@@ -119,7 +119,7 @@ GetContent에서 OpenDocument로 바꾸면 laucher에게 넘겨줘야하는 inpu
 BackgroundImageScreen(
     onBackClick = onBackClick,
     onLauncherOpen = { launcher.launch(arrayOf("image/*")) },
-``
+```
 
 `ACTION_OPEN_DOCUMENT`는 기본적으로 사용자가 여러 종류의 파일 타입을 동시에 선택할 수 있도록 `EXTRA_MIME_TYPES`라는 키를 사용하는 방식으로 설계되었기 때문에, 미리 MIME Type을 지정해서 호출해줘야한다.
 
@@ -174,7 +174,7 @@ suspend fun saveImageToInternalStorage(
 
 Android 11 이전까지만 해도 위와 같은 방식을 사용해서 이미지를 가져왔다.
 
-근데 구글에서 API 30, 즉 Android 11 부터 [photopicker](https://developer.android.com/training/data-storage/shared/photo-picker?hl=ko)를 도입하더니, 지금은 사진첩에 접근할 경우 Android 14 (API 34)를 타겟팅하는 앱의 경우 전체 사진 라이브러리 접근(READ_MEDIA_IMAGES)보다 PhotoPicker 사용을 강력히 권장중인 것으로 알고 있다.
+근데 구글에서 API 30, 즉 Android 11 부터 [photopicker](https://developer.android.com/training/data-storage/shared/photo-picker?hl=ko)를 도입하더니, 지금은 Android 14(API 34)이상을 타겟팅하는 앱에서 사진첩에 접근할 경우 전체 사진 라이브러리 접근(READ_MEDIA_IMAGES)보다 PhotoPicker 사용을 강력히 권장중인 것으로 알고 있다.
 
 출시까지는 조금 먼 얘기인 것 같지만.. 일단 준비하자.
 
