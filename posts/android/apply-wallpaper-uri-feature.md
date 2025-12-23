@@ -119,7 +119,7 @@ GetContent에서 OpenDocument로 바꾸면 laucher에게 넘겨줘야하는 inpu
 BackgroundImageScreen(
     onBackClick = onBackClick,
     onLauncherOpen = { launcher.launch(arrayOf("image/*")) },
-``
+```
 
 `ACTION_OPEN_DOCUMENT`는 기본적으로 사용자가 여러 종류의 파일 타입을 동시에 선택할 수 있도록 `EXTRA_MIME_TYPES`라는 키를 사용하는 방식으로 설계되었기 때문에, 미리 MIME Type을 지정해서 호출해줘야한다.
 
