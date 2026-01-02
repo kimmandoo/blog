@@ -2,7 +2,7 @@
 title: Compose에서 Darkmode 제대로 지원하기
 date: 2025-12-30
 category: Andriod
-tags: [trouble-shooting, android, material-theme]
+tags: [trouble-shooting, android, material-theme, jetpack-compose]
 ---
 
 메모장에 다크모드를 적용하는 도중에 부딪히며 알게된 정보를 기록해보겠다.

@@ -2,7 +2,7 @@
 title: 외부 이미지를 앱 내부로 가져오기
 date: 2025-12-23
 category: Andriod
-tags: [trouble-shooting, android, bitmap]
+tags: [trouble-shooting, android, bitmap, jetpack-compose]
 ---
 
 사이드로 개발 중인 메모장 앱에, 본인이 원하는 이미지로 배경을 꾸밀 수 있는 기능을 넣고 있다.

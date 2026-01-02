@@ -2,7 +2,7 @@
 title: navigation3의 철학으로 인해 만나게 된 backstack empty 에러
 date: 2025-12-22
 category: Andriod
-tags: [trouble-shooting, android]
+tags: [trouble-shooting, android, jetpack-compose]
 ---
 
 사이드를 마무리 지으려고 메모앱 개발을 재개했는데, 배경화면 기능을 만들던 중 백버튼을 빠르게 두번 눌렀더니 크래시가 나는 걸 발견했다.
