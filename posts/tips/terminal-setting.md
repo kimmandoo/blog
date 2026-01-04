@@ -113,17 +113,17 @@ typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet # verbose였던걸 quiet로 변경
 나는 폰트세팅을 아래와 같이 했다.
 
 ```bash
-brew install --cask font-jetbrains-mono-nerd-font
+brew install --cask font-d2coding-nerd-font
 
 # ghostty/config
-# 1순위: 아이콘과 영어는 JetBrains가 담당
-font-family = "JetBrainsMono Nerd Font"
-
-# 2순위: 위 폰트에 없는 한글은 맥북 기본 폰트가 담당
-font-family = "AppleSDGothicNeo-Regular"
-font-size = 13
+font-family = "D2CodingLigature Nerd Font"
+font-size = 14
 window-padding-x = 4
 ```
+
+![img](/images/260104/2.png)
+
+완성된 모습이다!
 
 ## ghostty 설정
 
