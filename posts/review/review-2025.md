@@ -1,5 +1,5 @@
 ---
-title: 조금 이른 2025년 회고
+title: 2025년 회고
 date: 2025-12-31
 excerpt: 나는 올해 무엇을 했는가
 category: 회고
