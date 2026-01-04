@@ -132,3 +132,18 @@ window-padding-x = 4
 터미널 테마는 `ghostty +list-themes` 로 간단하게 설정할 수 있다.
 
 폰트는 `ghostty +list-fonts`로 목록을 확인해서 ghostty의 setting에서 처리하면 된다.
+
+## vscode 설정
+
+무조건 vscode에서 터미널 열면 깨질 것이다.
+
+`'D2CodingLigature Nerd Font', monospace`를 font-familly에 넣어주자.
+
+settings.json을 이렇게 설정하면 된다.
+
+```json
+{
+    "terminal.integrated.fontSize": 13,
+    "terminal.integrated.fontFamily": "'JetBrainsMono Nerd Font', monospace",
+}
+```
