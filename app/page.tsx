@@ -15,6 +15,10 @@ export default async function Home({
   
   // Filter posts based on category or tag
   const posts = allPosts.filter(post => {
+    // Exclude PS posts from main blog
+    if (post.category === 'PS') {
+      return false;
+    }
     if (selectedCategory && post.category !== selectedCategory) {
       return false;
     }

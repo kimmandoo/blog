@@ -1,23 +1,24 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { themeConfig } from '@/config/theme.config';
 
 const ROUTES = {
   HOME: '/',
   ANDROIDCS: '/androidcs',
-  PS: '/?category=PS',
+  PS: '/ps',
 } as const;
 
 export function Navigation() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const activeCategory = searchParams.get('category');
-
-  const isAndroidActive = pathname.startsWith(ROUTES.ANDROIDCS);
-  const isPSActive = pathname === ROUTES.HOME && activeCategory === 'PS';
-  const isBlogActive = pathname === ROUTES.HOME && !isPSActive;
+  
+  const isActive = (path: string) => {
+    if (path === ROUTES.HOME) {
+      return pathname === ROUTES.HOME;
+    }
+    return pathname.startsWith(path);
+  };
 
   return (
     <nav className="mb-8">
@@ -25,7 +26,7 @@ export function Navigation() {
         <Link 
           href={ROUTES.HOME}
           className={`px-4 py-2 rounded-lg font-medium transition-all ${
-            isBlogActive
+            isActive(ROUTES.HOME) && !pathname.startsWith(ROUTES.ANDROIDCS) && !pathname.startsWith(ROUTES.PS)
               ? `${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary}`
               : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:bg-gray-100 dark:hover:bg-gray-800`
           }`}
@@ -35,7 +36,7 @@ export function Navigation() {
         <Link 
           href={ROUTES.ANDROIDCS}
           className={`px-4 py-2 rounded-lg font-medium transition-all ${
-            isAndroidActive
+            isActive(ROUTES.ANDROIDCS)
               ? `${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary}`
               : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:bg-gray-100 dark:hover:bg-gray-800`
           }`}
@@ -45,7 +46,7 @@ export function Navigation() {
         <Link 
           href={ROUTES.PS}
           className={`px-4 py-2 rounded-lg font-medium transition-all ${
-            isPSActive
+            isActive(ROUTES.PS)
               ? `${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary}`
               : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:bg-gray-100 dark:hover:bg-gray-800`
           }`}
