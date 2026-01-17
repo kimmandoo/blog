@@ -73,6 +73,36 @@ usecase는 아래와 같다.
 3. leaderboard screen 조회
 4. history screen 조회
 5. nickname 변경
-6. history screen 조회
+6. leaderboard screen 조회
 7. 회원탈퇴
 
+측정을 어떻게 할지 고민을 좀 많이 해봤는데 GCP 도구를 쓰기에는 이게 호출에 대한 소비만 측정되는 게 아니라서 직접 함수 호출 횟수를 세기로 했다.
+
+```kotlin
+object UsageTracker {
+    const val TAG = "UsageTracker"
+    var totalReads = 0
+    var totalWrites = 0
+
+    fun logRead(tag: String) {
+        totalReads++
+        Log.d(TAG, "[$tag] Read: $totalReads")
+    }
+
+    fun logWrite(tag: String) {
+        totalWrites++
+        Log.d(TAG, "[$tag] Write: $totalWrites")
+    }
+}
+```
+
+읽기에는 logRead, 수정,삭제,생성에는 logWrite를 호출 시킨다. await() 뒤에다가 달아두면 정확하게 돌아가는 걸 볼 수 있을 것 같다.
+
+batch 메서드의 경우에는 commit 시점 보단 transaction 내부에서 batch set 되는 곳에 로그를 달아 뒀다.
+
+===
+
+
+측정 후에는 2단계로 최적화를 진행해보려고 한다.
+
+불필요한 snapshotListener를 제거하는 게 첫번째고 두번째는 리더보드를 주간 리더보드만 살리는 것이다.
