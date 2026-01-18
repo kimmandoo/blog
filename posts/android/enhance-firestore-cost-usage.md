@@ -3,7 +3,6 @@ title: Firestore 비용 절감하기
 date: 2026-01-16
 category: Andriod
 tags: [trouble-shooting, android, firebase, firestore]
-draft: true
 ---
 
 MLkit을 활용한 푸시업 앱을 만들고 있다. 로컬로 사용하면 끝날 일이지만, 약간의 게이미피케이션 느낌을 주기위해 리더보드를 넣었는데 비용문제가 발생할 것으로 보인다.
