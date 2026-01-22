@@ -9,7 +9,7 @@
   --foreground: #171717;
   
   /* Code block configuration variables */
-  --code-block-bg: linear-gradient(135deg, #1e1e2e 0%, #181825 100%);
+  --code-block-bg: #f8fafc; /* 라이트 모드용 연한 그레이 */
   --code-block-text: #e6e6e6;
   --code-block-border: rgba(255, 255, 255, 0.1);
   --code-block-radius: 0.75rem;
@@ -32,7 +32,7 @@
 html.dark {
   --background: #0a0a0a;
   --foreground: #ededed;
-  
+  --code-block-bg: #1e1e1e; /* 다크 모드용 어두운 색 (VS Code 스타일) */
   /* Dark mode inline code */
   --inline-code-bg: #334155;
   --inline-code-text: #f1f5f9;
@@ -44,7 +44,7 @@ html.dark {
   html:not(.light):not(.dark) {
     --background: #0a0a0a;
     --foreground: #ededed;
-    
+    --code-block-bg: #1e1e1e;
     /* Dark mode inline code */
     --inline-code-bg: #334155;
     --inline-code-text: #f1f5f9;
@@ -97,8 +97,8 @@ html.dark :not(pre) > code:hover {
    ============================ */
 .hljs {
   display: block;
-  padding: 0.25em;
-  background: var(--code-block-bg);
+  padding: 1em; /* 패딩 조정 */
+  background: transparent; /* pre에서 배경을 제어하므로 투명하게 설정 */
   color: var(--code-block-text);
   border-radius: var(--code-block-radius);
   line-height: 1.4;
@@ -308,9 +308,11 @@ pre.has-line-numbers .hljs {
 pre {
   position: relative;
   margin: 0;
+  background-color: var(--code-block-bg); /* 변수 적용 */
   border: 1px solid var(--code-block-border);
   border-radius: var(--code-block-radius);
   overflow: hidden;
+  transition: background-color 0.2s ease; /* 부드러운 전환 효과 */
 }
 
 /* Remove default margin from hljs when inside wrapper */
