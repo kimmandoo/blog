@@ -9,9 +9,9 @@
   --foreground: #171717;
   
   /* Code block configuration variables */
-  --code-block-bg: #f8fafc; /* 라이트 모드용 연한 그레이 */
-  --code-block-text: #e6e6e6;
-  --code-block-border: rgba(255, 255, 255, 0.1);
+  --code-block-bg: #ffecaff3; 
+  --code-block-text: #24292e; 
+  --code-block-border: #ffdd45;
   --code-block-radius: 0.75rem;
   --code-line-number-color: #6c7086;
   --code-line-number-bg: rgba(0, 0, 0, 0.2);
@@ -32,8 +32,10 @@
 html.dark {
   --background: #0a0a0a;
   --foreground: #ededed;
-  --code-block-bg: #1e1e1e; /* 다크 모드용 어두운 색 (VS Code 스타일) */
-  /* Dark mode inline code */
+  /* 다크 모드 코드 블록: 어두운 배경 + 밝은 글자 */
+  --code-block-bg: #1e1e1e;
+  --code-block-text: #e6e6e6;
+  --code-block-border: rgba(255, 255, 255, 0.1);  /* Dark mode inline code */
   --inline-code-bg: #334155;
   --inline-code-text: #f1f5f9;
   --inline-code-border: #475569;
@@ -45,6 +47,8 @@ html.dark {
     --background: #0a0a0a;
     --foreground: #ededed;
     --code-block-bg: #1e1e1e;
+    --code-block-text: #e6e6e6;
+    --code-block-border: rgba(255, 255, 255, 0.1);
     /* Dark mode inline code */
     --inline-code-bg: #334155;
     --inline-code-text: #f1f5f9;
