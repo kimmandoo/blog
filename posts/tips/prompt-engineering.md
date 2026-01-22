@@ -192,7 +192,7 @@ AI 학습 데이터 중 한국어 비중이 영어보다 적다 보니, 한국�
 
 ⇒ 될 수 있으면 영어로 질문하고, 영어로 답변 받는 게 토큰 아끼는 방법 중 하나다.
 
-![alt text](image.png)
+![img](/images/260122/image.png)
 
 2024년 11월 claude 기준이라서 그렇게 신뢰있는 결과는 아닌데, 차이가 있음은 명확하다.
 
@@ -202,7 +202,7 @@ AI 학습 데이터 중 한국어 비중이 영어보다 적다 보니, 한국�
 
 ## MCP(Model Context Protocol)
 
-![alt text](image-1.png)
+![img](/images/260122/image-1.png)
 
 MCP는 AI 애플리케이션을 외부 시스템에 연결하기 위한 오픈 소스 표준
 
