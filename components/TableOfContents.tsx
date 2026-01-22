@@ -47,7 +47,7 @@ export function TableOfContents({ items }: TOCProps) {
         <h3 className={`text-xs font-semibold ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} mb-4 pb-2 border-b ${themeConfig.colors.light.border.secondary} ${themeConfig.colors.dark.border.secondary}`}>
           목차
         </h3>
-        <ul className="space-y-1.5">
+        <ul className="space-y-1.5 max-h-[calc(100vh-200px)] overflow-y-auto">
           {items.map((item) => (
             <li
               key={item.id}
