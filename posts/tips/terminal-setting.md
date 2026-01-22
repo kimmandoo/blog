@@ -1,7 +1,7 @@
 ---
 title: terminal 설정하기
 date: 2026-01-04
-category: tips
+category: Tip
 tags: [tips, terminal]
 ---
 
