@@ -6,21 +6,29 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0f172a;
   
-  /* Code block configuration variables */
-  --code-block-bg: #ffecaff3; 
-  --code-block-text: #24292e; 
-  --code-block-border: #ffdd45;
+  /* Light Mode Code Block: Soft Slate Style */
+  --code-block-bg: #f8fafc; 
+  --code-block-text: #334155; 
+  --code-block-border: #e2e8f0;
   --code-block-radius: 0.75rem;
-  --code-line-number-color: #6c7086;
-  --code-line-number-bg: rgba(0, 0, 0, 0.2);
-  --code-line-number-border: rgba(255, 255, 255, 0.1);
+  --code-line-number-color: #94a3b8;
+  --code-line-number-bg: #f1f5f9;
+  --code-line-number-border: #e2e8f0;
   
-  /* Inline code configuration variables */
+  /* Inline Code */
   --inline-code-bg: #f1f5f9;
-  --inline-code-text: #0f172a;
+  --inline-code-text: #ef4444; /* 포인트를 줄 수 있는 색상 */
   --inline-code-border: #e2e8f0;
+
+  /* Syntax Highlighting - Light */
+  --syntax-comment: #64748b;
+  --syntax-keyword: #7c3aed;
+  --syntax-string: #059669;
+  --syntax-function: #2563eb;
+  --syntax-number: #d97706;
+  --syntax-variable: #475569;
 }
 
 @theme inline {
@@ -30,15 +38,29 @@
 
 /* Dark mode via class (manual toggle) */
 html.dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  /* 다크 모드 코드 블록: 어두운 배경 + 밝은 글자 */
-  --code-block-bg: #1e1e1e;
-  --code-block-text: #e6e6e6;
-  --code-block-border: rgba(255, 255, 255, 0.1);  /* Dark mode inline code */
-  --inline-code-bg: #334155;
-  --inline-code-text: #f1f5f9;
-  --inline-code-border: #475569;
+  --background: #020617;
+  --foreground: #f8fafc;
+
+  /* Dark Mode Code Block: Tokyo Night / Slate Deep Style */
+  --code-block-bg: #0f172a;
+  --code-block-text: #e2e8f0;
+  --code-block-border: #1e293b;
+  --code-line-number-color: #475569;
+  --code-line-number-bg: #020617;
+  --code-line-number-border: #1e293b;
+
+  /* Dark Mode Inline Code */
+  --inline-code-bg: #1e293b;
+  --inline-code-text: #fb7185;
+  --inline-code-border: #334155;
+
+  /* Syntax Highlighting - Dark */
+  --syntax-comment: #64748b;
+  --syntax-keyword: #c084fc;
+  --syntax-string: #4ade80;
+  --syntax-function: #60a5fa;
+  --syntax-number: #fbbf24;
+  --syntax-variable: #94a3b8;
 }
 
 /* Dark mode via system preference (fallback when no class is set) */
@@ -103,7 +125,7 @@ html.dark :not(pre) > code:hover {
   display: block;
   padding: 1em; /* 패딩 조정 */
   background: transparent; /* pre에서 배경을 제어하므로 투명하게 설정 */
-  color: var(--code-block-text);
+  color: inherit; /* pre의 글자색을 그대로 상속 */
   border-radius: var(--code-block-radius);
   line-height: 1.4;
   position: relative;
@@ -227,66 +249,18 @@ pre.has-line-numbers .hljs {
   color: #10b981;
 }
 
-/* Syntax highlighting colors - VS Code Dark+ theme */
-.hljs-comment,
-.hljs-quote {
-  color: #6a9955;
-  font-style: italic;
-}
-
-.hljs-keyword,
-.hljs-selector-tag,
-.hljs-literal,
-.hljs-type {
-  color: #569cd6;
-  font-weight: 600;
-}
-
-.hljs-string,
-.hljs-title,
-.hljs-name,
-.hljs-attr {
-  color: #ce9178;
-}
-
-.hljs-number,
-.hljs-symbol,
-.hljs-bullet {
-  color: #b5cea8;
-}
-
-.hljs-function,
-.hljs-params {
-  color: #dcdcaa;
-}
-
-.hljs-variable,
-.hljs-template-variable {
-  color: #9cdcfe;
-}
-
-.hljs-tag,
-.hljs-section {
-  color: #569cd6;
-}
-
-.hljs-attribute {
-  color: #9cdcfe;
-}
-
-.hljs-regexp,
-.hljs-link {
-  color: #d16969;
-}
-
-.hljs-meta {
-  color: #d7ba7d;
-}
-
-.hljs-built_in,
-.hljs-class .hljs-title {
-  color: #4ec9b0;
-}
+/* ============================
+   REFINED SYNTAX HIGHLIGHTING
+   ============================ */
+.hljs-comment, .hljs-quote { color: var(--syntax-comment); font-style: italic; }
+.hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-type { color: var(--syntax-keyword); font-weight: 600; }
+.hljs-string, .hljs-title, .hljs-name, .hljs-attr { color: var(--syntax-string); }
+.hljs-number, .hljs-symbol, .hljs-bullet { color: var(--syntax-number); }
+.hljs-function, .hljs-params { color: var(--syntax-function); }
+.hljs-variable, .hljs-template-variable { color: var(--syntax-variable); }
+.hljs-tag, .hljs-section { color: var(--syntax-keyword); }
+.hljs-attribute { color: var(--syntax-function); }
+.hljs-built_in, .hljs-class .hljs-title { color: #2dd4bf; } /* Teal 포인트 */
 
 .hljs-emphasis {
   font-style: italic;
@@ -310,15 +284,12 @@ pre.has-line-numbers .hljs {
    PRE TAG STYLING
    ============================ */
 pre {
-  position: relative;
-  margin: 0;
   background-color: var(--code-block-bg); /* 변수 적용 */
   border: 1px solid var(--code-block-border);
+  color: var(--code-block-text); /* 텍스트 색상 적용 */
   border-radius: var(--code-block-radius);
   overflow: hidden;
-  transition: background-color 0.2s ease; /* 부드러운 전환 효과 */
 }
-
 /* Remove default margin from hljs when inside wrapper */
 .code-block-wrapper pre {
   margin: 0;
