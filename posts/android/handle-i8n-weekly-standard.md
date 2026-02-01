@@ -7,7 +7,7 @@ tags: [trouble-shooting, android, i8n]
 
 앱 기능에 주간 리더보드가 있는데... 1주가 계산되는 로직때문에 사소한 버그가 생겼다.
 
-![image-1](/images/260201/1.png)
+<img src="/images/260201/1.png" width="50%">
 
 이번주는 아직 16시간이 남았는데 리더보드는 이미 다음 주로 넘어가 있다.
 
@@ -51,4 +51,4 @@ private fun getWeeklyPeriodId(): String {
 
 이게 ISO-8601 표준을 따르는데, 그해의 첫 번째 목요일을 포함하는 주를 1주 차로 정의하는 4-day rule이라고 한다.
 
-![image-1](/images/260201/2.png)
+<img src="/images/260201/2.png" width="50%">
