@@ -37,7 +37,7 @@ export function BlockchainSidebar({ items, currentSlug }: BlockchainSidebarProps
       {/* Mobile Toggle Button */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="lg:hidden fixed bottom-4 left-4 z-50 p-3 bg-purple-600 text-white rounded-full shadow-lg shadow-purple-500/30"
+        className="lg:hidden fixed bottom-4 left-4 z-50 p-3 bg-emerald-600 text-white rounded-full shadow-lg shadow-emerald-500/30"
       >
         <svg className="w-6 h-6" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
           {isCollapsed ? (
@@ -52,7 +52,7 @@ export function BlockchainSidebar({ items, currentSlug }: BlockchainSidebarProps
       <aside 
         className={`
           fixed lg:sticky top-[64px] left-0 h-[calc(100vh-64px)] 
-          w-72 bg-gray-950 border-r border-gray-800
+          w-72 bg-white dark:bg-gray-950 border-r border-emerald-100 dark:border-gray-800
           overflow-y-auto transition-transform duration-300 z-40
           ${isCollapsed ? '-translate-x-full lg:translate-x-0' : 'translate-x-0'}
         `}
@@ -63,8 +63,8 @@ export function BlockchainSidebar({ items, currentSlug }: BlockchainSidebarProps
               href="/blockchain"
               className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
                 pathname === '/blockchain'
-                  ? 'bg-purple-900/30 text-purple-400 font-medium border border-purple-500/20'
-                  : 'text-gray-300 hover:bg-gray-800'
+                  ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 font-medium'
+                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
               }`}
             >
               <svg className="w-5 h-5" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,11 +83,11 @@ export function BlockchainSidebar({ items, currentSlug }: BlockchainSidebarProps
                 <div key={category}>
                   <button
                     onClick={() => toggleCategory(category)}
-                    className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold uppercase tracking-wider text-gray-500 hover:text-gray-300 transition-colors rounded-lg hover:bg-gray-800"
+                    className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
                   >
                     <div className="flex items-center gap-2">
                       <span>{category}</span>
-                      <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium bg-gray-800 text-gray-400 rounded-full">
+                      <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-full">
                         {categoryItems.length}
                       </span>
                     </div>
@@ -114,8 +114,8 @@ export function BlockchainSidebar({ items, currentSlug }: BlockchainSidebarProps
                               href={itemPath}
                               className={`block px-3 py-2 rounded-lg text-sm transition-colors ${
                                 isActive
-                                  ? 'bg-purple-900/30 text-purple-400 font-medium border border-purple-500/20'
-                                  : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'
+                                  ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 font-medium'
+                                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-200'
                               }`}
                             >
                               <div className="flex items-center gap-2">
@@ -140,7 +140,7 @@ export function BlockchainSidebar({ items, currentSlug }: BlockchainSidebarProps
       {/* Overlay for mobile */}
       {!isCollapsed && (
         <div
-          className="lg:hidden fixed inset-0 bg-black/70 z-30"
+          className="lg:hidden fixed inset-0 bg-black/50 z-30"
           onClick={() => setIsCollapsed(true)}
         />
       )}

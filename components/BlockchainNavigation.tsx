@@ -18,23 +18,23 @@ export function BlockchainNavigation({ allItems, currentSlug }: BlockchainNaviga
   }
 
   return (
-    <nav className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-12 pt-12 border-t border-gray-800">
+    <nav className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-12 pt-12 border-t border-gray-200 dark:border-gray-800">
       {prevItem ? (
         <Link 
           href={`/blockchain/${prevItem.slug}`}
-          className="group p-5 rounded-xl border border-gray-700/50 hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300 bg-gray-900/60"
+          className="group p-5 rounded-xl border border-gray-200 dark:border-gray-700/50 hover:border-emerald-400 dark:hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 bg-white dark:bg-gray-900/60"
         >
-          <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
+          <div className="flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500 mb-2">
             <svg className="w-4 h-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
               <path d="M15 19l-7-7 7-7" />
             </svg>
             <span>이전 문서</span>
           </div>
-          <div className="text-base font-medium text-gray-200 group-hover:text-purple-400 transition-colors">
+          <div className="text-base font-medium text-gray-700 dark:text-gray-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
             {prevItem.title}
           </div>
           {prevItem.category && (
-            <div className="text-xs text-gray-600 mt-1">{prevItem.category}</div>
+            <div className="text-xs text-gray-400 dark:text-gray-600 mt-1">{prevItem.category}</div>
           )}
         </Link>
       ) : (
@@ -44,19 +44,19 @@ export function BlockchainNavigation({ allItems, currentSlug }: BlockchainNaviga
       {nextItem ? (
         <Link 
           href={`/blockchain/${nextItem.slug}`}
-          className="group p-5 rounded-xl border border-gray-700/50 hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300 bg-gray-900/60 text-right"
+          className="group p-5 rounded-xl border border-gray-200 dark:border-gray-700/50 hover:border-emerald-400 dark:hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 bg-white dark:bg-gray-900/60 text-right"
         >
-          <div className="flex items-center justify-end gap-2 text-sm text-gray-500 mb-2">
+          <div className="flex items-center justify-end gap-2 text-sm text-gray-400 dark:text-gray-500 mb-2">
             <span>다음 문서</span>
             <svg className="w-4 h-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
               <path d="M9 5l7 7-7 7" />
             </svg>
           </div>
-          <div className="text-base font-medium text-gray-200 group-hover:text-purple-400 transition-colors">
+          <div className="text-base font-medium text-gray-700 dark:text-gray-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
             {nextItem.title}
           </div>
           {nextItem.category && (
-            <div className="text-xs text-gray-600 mt-1">{nextItem.category}</div>
+            <div className="text-xs text-gray-400 dark:text-gray-600 mt-1">{nextItem.category}</div>
           )}
         </Link>
       ) : (
