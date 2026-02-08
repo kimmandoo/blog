@@ -9,7 +9,8 @@ tags: [trouble-shooting, android, i8n]
 
 그 와중에... 이상한 글자가 key 값으로 저장된 걸 확인했다.
 
-![alt text](images/260208/image.png)
+<img src="/images/260208/image.png" width="50%">
+
 
 ?! 이게 뭘까..
 
