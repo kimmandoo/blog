@@ -7,6 +7,7 @@ import remarkMath from 'remark-math';
 import remarkEmoji from 'remark-emoji';
 import remarkRehype from 'remark-rehype';
 import rehypeStringify from 'rehype-stringify';
+import rehypeRaw from 'rehype-raw';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeSlug from 'rehype-slug';
 import rehypeKatex from 'rehype-katex';
@@ -159,11 +160,12 @@ export async function getAndroidCSData(slug: string): Promise<AndroidCSData> {
     .use(remarkGfm)
     .use(remarkMath)
     .use(remarkEmoji)
-    .use(remarkRehype)
+    .use(remarkRehype, { allowDangerousHtml: true })
+    .use(rehypeRaw)
     .use(rehypeSlug)
     .use(rehypeHighlight)
     .use(rehypeKatex)
-    .use(rehypeStringify)
+    .use(rehypeStringify, { allowDangerousHtml: true })
     .process(matterResult.content);
   const contentHtml = processedContent.toString();
 
