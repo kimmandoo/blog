@@ -308,5 +308,5 @@ private fun startFlexibleUpdate(appUpdateInfo: AppUpdateInfo) {
 리스너를 통해서 다운로드가 다 되면, 사용자 액션을 받는 곳에 `appUpdateManager.completeUpdate()`를 두면 구현이 끝난다.
 
 참조:
-https://medium.com/wantedly-engineering/testing-android-in-app-updates-with-fakeappupdatemanager-63d0e834c36
-https://developer.android.com/guide/playcore/in-app-updates/kotlin-java?hl=ko
+- https://medium.com/wantedly-engineering/testing-android-in-app-updates-with-fakeappupdatemanager-63d0e834c36
+- https://developer.android.com/guide/playcore/in-app-updates/kotlin-java?hl=ko
