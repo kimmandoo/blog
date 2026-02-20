@@ -6,7 +6,6 @@ import { format } from 'date-fns';
 import { CategoryBadge } from '@/components/CategoryBadge';
 import { TagBadge } from '@/components/TagBadge';
 import { SearchBar } from '@/components/SearchBar';
-import { SocialLinks } from '@/components/SocialLinks';
 import { themeConfig } from '@/config/theme.config';
 import { PostData } from '@/lib/posts';
 
@@ -49,9 +48,6 @@ export function PostList({
 
   return (
     <>
-      {/* Social Links */}
-      <SocialLinks />
-
       {/* Search Bar */}
       <div className="mb-5">
         <SearchBar onSearch={setSearchQuery} placeholder="검색..." />
