@@ -864,8 +864,8 @@ html.dark .mermaid-container {
   display: none !important;
 }
 
-/* Hide the Google Translate top bar */
-.skiptranslate {
+/* Hide only the Google Translate top notification bar (not the widget itself) */
+body > .skiptranslate {
   display: none !important;
 }
 
