@@ -84,7 +84,7 @@ export default function RootLayout({
           <ThemeToggle />
           {children}
           <Footer />
-          <div className="fixed bottom-4 right-4 z-40">
+          <div className="fixed top-6 right-20 z-50">
             <GoogleTranslate />
           </div>
         </ThemeProvider>
