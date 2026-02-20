@@ -138,6 +138,17 @@ html.dark :not(pre) > code:hover {
   filter: brightness(1.1);
 }
 
+/* Tailwind Typography adds pseudo backticks by default; disable for inline code */
+.prose :not(pre) > code::before,
+.prose :not(pre) > code::after {
+  content: none;
+}
+
+.prose :not(pre) > code {
+  font-size: 0.875em;
+  font-weight: 500;
+}
+
 /* Keep block code styling independent from inline prose styles */
 .prose pre > code {
   background: transparent;
