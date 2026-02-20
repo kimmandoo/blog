@@ -6,7 +6,7 @@ import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { GoogleAdsense } from "@/components/GoogleAdsense";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { GoogleTranslate } from "@/components/GoogleTranslate";
+
 import { Footer } from "@/components/Footer";
 
 const { seo, site } = themeConfig;
@@ -84,9 +84,6 @@ export default function RootLayout({
           <ThemeToggle />
           {children}
           <Footer />
-          <div className="fixed top-6 right-20 z-50">
-            <GoogleTranslate />
-          </div>
         </ThemeProvider>
       </body>
     </html>
