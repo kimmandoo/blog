@@ -28,6 +28,7 @@ export function PostList({
   basePath = '/posts'
 }: PostListProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const sectionPath = basePath === '/posts' ? '/' : basePath;
 
   // Filter posts based on search query
   const filteredPosts = useMemo(() => {
@@ -70,7 +71,7 @@ export function PostList({
                 clickable={false}
               />
               <Link 
-                href={basePath === '/posts' ? '/' : basePath}
+                href={sectionPath}
                 className={`text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 ${themeConfig.animations.transition}`}
               >
                 <svg className="w-5 h-5" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,7 +84,7 @@ export function PostList({
             <div className="flex items-center gap-2">
               <TagBadge tag={selectedTag} clickable={false} />
               <Link 
-                href={basePath === '/posts' ? '/' : basePath}
+                href={sectionPath}
                 className={`text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 ${themeConfig.animations.transition}`}
               >
                 <svg className="w-5 h-5" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,7 +106,7 @@ export function PostList({
                 {themeConfig.text.categories}
               </span>
               {allCategories.map((cat, index) => (
-                <CategoryBadge key={cat} category={cat} index={index} size="sm" basePath={basePath === '/posts' ? '/' : basePath} />
+                <CategoryBadge key={cat} category={cat} index={index} size="sm" basePath={sectionPath} />
               ))}
             </div>
           )}
@@ -117,7 +118,7 @@ export function PostList({
                 {themeConfig.text.tags}
               </span>
               {allTags.map((tag) => (
-                <TagBadge key={tag} tag={tag} size="sm" basePath={basePath === '/posts' ? '/' : basePath} />
+                <TagBadge key={tag} tag={tag} size="sm" basePath={sectionPath} />
               ))}
             </div>
           )}
@@ -146,7 +147,7 @@ export function PostList({
                     {themeConfig.text.noPostsFound}
                   </p>
                   <Link 
-                    href={basePath === '/posts' ? '/' : basePath}
+                    href={sectionPath}
                     className={`inline-flex items-center px-5 py-2.5 ${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary} ${themeConfig.borderRadius.button} font-medium ${themeConfig.animations.transition} hover:opacity-80`}
                   >
                     {themeConfig.text.viewAllPosts}
