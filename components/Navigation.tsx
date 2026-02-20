@@ -20,7 +20,7 @@ export function Navigation() {
   
   const isActive = (path: string) => {
     if (path === ROUTES.HOME) {
-      return pathname === ROUTES.HOME && !pathname.startsWith(ROUTES.ANDROIDCS) && !pathname.startsWith(ROUTES.PS);
+      return pathname === ROUTES.HOME;
     }
     return pathname.startsWith(path);
   };

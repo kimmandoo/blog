@@ -102,7 +102,7 @@ export function PostList({
           {/* Categories Section */}
           {allCategories.length > 0 && (
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mr-1">
+              <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mr-1">
                 {themeConfig.text.categories}
               </span>
               {allCategories.map((cat, index) => (
@@ -114,7 +114,7 @@ export function PostList({
           {/* Tags Section */}
           {allTags.length > 0 && (
             <div className="flex flex-wrap items-center gap-1">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mr-1">
+              <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mr-1">
                 {themeConfig.text.tags}
               </span>
               {allTags.map((tag) => (
