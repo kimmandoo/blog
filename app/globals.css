@@ -22,6 +22,15 @@
   --inline-code-text: #ef4444; /* 포인트를 줄 수 있는 색상 */
   --inline-code-border: #e2e8f0;
 
+  /* Language Badge & Copy Button - Light */
+  --badge-bg: rgba(0, 0, 0, 0.06);
+  --badge-text: #475569;
+  --copy-bg: rgba(0, 0, 0, 0.06);
+  --copy-border: rgba(0, 0, 0, 0.1);
+  --copy-text: #475569;
+  --copy-hover-bg: rgba(0, 0, 0, 0.12);
+  --copy-hover-border: rgba(0, 0, 0, 0.2);
+
   /* Syntax Highlighting - Light */
   --syntax-comment: #64748b;
   --syntax-keyword: #7c3aed;
@@ -54,6 +63,15 @@ html.dark {
   --inline-code-text: #fb7185;
   --inline-code-border: #334155;
 
+  /* Language Badge & Copy Button - Dark */
+  --badge-bg: rgba(0, 0, 0, 0.3);
+  --badge-text: #a6adc8;
+  --copy-bg: rgba(0, 0, 0, 0.4);
+  --copy-border: rgba(255, 255, 255, 0.15);
+  --copy-text: #e6e6e6;
+  --copy-hover-bg: rgba(0, 0, 0, 0.6);
+  --copy-hover-border: rgba(255, 255, 255, 0.25);
+
   /* Syntax Highlighting - Dark */
   --syntax-comment: #64748b;
   --syntax-keyword: #c084fc;
@@ -75,6 +93,14 @@ html.dark {
     --inline-code-bg: #334155;
     --inline-code-text: #f1f5f9;
     --inline-code-border: #475569;
+    /* Dark mode badge & copy button */
+    --badge-bg: rgba(0, 0, 0, 0.3);
+    --badge-text: #a6adc8;
+    --copy-bg: rgba(0, 0, 0, 0.4);
+    --copy-border: rgba(255, 255, 255, 0.15);
+    --copy-text: #e6e6e6;
+    --copy-hover-bg: rgba(0, 0, 0, 0.6);
+    --copy-hover-border: rgba(255, 255, 255, 0.25);
   }
 }
 
@@ -192,13 +218,13 @@ pre.has-line-numbers .hljs {
   top: 0;
   right: 0;
   padding: 0.375rem 0.875rem;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--badge-bg);
   border-bottom-left-radius: 0.5rem;
   border-top-right-radius: var(--code-block-radius);
   font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
-  color: #a6adc8;
+  color: var(--badge-text);
   letter-spacing: 0.05em;
   z-index: 10;
   backdrop-filter: blur(4px);
@@ -217,10 +243,10 @@ pre.has-line-numbers .hljs {
   bottom: 0.75rem;
   right: 0.75rem;
   padding: 0.5rem 0.875rem;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: var(--copy-bg);
+  border: 1px solid var(--copy-border);
   border-radius: 0.375rem;
-  color: #e6e6e6;
+  color: var(--copy-text);
   font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
@@ -235,8 +261,8 @@ pre.has-line-numbers .hljs {
 }
 
 .copy-button:hover {
-  background: rgba(0, 0, 0, 0.6);
-  border-color: rgba(255, 255, 255, 0.25);
+  background: var(--copy-hover-bg);
+  border-color: var(--copy-hover-border);
 }
 
 .copy-button:active {
