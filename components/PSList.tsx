@@ -4,7 +4,6 @@ import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { SearchBar } from '@/components/SearchBar';
-import { useLanguage } from '@/components/LanguageProvider';
 import { themeConfig } from '@/config/theme.config';
 import { PSData } from '@/lib/ps';
 
@@ -14,7 +13,6 @@ interface PSListProps {
 
 export function PSList({ items }: PSListProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const { t } = useLanguage();
 
   // Filter items based on search query
   const filteredItems = useMemo(() => {
@@ -37,7 +35,7 @@ export function PSList({ items }: PSListProps) {
   const groupedItems = useMemo(() => {
     const groups: Record<string, PSData[]> = {};
     filteredItems.forEach(item => {
-      const primaryTag = item.tags?.[0] || t('other');
+      const primaryTag = item.tags?.[0] || '기타';
       if (!groups[primaryTag]) {
         groups[primaryTag] = [];
       }
@@ -50,7 +48,7 @@ export function PSList({ items }: PSListProps) {
     <>
       {/* Search Bar */}
       <div className="mb-8">
-        <SearchBar onSearch={setSearchQuery} placeholder={t('searchProblems')} />
+        <SearchBar onSearch={setSearchQuery} placeholder="문제 검색..." />
       </div>
 
       {filteredItems.length === 0 ? (
@@ -58,13 +56,13 @@ export function PSList({ items }: PSListProps) {
           {searchQuery ? (
             <>
               <p className={`${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} mb-6`}>
-                &quot;{searchQuery}&quot;{t('noPSSearchResults')}
+                &quot;{searchQuery}&quot;에 해당하는 문제를 찾을 수 없습니다
               </p>
               <button 
                 onClick={() => setSearchQuery('')}
                 className="inline-flex items-center px-5 py-2.5 bg-emerald-600 text-white hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 rounded-md font-medium transition-colors"
               >
-                {t('clearSearch')}
+                검색 초기화
               </button>
             </>
           ) : (
@@ -78,7 +76,7 @@ export function PSList({ items }: PSListProps) {
           {/* Summary */}
           <div className="flex items-center justify-between mb-6">
             <h2 className={`text-2xl font-semibold ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary}`}>
-              📝 {searchQuery ? `${t('searchResults')} (${filteredItems.length}${t('countSuffix')})` : `${t('allProblems')} (${filteredItems.length}${t('countSuffix')})`}
+              📝 {searchQuery ? `검색 결과 (${filteredItems.length}개)` : `전체 문제 (${filteredItems.length}개)`}
             </h2>
           </div>
 
@@ -90,7 +88,7 @@ export function PSList({ items }: PSListProps) {
                   {tag}
                 </h3>
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200">
-                  {tagItems.length}{t('countSuffix')}
+                  {tagItems.length}개
                 </span>
               </div>
               
@@ -121,7 +119,7 @@ export function PSList({ items }: PSListProps) {
                                 <svg className="w-3.5 h-3.5" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
                                   <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                {item.readingTime}{t('minuteShort')}
+                                {item.readingTime}분
                               </span>
                             </>
                           )}

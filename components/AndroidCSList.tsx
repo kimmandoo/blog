@@ -4,7 +4,6 @@ import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { SearchBar } from '@/components/SearchBar';
-import { useLanguage } from '@/components/LanguageProvider';
 import { themeConfig } from '@/config/theme.config';
 import { AndroidCSData } from '@/lib/androidcs';
 
@@ -14,7 +13,6 @@ interface AndroidCSListProps {
 
 export function AndroidCSList({ items }: AndroidCSListProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const { t } = useLanguage();
 
   // Filter items based on search query
   const filteredItems = useMemo(() => {
@@ -37,7 +35,7 @@ export function AndroidCSList({ items }: AndroidCSListProps) {
   const groupedItems = useMemo(() => {
     const groups: Record<string, AndroidCSData[]> = {};
     filteredItems.forEach(item => {
-      const category = item.category || t('other');
+      const category = item.category || '기타';
       if (!groups[category]) {
         groups[category] = [];
       }
@@ -50,7 +48,7 @@ export function AndroidCSList({ items }: AndroidCSListProps) {
     <>
       {/* Search Bar */}
       <div className="mb-8">
-        <SearchBar onSearch={setSearchQuery} placeholder={t('search')} />
+        <SearchBar onSearch={setSearchQuery} placeholder="검색..." />
       </div>
 
       {filteredItems.length === 0 ? (
@@ -58,18 +56,18 @@ export function AndroidCSList({ items }: AndroidCSListProps) {
           {searchQuery ? (
             <>
               <p className={`${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} mb-6`}>
-                &quot;{searchQuery}&quot;{t('noDocumentsFound')}
+                &quot;{searchQuery}&quot;에 해당하는 문서를 찾을 수 없습니다
               </p>
               <button 
                 onClick={() => setSearchQuery('')}
                 className={`inline-flex items-center px-5 py-2.5 bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 rounded-md font-medium transition-colors`}
               >
-                {t('clearSearch')}
+                검색 초기화
               </button>
             </>
           ) : (
             <p className={`${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} mb-6`}>
-              {t('noDocumentsYet')} <code className="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 rounded font-mono text-sm">android-cs/</code> {t('addMarkdownTo')}
+              아직 작성된 문서가 없습니다. <code className="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 rounded font-mono text-sm">android-cs/</code> 디렉토리에 마크다운 파일을 추가해주세요.
             </p>
           )}
         </div>
@@ -78,7 +76,7 @@ export function AndroidCSList({ items }: AndroidCSListProps) {
           {/* Summary */}
           <div className="flex items-center justify-between mb-6">
             <h2 className={`text-2xl font-semibold ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary}`}>
-              📚 {searchQuery ? `${t('searchResults')} (${filteredItems.length}${t('countSuffix')})` : `${t('allDocuments')} (${filteredItems.length}${t('countSuffix')})`}
+              📚 {searchQuery ? `검색 결과 (${filteredItems.length}개)` : `전체 문서 (${filteredItems.length}개)`}
             </h2>
           </div>
 
@@ -90,7 +88,7 @@ export function AndroidCSList({ items }: AndroidCSListProps) {
                   {category}
                 </h3>
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
-                  {categoryItems.length}{t('countSuffix')}
+                  {categoryItems.length}개
                 </span>
               </div>
               
@@ -126,7 +124,7 @@ export function AndroidCSList({ items }: AndroidCSListProps) {
                                 <svg className="w-3.5 h-3.5" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
                                   <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                {item.readingTime}{t('minuteShort')}
+                                {item.readingTime}분
                               </span>
                             </>
                           )}

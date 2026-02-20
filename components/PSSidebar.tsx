@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { PSData } from '@/lib/ps';
 import { useState } from 'react';
-import { useLanguage } from '@/components/LanguageProvider';
 
 interface PSSidebarProps {
   items: PSData[];
@@ -15,11 +14,10 @@ export function PSSidebar({ items, currentSlug }: PSSidebarProps) {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
-  const { t } = useLanguage();
   
   // Group items by category
   const groupedItems = items.reduce((acc, item) => {
-    const category = item.category || t('other');
+    const category = item.category || '기타';
     if (!acc[category]) {
       acc[category] = [];
     }
@@ -72,7 +70,7 @@ export function PSSidebar({ items, currentSlug }: PSSidebarProps) {
               <svg className="w-5 h-5" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
                 <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
               </svg>
-              <span>{t('home')}</span>
+              <span>홈</span>
             </Link>
           </div>
 

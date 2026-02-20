@@ -6,7 +6,6 @@ import { format } from 'date-fns';
 import { CategoryBadge } from '@/components/CategoryBadge';
 import { TagBadge } from '@/components/TagBadge';
 import { SearchBar } from '@/components/SearchBar';
-import { useLanguage } from '@/components/LanguageProvider';
 import { themeConfig } from '@/config/theme.config';
 import { PostData } from '@/lib/posts';
 
@@ -29,7 +28,6 @@ export function PostList({
 }: PostListProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const sectionPath = basePath === '/posts' ? '/' : basePath;
-  const { t } = useLanguage();
 
   // Filter posts based on search query
   const filteredPosts = useMemo(() => {
@@ -52,14 +50,14 @@ export function PostList({
     <>
       {/* Search Bar */}
       <div className="mb-5">
-        <SearchBar onSearch={setSearchQuery} placeholder={t('search')} />
+        <SearchBar onSearch={setSearchQuery} placeholder="검색..." />
       </div>
 
       {/* Filter Tags */}
       {(selectedCategory || selectedTag) && (
         <div className="mb-8 flex flex-wrap items-center gap-3">
           <span className={`font-medium ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary}`}>
-            {t('filter')}
+            {themeConfig.text.filter}
           </span>
           {selectedCategory && (
             <div className="flex items-center gap-2">
@@ -101,7 +99,7 @@ export function PostList({
           {allCategories.length > 0 && (
             <div className="flex flex-wrap items-center gap-1.5">
               <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mr-1">
-                {t('categories')}
+                {themeConfig.text.categories}
               </span>
               {allCategories.map((cat, index) => (
                 <CategoryBadge key={cat} category={cat} index={index} size="sm" basePath={sectionPath} />
@@ -113,7 +111,7 @@ export function PostList({
           {allTags.length > 0 && (
             <div className="flex flex-wrap items-center gap-1">
               <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mr-1">
-                {t('tags')}
+                {themeConfig.text.tags}
               </span>
               {allTags.map((tag) => (
                 <TagBadge key={tag} tag={tag} size="sm" basePath={sectionPath} />
@@ -130,25 +128,25 @@ export function PostList({
               {searchQuery ? (
                 <>
                   <p className={`${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} mb-6 ${themeConfig.typography.fontSize.body}`}>
-                    &quot;{searchQuery}&quot;{t('noSearchResults')}
+                    &quot;{searchQuery}&quot;에 해당하는 글을 찾을 수 없습니다
                   </p>
                   <button 
                     onClick={() => setSearchQuery('')}
                     className={`inline-flex items-center px-5 py-2.5 ${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary} ${themeConfig.borderRadius.button} font-medium ${themeConfig.animations.transition} hover:opacity-80`}
                   >
-                    {t('clearSearch')}
+                    검색 초기화
                   </button>
                 </>
               ) : selectedCategory || selectedTag ? (
                 <>
                   <p className={`${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} mb-6 ${themeConfig.typography.fontSize.body}`}>
-                    {t('noPostsFound')}
+                    {themeConfig.text.noPostsFound}
                   </p>
                   <Link 
                     href={sectionPath}
                     className={`inline-flex items-center px-5 py-2.5 ${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary} ${themeConfig.borderRadius.button} font-medium ${themeConfig.animations.transition} hover:opacity-80`}
                   >
-                    {t('viewAllPosts')}
+                    {themeConfig.text.viewAllPosts}
                   </Link>
                 </>
               ) : (
@@ -176,7 +174,7 @@ export function PostList({
                         </time>
                         {post.readingTime && (
                           <span className={`text-xs ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
-                            · {post.readingTime}{t('minuteShort')}
+                            · {post.readingTime}분
                           </span>
                         )}
                         {post.category && (

@@ -1,14 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { useLanguage } from '@/components/LanguageProvider';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { themeConfig } from '@/config/theme.config';
 
 export function AndroidTopBar() {
-  const { t } = useLanguage();
-
   return (
     <div className="sticky top-0 z-50 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800">
       <div className="h-16 px-6 flex items-center justify-between max-w-screen-2xl mx-auto">
@@ -20,17 +16,16 @@ export function AndroidTopBar() {
           </Link>
           <span className="text-gray-300 dark:text-gray-700">|</span>
           <Link href="/androidcs" className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
-            {t('android')}
+            Android
           </Link>
         </div>
         <div className="flex items-center gap-3">
-          <LanguageSwitcher />
           <ThemeToggle inline />
           <Link 
             href="/" 
             className="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors border border-gray-200 dark:border-gray-700"
           >
-            {t('blog')}
+            Blog
           </Link>
         </div>
       </div>

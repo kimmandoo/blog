@@ -6,7 +6,7 @@ import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { GoogleAdsense } from "@/components/GoogleAdsense";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { LanguageProvider } from "@/components/LanguageProvider";
+import { GoogleTranslate } from "@/components/GoogleTranslate";
 import { Footer } from "@/components/Footer";
 
 const { seo, site } = themeConfig;
@@ -79,13 +79,14 @@ export default function RootLayout({
     <html lang="ko" suppressHydrationWarning>
       <body className="antialiased">
         <ThemeProvider>
-          <LanguageProvider>
-            <GoogleAnalytics />
-            <GoogleAdsense />
-            <ThemeToggle />
-            {children}
-            <Footer />
-          </LanguageProvider>
+          <GoogleAnalytics />
+          <GoogleAdsense />
+          <ThemeToggle />
+          {children}
+          <Footer />
+          <div className="fixed bottom-4 right-20 z-50">
+            <GoogleTranslate />
+          </div>
         </ThemeProvider>
       </body>
     </html>

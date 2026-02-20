@@ -2,7 +2,6 @@
 
 import { AndroidCSData } from '@/lib/androidcs';
 import { useState } from 'react';
-import { useLanguage } from '@/components/LanguageProvider';
 
 interface AndroidCSStatsProps {
   items: AndroidCSData[];
@@ -10,7 +9,6 @@ interface AndroidCSStatsProps {
 
 export function AndroidCSStats({ items }: AndroidCSStatsProps) {
   const [hoveredSegment, setHoveredSegment] = useState<{ tag: string; count: number; percentage: number; color: string } | null>(null);
-  const { t } = useLanguage();
   const totalReadingTime = items.reduce((sum, item) => sum + (item.readingTime || 0), 0);
 
   // Count posts per tag
@@ -71,7 +69,7 @@ export function AndroidCSStats({ items }: AndroidCSStatsProps) {
               </svg>
             </div>
             <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
-              {t('tagDistribution')}
+              태그별 문서 비율
             </h3>
           </div>
           
@@ -154,7 +152,7 @@ export function AndroidCSStats({ items }: AndroidCSStatsProps) {
                       #{hoveredSegment.tag}
                     </div>
                     <div className="text-sm text-white/90 font-medium">
-                      {hoveredSegment.count}{t('countSuffix')}
+                      {hoveredSegment.count}개 문서
                     </div>
                     <div className="text-lg font-bold text-white mt-1">
                       {hoveredSegment.percentage.toFixed(1)}%
@@ -178,7 +176,7 @@ export function AndroidCSStats({ items }: AndroidCSStatsProps) {
               {totalReadingTime}
             </div>
             <div className="text-sm text-gray-500 dark:text-gray-400 font-medium">
-              {t('totalReadingTime')}
+              총 읽기 시간(분)
             </div>
           </div>
         </div>
