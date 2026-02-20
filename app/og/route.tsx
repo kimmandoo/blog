@@ -1,6 +1,9 @@
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
 
+const MAX_TAGS_DISPLAY = 4;
+const TITLE_LENGTH_THRESHOLD = 30;
+
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const title = searchParams.get('title') || 'mandoo.log';
@@ -8,7 +11,7 @@ export async function GET(request: NextRequest) {
   const date = searchParams.get('date') || '';
   const tags = searchParams.get('tags') || '';
 
-  const tagList = tags ? tags.split(',').slice(0, 4) : [];
+  const tagList = tags ? tags.split(',').slice(0, MAX_TAGS_DISPLAY) : [];
 
   return new ImageResponse(
     (
@@ -57,7 +60,7 @@ export async function GET(request: NextRequest) {
           <div
             style={{
               display: 'flex',
-              fontSize: title.length > 30 ? '48px' : '56px',
+              fontSize: title.length > TITLE_LENGTH_THRESHOLD ? '48px' : '56px',
               fontWeight: 800,
               color: '#f9fafb',
               lineHeight: 1.2,
