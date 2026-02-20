@@ -4,9 +4,10 @@ interface TagBadgeProps {
   tag: string;
   size?: 'sm' | 'md' | 'lg';
   clickable?: boolean;
+  basePath?: string;
 }
 
-export function TagBadge({ tag, size = 'sm', clickable = true }: TagBadgeProps) {
+export function TagBadge({ tag, size = 'sm', clickable = true, basePath = '/' }: TagBadgeProps) {
   const sizeClasses = {
     sm: 'text-xs px-1.5 py-0.5',
     md: 'text-sm px-2 py-1',
@@ -26,7 +27,7 @@ export function TagBadge({ tag, size = 'sm', clickable = true }: TagBadgeProps) 
 
   if (clickable) {
     return (
-      <Link href={`/?tag=${encodeURIComponent(tag)}`} className="group">
+      <Link href={`${basePath}?tag=${encodeURIComponent(tag)}`} className="group">
         {badge}
       </Link>
     );

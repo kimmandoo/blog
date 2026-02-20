@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const post = await getPostData(slugString);
     const postUrl = `${seo.siteUrl}/posts/${slugString}`;
     
-    // Use the first image from the post content if available, otherwise use default
+    // Use the first image from the post content if available, otherwise auto-generate
     let ogImageUrl: string;
     if (post.firstImage) {
       // If the image is a relative path (starts with /), prepend the site URL
@@ -42,12 +42,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         ogImageUrl = `${seo.siteUrl}/${post.firstImage}`;
       }
     } else {
-      // Use default image - check if it's already a full URL or a path
-      if (seo.openGraph.defaultImage.startsWith('http://') || seo.openGraph.defaultImage.startsWith('https://')) {
-        ogImageUrl = seo.openGraph.defaultImage;
-      } else {
-        ogImageUrl = `${seo.siteUrl}${seo.openGraph.defaultImage}`;
-      }
+      // Auto-generate OG image with post metadata
+      const ogParams = new URLSearchParams({
+        title: post.title,
+        ...(post.category && { category: post.category }),
+        ...(post.date && { date: post.date }),
+        ...(post.tags?.length && { tags: post.tags.join(',') }),
+      });
+      ogImageUrl = `${seo.siteUrl}/og?${ogParams.toString()}`;
     }
     
     return {

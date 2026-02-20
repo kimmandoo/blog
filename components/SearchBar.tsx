@@ -21,9 +21,9 @@ export function SearchBar({ onSearch, placeholder = "Search posts..." }: SearchB
 
   return (
     <div className="relative">
-      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
         <svg 
-          className={`w-5 h-5 ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}
+          className={`w-4 h-4 ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}
           fill="none" 
           strokeWidth="2" 
           stroke="currentColor" 
@@ -37,14 +37,14 @@ export function SearchBar({ onSearch, placeholder = "Search posts..." }: SearchB
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={placeholder}
-        className={`w-full pl-12 pr-4 py-4 ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} border-2 rounded-md ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-black dark:focus:border-white ${themeConfig.animations.transition}`}
+        className={`w-full pl-10 pr-4 py-2.5 text-sm ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} border border-gray-200 dark:border-gray-800 rounded-lg ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-900/10 dark:focus:ring-white/10 focus:border-transparent ${themeConfig.animations.transition}`}
       />
       {query && (
         <button
           onClick={() => setQuery('')}
-          className={`absolute inset-y-0 right-0 pr-4 flex items-center ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} hover:text-black dark:hover:text-white ${themeConfig.animations.transition}`}
+          className={`absolute inset-y-0 right-0 pr-3.5 flex items-center ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} hover:text-black dark:hover:text-white ${themeConfig.animations.transition}`}
         >
-          <svg className="w-5 h-5" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
             <path d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>

@@ -165,9 +165,9 @@ export const themeConfig = {
     // Starting line number (usually 1)
     startLineNumber: 1,
     // Show copy button on hover
-    showCopyButton: false,
+    showCopyButton: true,
     // Show language badge
-    showLanguageBadge: false,
+    showLanguageBadge: true,
     // Colors for code blocks
     colors: {
       // Background gradient

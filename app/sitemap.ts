@@ -2,7 +2,6 @@ import { MetadataRoute } from 'next';
 import { getSortedAndroidCSData } from '@/lib/androidcs';
 import { getSortedPSData } from '@/lib/ps';
 import { getSortedPostsData } from '@/lib/posts';
-import { getSortedRustData } from '@/lib/rust';
 import { themeConfig } from '@/config/theme.config';
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -10,7 +9,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const posts = getSortedPostsData();
   const psPosts = getSortedPSData();
   const androidPosts = getSortedAndroidCSData();
-  const rustPosts = getSortedRustData();
   const now = new Date();
   const parseDate = (value?: string | Date) => {
     if (!value) return null;
@@ -49,13 +47,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  const rustUrls = rustPosts.map((post) => ({
-    url: `${baseUrl}/rust/${post.slug}`,
-    lastModified: parseDate(post.date) ?? now,
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }));
-
   return [
     {
       url: baseUrl,
@@ -75,15 +66,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly' as const,
       priority: 0.7,
     },
-    {
-      url: `${baseUrl}/rust`,
-      lastModified: getLastModified(rustPosts),
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
-    },
     ...postUrls,
     ...psUrls,
     ...androidUrls,
-    ...rustUrls,
   ];
 }
