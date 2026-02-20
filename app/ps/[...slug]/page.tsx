@@ -29,9 +29,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const item = await getPSData(slugString);
     const itemUrl = `${seo.siteUrl}/ps/${slugString}`;
     
-    const ogImageUrl = seo.openGraph.defaultImage.startsWith('http://') || seo.openGraph.defaultImage.startsWith('https://')
-      ? seo.openGraph.defaultImage
-      : `${seo.siteUrl}${seo.openGraph.defaultImage}`;
+    // Auto-generate OG image with post metadata
+    const ogParams = new URLSearchParams({
+      title: item.title,
+      ...(item.category && { category: item.category }),
+      ...(item.date && { date: item.date }),
+      ...(item.tags?.length && { tags: item.tags.join(',') }),
+    });
+    const ogImageUrl = `${seo.siteUrl}/og?${ogParams.toString()}`;
     
     return {
       title: item.title,
