@@ -30,14 +30,12 @@ export default async function Home({
 
   return (
     <div className={`min-h-screen bg-gradient-to-br ${themeConfig.colors.light.background.primary} ${themeConfig.colors.dark.background.primary}`}>
-      <main className={`${themeConfig.spacing.container} mx-auto px-6 ${themeConfig.spacing.section}`}>
-        <header className="mb-8 text-center">
-          <div className={`${themeConfig.typography.fontSize.title} ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} font-semibold`}>
-            <h1> 
-              {themeConfig.site.title} 
-            </h1>
-          </div>
-          <p className={`${themeConfig.typography.fontSize.body} ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} font-light`}>
+      <main className={`${themeConfig.spacing.container} mx-auto px-6 pt-12 pb-8`}>
+        <header className="mb-6 text-center">
+          <h1 className={`text-2xl font-bold tracking-tight ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary}`}>
+            {themeConfig.site.title}
+          </h1>
+          <p className={`mt-1 text-sm ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
             {themeConfig.site.tagline}
           </p>
         </header>

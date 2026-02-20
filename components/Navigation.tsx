@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { themeConfig } from '@/config/theme.config';
 
 const ROUTES = {
   HOME: '/',
@@ -10,49 +9,38 @@ const ROUTES = {
   PS: '/ps',
 } as const;
 
+const NAV_ITEMS = [
+  { path: ROUTES.HOME, label: 'Blog' },
+  { path: ROUTES.ANDROIDCS, label: 'Android' },
+  { path: ROUTES.PS, label: 'PS' },
+];
+
 export function Navigation() {
   const pathname = usePathname();
   
   const isActive = (path: string) => {
     if (path === ROUTES.HOME) {
-      return pathname === ROUTES.HOME;
+      return pathname === ROUTES.HOME && !pathname.startsWith(ROUTES.ANDROIDCS) && !pathname.startsWith(ROUTES.PS);
     }
     return pathname.startsWith(path);
   };
 
   return (
-    <nav className="mb-8">
-      <div className="flex gap-2 justify-center pb-4 border-b border-gray-200 dark:border-gray-800">
-        <Link 
-          href={ROUTES.HOME}
-          className={`px-4 py-2 rounded-lg font-medium transition-all ${
-            isActive(ROUTES.HOME) && !pathname.startsWith(ROUTES.ANDROIDCS) && !pathname.startsWith(ROUTES.PS)
-              ? `${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary}`
-              : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:bg-gray-100 dark:hover:bg-gray-800`
-          }`}
-        >
-          Blog
-        </Link>
-        <Link 
-          href={ROUTES.ANDROIDCS}
-          className={`px-4 py-2 rounded-lg font-medium transition-all ${
-            isActive(ROUTES.ANDROIDCS)
-              ? `${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary}`
-              : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:bg-gray-100 dark:hover:bg-gray-800`
-          }`}
-        >
-          Android
-        </Link>
-        <Link 
-          href={ROUTES.PS}
-          className={`px-4 py-2 rounded-lg font-medium transition-all ${
-            isActive(ROUTES.PS)
-              ? `${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary}`
-              : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:bg-gray-100 dark:hover:bg-gray-800`
-          }`}
-        >
-          PS
-        </Link>
+    <nav className="mb-6">
+      <div className="flex gap-1 justify-center p-1 bg-gray-100/80 dark:bg-gray-800/50 rounded-lg w-fit mx-auto">
+        {NAV_ITEMS.map(({ path, label }) => (
+          <Link
+            key={path}
+            href={path}
+            className={`px-5 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
+              isActive(path)
+                ? 'bg-white dark:bg-gray-700 text-black dark:text-white shadow-sm'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+            }`}
+          >
+            {label}
+          </Link>
+        ))}
       </div>
     </nav>
   );
