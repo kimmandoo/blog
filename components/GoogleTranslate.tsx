@@ -8,7 +8,7 @@ declare global {
     google?: {
       translate: {
         TranslateElement: new (
-          options: { pageLanguage: string; includedLanguages: string; autoDisplay: boolean; layout?: unknown },
+          options: { pageLanguage: string; includedLanguages: string; autoDisplay: boolean },
           elementId: string
         ) => void;
       };
