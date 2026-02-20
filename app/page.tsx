@@ -3,6 +3,7 @@ import { PostList } from '@/components/PostList';
 import { themeConfig } from '@/config/theme.config';
 import { Navigation } from '@/components/Navigation';
 import { SocialLinks } from '@/components/SocialLinks';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 export default async function Home({
   searchParams,
@@ -33,6 +34,9 @@ export default async function Home({
     <div className={`min-h-screen bg-gradient-to-br ${themeConfig.colors.light.background.primary} ${themeConfig.colors.dark.background.primary}`}>
       <main className={`${themeConfig.spacing.container} mx-auto px-6 pt-12 pb-8`}>
         <header className="mb-4 text-center">
+          <div className="flex justify-end mb-2">
+            <LanguageSwitcher />
+          </div>
           <h1 className={`text-2xl font-bold tracking-tight ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary}`}>
             {themeConfig.site.title}
           </h1>

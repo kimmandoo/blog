@@ -1,12 +1,14 @@
 'use client';
 
 import { PSData } from '@/lib/ps';
+import { useLanguage } from '@/components/LanguageProvider';
 
 interface PSStatsProps {
   items: PSData[];
 }
 
 export function PSStats({ items }: PSStatsProps) {
+  const { t } = useLanguage();
   const totalReadingTime = items.reduce((sum, item) => sum + (item.readingTime || 0), 0);
 
   // Count posts per tag
@@ -33,7 +35,7 @@ export function PSStats({ items }: PSStatsProps) {
         </div>
         <div>
           <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{items.length}</div>
-          <div className="text-xs text-gray-500 dark:text-gray-400">풀이 수</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">{t('totalProblems')}</div>
         </div>
       </div>
 
@@ -46,7 +48,7 @@ export function PSStats({ items }: PSStatsProps) {
         </div>
         <div>
           <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{totalReadingTime}</div>
-          <div className="text-xs text-gray-500 dark:text-gray-400">총 읽기 시간(분)</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">{t('totalReadingTime')}</div>
         </div>
       </div>
 
@@ -59,14 +61,14 @@ export function PSStats({ items }: PSStatsProps) {
         </div>
         <div>
           <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{sortedTags.length}</div>
-          <div className="text-xs text-gray-500 dark:text-gray-400">태그 수</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">{t('tagCount')}</div>
         </div>
       </div>
 
       {/* Tag Distribution */}
       {sortedTags.length > 0 && (
         <div className="sm:col-span-3 p-5 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
-          <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">태그 분포</h4>
+          <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">{t('tagDistribution')}</h4>
           <div className="space-y-2">
             {sortedTags.slice(0, 8).map(([tag, count]) => (
               <div key={tag} className="flex items-center gap-3">

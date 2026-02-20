@@ -11,7 +11,7 @@ import { Comments } from '@/components/Comments';
 import { themeConfig } from '@/config/theme.config';
 import { AndroidCSSidebar } from '@/components/AndroidCSSidebar';
 import { AndroidCSNavigation } from '@/components/AndroidCSNavigation';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { AndroidTopBar } from '@/components/AndroidTopBar';
 
 export async function generateStaticParams() {
   const items = getAllAndroidCSSlugs();
@@ -91,34 +91,7 @@ export default async function AndroidCSPost({ params }: { params: Promise<{ slug
       {/* Reading Progress Bar */}
       <ReadingProgressBar readingTime={item.readingTime} />
       
-      {/* GitBook-style Top Bar - Simpler and cleaner */}
-      <div className="sticky top-0 z-50 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800">
-        <div className="h-16 px-6 flex items-center justify-between max-w-screen-2xl mx-auto">
-          {/* Left: Logo and Title */}
-          <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                {themeConfig.site.title}
-              </span>
-            </Link>
-            <span className="text-gray-300 dark:text-gray-700">|</span>
-            <Link href="/androidcs" className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
-              Android
-            </Link>
-          </div>
-          
-          {/* Right: Theme Toggle and Back to Blog */}
-          <div className="flex items-center gap-3">
-            <ThemeToggle inline />
-            <Link 
-              href="/" 
-              className="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors border border-gray-200 dark:border-gray-700"
-            >
-              Blog
-            </Link>
-          </div>
-        </div>
-      </div>
+      <AndroidTopBar />
 
       {/* GitBook-style Layout */}
       <div className="flex max-w-screen-2xl mx-auto">

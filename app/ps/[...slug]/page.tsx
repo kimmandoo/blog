@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import { Metadata } from 'next';
 import { getPSData, getAllPSSlugs, getAdjacentPS, getSortedPSData } from '@/lib/ps';
 import { format } from 'date-fns';
@@ -11,7 +10,7 @@ import { ReadingProgressBar } from '@/components/ReadingProgressBar';
 import { ShareButtons } from '@/components/ShareButtons';
 import { PostNavigation } from '@/components/PostNavigation';
 import { PSSidebar } from '@/components/PSSidebar';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { PSTopBar } from '@/components/PSTopBar';
 import { themeConfig } from '@/config/theme.config';
 
 export async function generateStaticParams() {
@@ -93,31 +92,7 @@ export default async function PSPost({ params }: { params: Promise<{ slug: strin
     <div className="min-h-screen bg-white dark:bg-gray-950">
       <ReadingProgressBar readingTime={item.readingTime} />
 
-      {/* Top Bar */}
-      <div className="sticky top-0 z-50 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800">
-        <div className="h-16 px-6 flex items-center justify-between max-w-screen-2xl mx-auto">
-          <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                {themeConfig.site.title}
-              </span>
-            </Link>
-            <span className="text-gray-300 dark:text-gray-700">|</span>
-            <Link href="/ps" className="text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors">
-              PS
-            </Link>
-          </div>
-          <div className="flex items-center gap-3">
-            <ThemeToggle inline />
-            <Link 
-              href="/ps" 
-              className="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors border border-gray-200 dark:border-gray-700"
-            >
-              목록
-            </Link>
-          </div>
-        </div>
-      </div>
+      <PSTopBar />
 
       <div className="flex max-w-screen-2xl mx-auto">
         <PSSidebar items={allItems} currentSlug={slugString} />
