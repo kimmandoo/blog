@@ -22,7 +22,7 @@ export function Navigation() {
 
   return (
     <nav className="mb-8">
-      <div className="flex gap-6 justify-center">
+      <div className="flex gap-2 justify-center pb-4 border-b border-gray-200 dark:border-gray-800">
         <Link 
           href={ROUTES.HOME}
           className={`px-4 py-2 rounded-lg font-medium transition-all ${

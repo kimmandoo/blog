@@ -5,9 +5,10 @@ interface CategoryBadgeProps {
   index?: number;
   size?: 'sm' | 'md' | 'lg';
   clickable?: boolean;
+  basePath?: string;
 }
 
-export function CategoryBadge({ category, size = 'md', clickable = true }: CategoryBadgeProps) {
+export function CategoryBadge({ category, size = 'md', clickable = true, basePath = '/' }: CategoryBadgeProps) {
   const sizeClasses = {
     sm: 'text-xs px-2 py-0.5',
     md: 'text-sm px-2.5 py-1',
@@ -26,7 +27,7 @@ export function CategoryBadge({ category, size = 'md', clickable = true }: Categ
 
   if (clickable) {
     return (
-      <Link href={`/?category=${encodeURIComponent(category)}`} className="group">
+      <Link href={`${basePath}?category=${encodeURIComponent(category)}`} className="group">
         {badge}
       </Link>
     );

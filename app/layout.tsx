@@ -6,6 +6,7 @@ import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { GoogleAdsense } from "@/components/GoogleAdsense";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Footer } from "@/components/Footer";
 
 const { seo, site } = themeConfig;
 const ogImageUrl = `${seo.siteUrl}${seo.openGraph.defaultImage}`;
@@ -81,6 +82,7 @@ export default function RootLayout({
           <GoogleAdsense />
           <ThemeToggle />
           {children}
+          <Footer />
         </ThemeProvider>
       </body>
     </html>
