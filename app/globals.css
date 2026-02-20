@@ -138,6 +138,15 @@ html.dark :not(pre) > code:hover {
   filter: brightness(1.1);
 }
 
+/* Keep block code styling independent from inline prose styles */
+.prose pre > code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
 @media (prefers-color-scheme: dark) {
   html:not(.light):not(.dark) :not(pre) > code:hover {
     filter: brightness(1.1);
@@ -278,15 +287,72 @@ pre.has-line-numbers .hljs {
 /* ============================
    REFINED SYNTAX HIGHLIGHTING
    ============================ */
-.hljs-comment, .hljs-quote { color: var(--syntax-comment); font-style: italic; }
-.hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-type { color: var(--syntax-keyword); font-weight: 600; }
-.hljs-string, .hljs-title, .hljs-name, .hljs-attr { color: var(--syntax-string); }
-.hljs-number, .hljs-symbol, .hljs-bullet { color: var(--syntax-number); }
-.hljs-function, .hljs-params { color: var(--syntax-function); }
-.hljs-variable, .hljs-template-variable { color: var(--syntax-variable); }
-.hljs-tag, .hljs-section { color: var(--syntax-keyword); }
-.hljs-attribute { color: var(--syntax-function); }
-.hljs-built_in, .hljs-class .hljs-title { color: #2dd4bf; } /* Teal 포인트 */
+.hljs {
+  color: var(--code-block-text);
+}
+
+.hljs-comment, .hljs-quote {
+  color: var(--syntax-comment);
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-type,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-selector-attr,
+.hljs-selector-pseudo {
+  color: var(--syntax-keyword);
+  font-weight: 600;
+}
+
+.hljs-string,
+.hljs-regexp,
+.hljs-doctag,
+.hljs-title,
+.hljs-name,
+.hljs-attr {
+  color: var(--syntax-string);
+}
+
+.hljs-number,
+.hljs-symbol,
+.hljs-bullet {
+  color: var(--syntax-number);
+}
+
+.hljs-function,
+.hljs-title.function_,
+.hljs-title.class_,
+.hljs-params {
+  color: var(--syntax-function);
+}
+
+.hljs-variable,
+.hljs-template-variable,
+.hljs-property,
+.hljs-operator,
+.hljs-punctuation {
+  color: var(--syntax-variable);
+}
+
+.hljs-tag,
+.hljs-section {
+  color: var(--syntax-keyword);
+}
+
+.hljs-attribute {
+  color: var(--syntax-function);
+}
+
+.hljs-built_in,
+.hljs-class .hljs-title,
+.hljs-meta,
+.hljs-meta .hljs-keyword {
+  color: #2dd4bf;
+}
 
 .hljs-emphasis {
   font-style: italic;
