@@ -7,7 +7,6 @@ import { themeConfig } from '@/config/theme.config';
 const ROUTES = {
   HOME: '/',
   ANDROIDCS: '/androidcs',
-  RUST: '/rust',
   PS: '/ps',
 } as const;
 
@@ -27,22 +26,12 @@ export function Navigation() {
         <Link 
           href={ROUTES.HOME}
           className={`px-4 py-2 rounded-lg font-medium transition-all ${
-            isActive(ROUTES.HOME) && !pathname.startsWith(ROUTES.ANDROIDCS) && !pathname.startsWith(ROUTES.PS) && !pathname.startsWith(ROUTES.RUST)
+            isActive(ROUTES.HOME) && !pathname.startsWith(ROUTES.ANDROIDCS) && !pathname.startsWith(ROUTES.PS)
               ? `${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary}`
               : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:bg-gray-100 dark:hover:bg-gray-800`
           }`}
         >
           Blog
-        </Link>
-        <Link
-          href={ROUTES.RUST}
-          className={`px-4 py-2 rounded-lg font-medium transition-all ${
-            isActive(ROUTES.RUST)
-              ? `${themeConfig.colors.light.accent.primary} ${themeConfig.colors.dark.accent.primary}`
-              : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:bg-gray-100 dark:hover:bg-gray-800`
-          }`}
-        >
-          Rust
         </Link>
         <Link 
           href={ROUTES.ANDROIDCS}
