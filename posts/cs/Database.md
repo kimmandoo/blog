@@ -622,7 +622,7 @@ ACID에서 가장 미묘한 것은 Isolation이다. 완전한 격리(Serializabl
 |-----------|-----------|-------------------|-------------|------|
 | Read Uncommitted | 가능 | 가능 | 가능 | 최고 |
 | Read Committed | 차단 | 가능 | 가능 | 높음 |
-| Repeatable Read | 차단 | 차단 | 가능* | 중간 |
+| Repeatable Read | 차단 | 차단 | 가능(구현 의존)* | 중간 |
 | Serializable | 차단 | 차단 | 차단 | 낮음 |
 
 이상 현상(Anomaly):
@@ -630,7 +630,7 @@ ACID에서 가장 미묘한 것은 Isolation이다. 완전한 격리(Serializabl
 - **Non-repeatable Read**: 같은 트랜잭션 내에서 같은 행을 두 번 읽었는데 결과가 다름 (다른 트랜잭션이 수정/커밋)
 - **Phantom Read**: 같은 조건으로 두 번 쿼리했는데 행의 수가 달라짐 (다른 트랜잭션이 INSERT/DELETE)
 
-*InnoDB의 Repeatable Read: MVCC 스냅샷으로 Non-repeatable Read와 Phantom Read를 대부분 방지하지만, 완전한 Serializable은 아님. 특정 조건(SELECT ... FOR UPDATE)에서만 gap lock으로 phantom을 방지.
+*Repeatable Read에서 phantom 처리 방식은 DBMS 구현에 따라 다르다. InnoDB는 일관 읽기(MVCC)와 잠금 읽기(Next-Key/Gap Lock)의 조합으로 많은 케이스를 방지하지만, SERIALIZABLE과 동일 의미는 아니다.
 
 **기본 격리 수준**:
 - PostgreSQL: Read Committed
