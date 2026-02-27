@@ -150,6 +150,7 @@ export default async function PSPost({ params }: { params: Promise<{ slug: strin
                     prose-h1:${themeConfig.prose.h1} prose-h1:mb-6 prose-h1:mt-12
                     prose-h2:${themeConfig.prose.h2} prose-h2:mb-4 prose-h2:mt-10 prose-h2:pb-2 prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-gray-800
                     prose-h3:${themeConfig.prose.h3} prose-h3:mb-3 prose-h3:mt-8
+                    prose-h4:${themeConfig.prose.h4} prose-h4:mb-2 prose-h4:mt-6
                     prose-p:${themeConfig.prose.paragraphColor.light} dark:prose-p:${themeConfig.prose.paragraphColor.dark} prose-p:leading-relaxed prose-p:mb-6
                     prose-a:text-black dark:prose-a:text-white prose-a:font-medium prose-a:no-underline prose-a:border-b prose-a:border-gray-400 dark:prose-a:border-gray-600 hover:prose-a:border-black dark:hover:prose-a:border-white prose-a:transition-colors
                     prose-strong:text-black dark:prose-strong:text-white prose-strong:font-bold

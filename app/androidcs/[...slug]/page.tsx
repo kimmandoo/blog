@@ -177,6 +177,7 @@ export default async function AndroidCSPost({ params }: { params: Promise<{ slug
                   prose-h1:${themeConfig.prose.h1} prose-h1:mb-6 prose-h1:mt-12
                   prose-h2:${themeConfig.prose.h2} prose-h2:mb-4 prose-h2:mt-10 prose-h2:pb-2 prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-gray-800
                   prose-h3:${themeConfig.prose.h3} prose-h3:mb-3 prose-h3:mt-8
+                  prose-h4:${themeConfig.prose.h4} prose-h4:mb-2 prose-h4:mt-6
                   prose-p:${themeConfig.prose.paragraphColor.light} dark:prose-p:${themeConfig.prose.paragraphColor.dark} prose-p:leading-relaxed prose-p:mb-6
                   prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:font-medium prose-a:no-underline hover:prose-a:underline prose-a:transition-colors
                   prose-strong:text-black dark:prose-strong:text-white prose-strong:font-bold

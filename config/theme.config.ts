@@ -90,6 +90,7 @@ export const themeConfig = {
     h1: 'text-3xl',
     h2: 'text-2xl',
     h3: 'text-xl',
+    h4: 'text-lg',
     // Paragraph text color: text-gray-600, text-gray-700, text-gray-800, etc.
     paragraphColor: {
       light: 'text-gray-700',
