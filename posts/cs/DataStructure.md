@@ -1,4 +1,4 @@
----
+﻿---
 title: CS단권화 - DataStructure
 date: 2026-02-27
 category: CS
@@ -8,6 +8,12 @@ tags: [cs, datsstructure]
 ## 1. Complexity Theory
 
 ### Time Complexity
+
+```mermaid
+graph LR
+  C1["O(1)"] --> C2["O(log n)"] --> C3["O(n)"] --> C4["O(n log n)"] --> C5["O(n^2)"] --> C6["O(2^n)"] --> C7["O(n!)"]
+```
+
 
 시간 복잡도는 입력 크기 `n`이 증가할 때 알고리즘 실행 시간이 어떻게 증가하는지를 나타낸다. 절대 시간(초)보다 증가율에 초점을 맞추기 때문에, 하드웨어나 언어 차이를 넘어 알고리즘 효율을 비교할 수 있다.
 
@@ -33,6 +39,17 @@ $T(n) = aT(n/b) + O(n^d)$
 
 ### Space Complexity
 
+```mermaid
+flowchart TD
+  Input[Input data] --> Aux[Auxiliary space]
+  Aux --> Stack[Recursion stack]
+  Aux --> Temp[Temporary buffers]
+  Aux --> Table[DP tables]
+```
+
+
+
+
 공간 복잡도는 알고리즘이 추가로 사용하는 메모리 양의 증가율이다. 입력 저장 자체를 제외하고 보조 메모리(auxiliary space)를 따로 보는 경우가 많다. 시간 최적화와 공간 최적화는 종종 트레이드오프 관계다.
 
 공간 복잡도 분류:
@@ -46,6 +63,16 @@ $T(n) = aT(n/b) + O(n^d)$
 
 ### Big-O / Theta / Omega
 
+```mermaid
+flowchart LR
+  F["f(n)"] --> O["O(g(n)) upper bound"]
+  F --> T["Theta(g(n)) tight bound"]
+  F --> W["Omega(g(n)) lower bound"]
+```
+
+
+
+
 - **Big-O ($O$)**: 상한(upper bound). $f(n) = O(g(n))$이면 충분히 큰 n에 대해 $f(n) \leq c \cdot g(n)$. "이 알고리즘은 최악에도 이 정도 이하"
 - **Theta ($\Theta$)**: 정확한 점근적 경계. $f(n) = \Theta(g(n))$이면 $c_1 \cdot g(n) \leq f(n) \leq c_2 \cdot g(n)$. 상한과 하한이 같은 차수
 - **Omega ($\Omega$)**: 하한(lower bound). $f(n) = \Omega(g(n))$이면 $f(n) \geq c \cdot g(n)$. "최소한 이 정도는 걸린다"
@@ -58,6 +85,17 @@ $T(n) = aT(n/b) + O(n^d)$
 소문자 표기(little-o, little-omega)도 있다: $o(g(n))$은 엄밀한 상한(=보다 작은), $\omega(g(n))$은 엄밀한 하한이다. $2n = o(n^2)$이지만 $2n \neq o(n)$.
 
 ### Amortized Analysis
+
+```mermaid
+flowchart LR
+  A[Push operations] --> B{Capacity full?}
+  B -->|No| C["O(1) append"]
+  B -->|Yes| D[Allocate bigger array]
+  D --> E[Copy n elements]
+  E --> C
+  C --> F["Overall average: amortized O(1)"]
+```
+
 
 분할 상환 분석은 "평균적인 시퀀스 비용"을 다루는 기법이다. 개별 연산 중 비싼 연산이 있어도, 긴 연산열 전체로 보면 연산당 평균 비용이 낮을 수 있다. 이는 확률적 평균(average-case)과는 다른 개념으로, 최악 시퀀스에서도 보장되는 연산당 비용이다.
 
@@ -76,6 +114,19 @@ $T(n) = aT(n/b) + O(n^d)$
 ## 2. Linear Structures
 
 ### Array
+
+```mermaid
+flowchart LR
+  subgraph Contiguous_Memory
+    A0[idx0]
+    A1[idx1]
+    A2[idx2]
+    A3[idx3]
+    A4[idx4]
+  end
+  IDX["base + i * element_size"] --> A3
+```
+
 
 배열은 연속 메모리에 동일 타입 원소를 저장하는 구조다. 인덱스 접근은 `O(1)`로 매우 빠르지만, 중간 삽입/삭제는 원소 이동 때문에 `O(n)`이 된다.
 
@@ -98,6 +149,15 @@ $T(n) = aT(n/b) + O(n^d)$
 
 ### Linked List
 
+```mermaid
+flowchart LR
+  H[Head] --> N1["Node 1<br/>data,next"]
+  N1 --> N2["Node 2<br/>data,next"]
+  N2 --> N3["Node 3<br/>data,next"]
+  N3 --> NIL[null]
+```
+
+
 연결 리스트는 노드가 포인터로 이어진 구조다. 중간 삽입/삭제가 포인터 변경만으로 가능해 구조 변경에 유리하다(탐색 위치를 이미 알고 있을 때). 하지만 임의 접근이 `O(n)`이고 캐시 효율이 낮아 실제 성능은 배열보다 불리할 때가 많다.
 
 연결 리스트 유형:
@@ -113,6 +173,17 @@ $T(n) = aT(n/b) + O(n^d)$
 현대 실무에서 연결 리스트 사용이 줄어드는 이유: 캐시 비효율성, 메모리 할당 오버헤드(노드마다 malloc), 포인터 크기(64비트 시스템에서 8B)로 인한 메모리 오버헤드. Bjarne Stroustrup은 "대부분의 경우 std::vector가 std::list보다 빠르다"고 강조한다.
 
 ### Stack
+
+```mermaid
+flowchart TD
+  P1["push(1)"] --> S1["top → 1"]
+  P2["push(2)"] --> S2["top → 2, 1"]
+  P3["push(3)"] --> S3["top → 3, 2, 1"]
+  POP["pop() → 3"] --> S4["top → 2, 1"]
+```
+
+
+
 
 스택은 LIFO(Last-In, First-Out) 구조다. `push/pop/top`이 `O(1)`이며, 함수 호출 스택, DFS, 괄호 매칭, 되돌리기(undo) 등에 활용된다.
 
@@ -142,6 +213,19 @@ public static int[] nextGreater(int[] nums) {
 
 ### Queue
 
+```mermaid
+flowchart LR
+  subgraph Circular_Buffer
+    S0["slot 0: A"] --> S1["slot 1: B"] --> S2["slot 2: C"] --> S3["slot 3: ·"] --> S4["slot 4: ·"]
+    S4 --> S0
+  end
+  ENQ["enqueue(D)"] -.-> S3
+  S0 -.-> DEQ["dequeue() → A"]
+  HEAD["head"] -->|index 0| S0
+  TAIL["tail"] -->|index 3| S3
+```
+
+
 큐는 FIFO(First-In, First-Out) 구조다. `enqueue/dequeue`가 기본이며 작업 스케줄링, BFS, 버퍼링 시스템에 널리 사용된다.
 
 큐 구현 방식:
@@ -157,6 +241,19 @@ public static int[] nextGreater(int[] nums) {
 고성능 환경에서는 **SPSC(Single Producer Single Consumer) Ring Buffer**가 가장 효율적이다. Disruptor(LMAX)는 CAS 없이도 고성능 메시지 전달을 달성하는 ring buffer 기반 구조로, 초당 수백만 메시지를 처리한다.
 
 ### Deque
+
+```mermaid
+flowchart LR
+  FL[push_front] --> FRONT
+  FRONT["front"] --> DEQ["A | B | C | D"]
+  DEQ --> BACK["back"]
+  BACK --> RL[push_back]
+  FR[pop_front] -.-> FRONT
+  RR[pop_back] -.-> BACK
+```
+
+
+
 
 덱(deque, Double-Ended Queue)은 양끝 삽입/삭제를 모두 `O(1)`로 지원하는 구조다.
 
@@ -195,6 +292,19 @@ public static int[] slidingMax(int[] nums, int k) {
 
 ### Binary Tree
 
+```mermaid
+graph TD
+  A((A)) --> B((B))
+  A --> C((C))
+  B --> D((D))
+  B --> E((E))
+  C --> F((F))
+  C --> G((G))
+```
+
+
+
+
 이진 트리는 각 노드가 최대 두 자식을 갖는 계층 구조다.
 
 이진 트리의 종류:
@@ -218,6 +328,19 @@ public static int[] slidingMax(int[] nums, int k) {
 
 ### Binary Search Tree
 
+```mermaid
+graph TD
+  R((8)) --> L((3))
+  R --> X((10))
+  L --> A((1))
+  L --> B((6))
+  X --> C((14))
+  B --> D((4))
+  B --> E((7))
+  C --> F((13))
+```
+
+
 BST는 "왼쪽 < 루트 < 오른쪽" 정렬 성질을 가진 이진 트리다. 평균적으로 탐색/삽입/삭제 `O(log n)`이지만 편향되면 `O(n)`으로 악화된다.
 
 BST 핵심 연산:
@@ -234,6 +357,20 @@ BST의 한계와 해결책:
 - **Splay Tree**: 접근한 노드를 회전으로 루트까지 올림(splaying). Temporal locality가 높은 워크로드에서 우수한 상환 O(log n) 성능. 캐시에 적합
 
 ### AVL Tree
+
+```mermaid
+flowchart TD
+  A[Unbalanced node] --> B{Case}
+  B -->|LL| C[Right Rotation]
+  B -->|RR| D[Left Rotation]
+  B -->|LR| E[Left Rotation on child<br/>then Right Rotation]
+  B -->|RL| F[Right Rotation on child<br/>then Left Rotation]
+  C --> G[Balanced subtree]
+  D --> G
+  E --> G
+  F --> G
+```
+
 
 AVL 트리는 높이 균형 조건(좌우 서브트리 높이 차이 ≤ 1)을 엄격히 유지하는 자기 균형 BST다.
 
@@ -258,6 +395,19 @@ AVL 트리의 높이는 최대 $1.44 \log_2(n+2)$으로 보장된다. 이는 Red
 
 ### Red-Black Tree
 
+```mermaid
+graph TD
+  R((10 B)) --> L((5 R))
+  R --> X((15 R))
+  L --> A((2 B))
+  L --> B((7 B))
+  X --> C((12 B))
+  X --> D((20 B))
+```
+
+
+
+
 Red-Black 트리는 색상 규칙으로 균형을 완화해 유지하는 자기 균형 BST다. AVL보다 균형은 덜 엄격하지만 갱신 연산에 유리한 경우가 많다.
 
 Red-Black Tree의 5가지 규칙:
@@ -280,6 +430,17 @@ Red-Black Tree의 5가지 규칙:
 - **Java 8+ `HashMap`**: 버킷의 연결 리스트가 8개 이상이면 RB Tree로 변환 (O(n) → O(log n))
 
 ### Segment Tree
+
+```mermaid
+graph TD
+  N1["1: 0..7"] --> N2["2: 0..3"]
+  N1 --> N3["3: 4..7"]
+  N2 --> N4["4: 0..1"]
+  N2 --> N5["5: 2..3"]
+  N3 --> N6["6: 4..5"]
+  N3 --> N7["7: 6..7"]
+```
+
 
 세그먼트 트리는 구간 질의(합, 최소, 최대 등)와 점/구간 업데이트를 효율적으로 처리하는 트리이다.
 
@@ -322,6 +483,23 @@ static int query(int[] tree, int node, int start, int end, int l, int r) {
 변형: **Persistent Segment Tree** (이전 버전의 트리를 유지), **Merge Sort Tree** (각 노드에 정렬된 배열 저장), **2D Segment Tree** (2차원 구간 질의).
 
 ### Fenwick Tree
+
+```mermaid
+flowchart TD
+  U["update(i, delta)"] --> A["i = i + (i & -i)"]
+  A --> B["add delta to BIT(i)"]
+  B --> C{within N?}
+  C -->|Yes| A
+  C -->|No| END1[done]
+  Q["prefixSum(i)"] --> D["i = i - (i & -i)"]
+  D --> E["accumulate BIT(i)"]
+  E --> F{i > 0?}
+  F -->|Yes| D
+  F -->|No| END2[result]
+```
+
+
+
 
 Fenwick Tree(Binary Indexed Tree, BIT)는 누적 합 기반의 점 업데이트 + prefix sum 질의를 `O(log n)`에 처리하는 구조다. 구현이 세그먼트 트리보다 간결하고 메모리 효율이 좋다.
 
@@ -371,6 +549,19 @@ class BIT {
 
 ### Binary Heap
 
+```mermaid
+graph TD
+  H1((1)) --> H2((3))
+  H1 --> H3((6))
+  H2 --> H4((5))
+  H2 --> H5((9))
+  H3 --> H6((8))
+  H3 --> H7((10))
+```
+
+
+
+
 이진 힙은 완전 이진 트리 기반 우선순위 구조다. 보통 배열로 구현하며 부모/자식 인덱스 관계로 빠르게 탐색한다.
 
 배열 인덱싱 (0-based):
@@ -396,6 +587,17 @@ class BIT {
 **Fibonacci Heap**: decrease-key가 상환 O(1)이라 Dijkstra, Prim에서 이론적 최적. 하지만 상수가 크고 구현이 복잡해 실전에서는 이진 힙이 더 빠른 경우가 많다.
 
 ### Priority Queue
+
+```mermaid
+flowchart TD
+  IN["insert(x)"] --> HEAP[Binary Heap]
+  TOP["peek()"] --> HEAP
+  POP["extract-min/max"] --> HEAP
+  HEAP --> ORD[Priority order maintained]
+```
+
+
+
 
 우선순위 큐는 "가장 우선순위 높은 원소"를 빠르게 꺼내는 ADT(Abstract Data Type)다. 힙 기반 구현에서 삽입/삭제가 `O(log n)`, 최상단 조회가 `O(1)`이다.
 
@@ -438,6 +640,18 @@ public static List<Integer> mergeKSorted(List<List<Integer>> lists) {
 
 ### Heapify
 
+```mermaid
+flowchart TD
+  A["Start from last non-leaf = n/2-1"] --> B["Sift-down node i"]
+  B --> C{i > 0?}
+  C -->|Yes| D["i = i-1"]
+  D --> B
+  C -->|No| E["Heap built in O(n)"]
+```
+
+
+
+
 Heapify는 배열을 힙 성질로 변환하는 과정이다.
 
 **Bottom-Up Heapify가 O(n)인 이유**:
@@ -461,6 +675,17 @@ Top-Down 방식(n번 insert)은 O(n log n)이므로 Bottom-Up이 중요하다.
 
 ### Hash Table
 
+```mermaid
+flowchart TD
+  K[Key] --> H[Hash Function]
+  H --> B[Bucket i]
+  B --> C{Collision?}
+  C -->|No| S1[Store directly]
+  C -->|Chaining| S2[Linked list or tree in bucket]
+  C -->|Open Addressing| S3[Probe next slot]
+```
+
+
 해시 테이블은 키를 해시 함수로 인덱스로 매핑해 평균 `O(1)` 조회/삽입/삭제를 제공한다.
 
 좋은 해시 함수의 조건:
@@ -475,6 +700,21 @@ Top-Down 방식(n번 insert)은 O(n log n)이므로 Bottom-Up이 중요하다.
 - **범용 해시**: MurmurHash3, xxHash (비암호학적, 매우 빠름), SipHash (HashDoS 방어, Python/Rust 기본)
 
 ### Collision Resolution
+
+```mermaid
+flowchart LR
+  K[Key] --> H[Hash]
+  H --> B[Bucket i occupied]
+  B --> C{Strategy}
+  C --> CH["Chaining: linked list/tree"]
+  C --> OA[Open addressing]
+  OA --> LP[Linear probing]
+  OA --> QP[Quadratic probing]
+  OA --> DH[Double hashing]
+```
+
+
+
 
 충돌 해결은 해시 품질 못지않게 중요하다. 대표 방식은 체이닝과 개방 주소법이며, 워크로드 특성(삭제 빈도, 메모리 locality, load factor)에 따라 선택이 달라진다.
 
@@ -498,6 +738,16 @@ Top-Down 방식(n번 insert)은 O(n log n)이므로 Bottom-Up이 중요하다.
 
 ### Load Factor
 
+```mermaid
+flowchart LR
+  N[Stored entries n] --> LF["alpha = n / bucket_count"]
+  B[Bucket count m] --> LF
+  LF --> PERF["Collision probability/performance"]
+```
+
+
+
+
 로드 팩터(`α = n/m`, n=원소 수, m=버킷 수)는 성능의 핵심 지표다.
 
 Chaining: 평균 탐사 길이 = 1 + α/2 (성공), 1 + α (실패). α > 1도 동작하지만 성능 저하
@@ -512,6 +762,17 @@ Open Addressing: 1/(1-α)에 비례. α가 1에 가까워질수록 급격히 악
 일반적인 리사이즈 임계치: Open Addressing 0.5~0.75, Chaining 0.75~1.0. Google의 Swiss Table(Abseil)은 load factor 0.875에서도 효율적으로 동작하도록 SIMD 기반 그룹 탐사를 사용한다.
 
 ### Rehashing
+
+```mermaid
+flowchart TD
+  A[Insert causes high load factor] --> B[Allocate bigger table]
+  B --> C[Recompute hash for each key]
+  C --> D[Move entries to new buckets]
+  D --> E[Swap new table]
+```
+
+
+
 
 리해싱은 테이블 크기를 확장하고 기존 원소를 새 해시 정책에 따라 재배치하는 과정이다.
 
@@ -528,6 +789,18 @@ Open Addressing: 1/(1-α)에 비례. α가 1에 가까워질수록 급격히 악
 ## 6. Graph
 
 ### Representation (Adjacency List / Matrix)
+
+```mermaid
+flowchart LR
+  G[Graph]
+  G --> L["Adjacency List<br/>space O(V+E)"]
+  G --> M["Adjacency Matrix<br/>space O(V^2)"]
+  L --> L1[sparse graph friendly]
+  M --> M1["edge lookup O(1)"]
+```
+
+
+
 
 | 비교 | 인접 리스트 | 인접 행렬 |
 |------|-----------|----------|
@@ -554,6 +827,17 @@ int[][] edges = {{u, v, weight}, ...};
 - **행렬 곱셈과 경로**: 인접 행렬 $A$의 $k$제곱 $A^k[i][j]$는 i에서 j로 가는 길이 k인 경로의 수. Floyd-Warshall도 행렬 관점에서 이해할 수 있음
 
 ### BFS / DFS
+
+```mermaid
+flowchart LR
+  BFS[BFS] --> Q[Queue]
+  BFS --> BL["Level-order traversal"]
+  DFS[DFS] --> ST["Stack/Recursion"]
+  DFS --> DP[Deep exploration]
+```
+
+
+
 
 **BFS (Breadth-First Search)**:
 - 자료구조: 큐
@@ -601,6 +885,20 @@ DFS 간선 분류 (방향 그래프):
 
 ### Dijkstra
 
+```mermaid
+flowchart TD
+  A["init dist(source)=0, others=INF"] --> B["push source to min-heap"]
+  B --> C{Heap empty?}
+  C -->|Yes| H[Done]
+  C -->|No| D[Pop node with min distance]
+  D --> E[Relax all outgoing edges]
+  E --> F{Distance improved?}
+  F -->|Yes| G["Update dist + push heap"]
+  F -->|No| C
+  G --> C
+```
+
+
 다익스트라는 음수 간선이 없는 그래프에서 단일 시작점 최단 경로를 구한다.
 
 ```java
@@ -639,6 +937,18 @@ public static int[] dijkstra(List<List<int[]>> graph, int start, int V) {
 
 ### Bellman-Ford
 
+```mermaid
+flowchart TD
+  I["initialize dist(source)=0"] --> R["repeat V-1 times: relax all edges"]
+  R --> C[One more pass]
+  C --> N{Any edge still relaxes?}
+  N -->|Yes| NEG[Negative cycle exists]
+  N -->|No| DONE[Shortest paths confirmed]
+```
+
+
+
+
 벨만-포드는 음수 간선이 있어도 최단 경로를 계산할 수 있고, 음수 사이클 탐지도 가능하다.
 
 알고리즘:
@@ -651,6 +961,18 @@ public static int[] dijkstra(List<List<int[]>> graph, int start, int V) {
 **SPFA (Shortest Path Faster Algorithm)**: Bellman-Ford의 큐 기반 최적화. 완화에 성공한 노드만 큐에 넣어 불필요한 완화를 줄인다. 평균적으로 빠르지만 최악은 여전히 O(VE). 알고리즘 대회에서 자주 사용되지만, 최악 케이스가 쉽게 구성될 수 있어 실전에서는 주의가 필요하다.
 
 ### Floyd-Warshall
+
+```mermaid
+flowchart TD
+  A[Init dist matrix] --> K[for k in 1..V]
+  K --> I[for i in 1..V]
+  I --> J[for j in 1..V]
+  J --> U["dist(i,j) = min(dist(i,j), dist(i,k) + dist(k,j))"]
+  U --> O["All-pairs shortest paths"]
+```
+
+
+
 
 플로이드-워셜은 모든 정점 쌍 최단 경로를 `O(V³)`로 계산한다.
 
@@ -676,6 +998,19 @@ for (int k = 0; k < V; k++) {
 적용 조건: V ≤ ~500 정도에서 실용적. V가 크면 Dijkstra를 V번 실행하는 것이 더 효율적일 수 있다 (E가 희소할 때). 경로 복원 시 별도의 `next[i][j]` 행렬을 유지한다.
 
 ### Topological Sort
+
+```mermaid
+flowchart TD
+  A[Compute indegree] --> B[Push indegree 0 nodes]
+  B --> C[Pop node and output]
+  C --> D[Decrease indegree of neighbors]
+  D --> E{new indegree 0?}
+  E -->|Yes| B
+  E -->|No| C
+```
+
+
+
 
 위상 정렬은 DAG(Directed Acyclic Graph)에서 선행 제약을 만족하는 노드 순서를 구한다.
 
@@ -708,6 +1043,19 @@ public static List<Integer> topologicalSort(List<List<Integer>> graph, int[] inD
 **사전순 위상 정렬**: 여러 유효한 위상 정렬 중 사전순으로 가장 앞서는 것을 구하려면, 큐 대신 min-heap을 사용한다.
 
 ### Union-Find
+
+```mermaid
+flowchart LR
+  U["union(a,b)"] --> FA["find(a)"]
+  U --> FB["find(b)"]
+  FA --> C{rootA != rootB?}
+  FB --> C
+  C -->|Yes| M["merge by rank/size"]
+  C -->|No| N[already connected]
+  P[path compression in find] --> FA
+  P --> FB
+```
+
 
 Union-Find(Disjoint Set Union, DSU)는 원소 집합 분리/병합을 효율적으로 관리한다.
 
@@ -750,6 +1098,17 @@ class UnionFind {
 
 ### MST (Kruskal / Prim)
 
+```mermaid
+flowchart LR
+  K1["Kruskal: sort edges by weight"] --> K2["Add edge if no cycle (Union-Find)"]
+  P1["Prim: grow tree from a start node"] --> P2["Pick min crossing edge (PQ)"]
+  K2 --> MST[Minimum Spanning Tree]
+  P2 --> MST
+```
+
+
+
+
 최소 신장 트리(MST)는 모든 정점을 최소 비용으로 연결하는 V-1개의 간선 집합이다.
 
 **Kruskal's Algorithm**:
@@ -777,6 +1136,21 @@ MST의 유일성: 모든 간선 가중치가 서로 다르면 MST는 유일하�
 ## 7. Advanced Structures
 
 ### Trie
+
+```mermaid
+graph TD
+  R((root)) --> A((a))
+  A --> AP((p))
+  AP --> APP((p*))
+  AP --> APL((l))
+  APL --> APLE((e*))
+  R --> B((b))
+  B --> BA((a))
+  BA --> BAT((t*))
+```
+
+
+
 
 Trie(Prefix Tree)는 문자열 집합을 문자 단위 경로로 저장하는 트리다. 접두사 검색(prefix query)과 자동완성에 매우 강하다.
 
@@ -831,6 +1205,17 @@ class Trie {
 
 ### Suffix Array
 
+```mermaid
+flowchart TD
+  S[String S] --> SUF[Generate all suffixes]
+  SUF --> SORT[Sort suffixes lexicographically]
+  SORT --> SA["Store starting indices = Suffix Array"]
+  SA --> LCP[LCP array for fast queries]
+```
+
+
+
+
 Suffix Array는 문자열의 모든 접미사를 사전순 정렬한 인덱스 배열이다.
 
 예: `s = "banana"`
@@ -853,6 +1238,19 @@ SA + LCP Array 활용:
 
 ### Suffix Tree
 
+```mermaid
+graph TD
+  R((root)) --> A[a...]
+  R --> B[b...]
+  A --> A1[na$]
+  A --> A2[pple$]
+  B --> B1[anana$]
+  B --> B2[and$]
+```
+
+
+
+
 Suffix Tree는 모든 접미사를 압축 트리 형태로 표현해 다양한 문자열 질의를 선형 시간에 지원한다.
 
 **Ukkonen's Algorithm**: O(n) 온라인 구성 알고리즘. 핵심 트릭:
@@ -869,6 +1267,20 @@ Suffix Tree 응용:
 실전에서는 Suffix Array + LCP Array 조합이 메모리 면에서 더 효율적이어서, Suffix Tree를 직접 구성하기보다 SA를 사용하는 경우가 많다.
 
 ### LRU Cache (Hash + Doubly Linked List)
+
+```mermaid
+flowchart LR
+  M["HashMap key->node"] --> N1[Node A]
+  M --> N2[Node B]
+  M --> N3[Node C]
+  H[Head MRU] <--> N1
+  N1 <--> N2
+  N2 <--> N3
+  N3 <--> T[Tail LRU]
+```
+
+
+
 
 LRU(Least Recently Used) 캐시는 "가장 오래 사용되지 않은" 항목을 우선 제거한다.
 
@@ -911,6 +1323,17 @@ O(1) LFU: HashMap + 빈도별 Doubly Linked List의 HashMap 구조로 삽입/삭
 
 ### Skip List
 
+```mermaid
+flowchart TD
+  L3["Level 3: sparse express lane"] --> L2[Level 2]
+  L2 --> L1[Level 1]
+  L1 --> L0["Level 0: full ordered list"]
+  L3 --> S[Search drops down when next key is too large]
+```
+
+
+
+
 스킵 리스트는 다층 연결 리스트로 평균 `O(log n)` 탐색/삽입/삭제를 제공한다.
 
 구조: 최하위 레벨은 모든 원소를 정렬 순서로 포함하는 연결 리스트. 상위 레벨은 하위 레벨의 일부 원소를 포함하며, 각 원소가 레벨 i에 나타날 확률은 p^i (보통 p = 0.5 또는 0.25).
@@ -944,6 +1367,18 @@ Level 0: 1  2  3  4  5  6  7  8  9
 
 ### DP 기본 원리
 
+```mermaid
+flowchart TD
+  P[Problem] --> S[Define state]
+  S --> R[Recurrence relation]
+  R --> B[Base cases]
+  B --> O["Compute order (top-down/bottom-up)"]
+  O --> A[Answer from DP table]
+```
+
+
+
+
 동적 프로그래밍(DP)은 문제를 **최적 부분 구조(Optimal Substructure)** 와 **겹치는 부분 문제(Overlapping Subproblems)** 를 가질 때, 부분 문제의 답을 저장(memoization/tabulation)해 중복 계산을 제거하는 기법이다.
 
 두 가지 접근법:
@@ -958,6 +1393,16 @@ DP 설계 5단계:
 5. **최종 답 위치**: dp[n], dp[0][n-1] 등
 
 ### 배낭 문제 (Knapsack)
+
+```mermaid
+flowchart LR
+  S["state dp(i,w)"] --> A1["skip item i<br/>dp(i-1,w)"]
+  S --> A2["take item i<br/>dp(i-1,w-wi) + vi"]
+  A1 --> M[max]
+  A2 --> M
+  M --> N["dp(i,w)"]
+```
+
 
 DP의 대표 문제 군이며, 변형이 다양하게 출제된다.
 
@@ -1017,6 +1462,17 @@ public static int knapsackUnbounded(int[] weights, int[] values, int W) {
 
 ### LIS (Longest Increasing Subsequence)
 
+```mermaid
+flowchart LR
+  N[Input sequence] --> T[tails array]
+  T --> BS[Binary search insertion position]
+  BS --> REP[Replace or append]
+  REP --> LEN["Length of tails = LIS length"]
+```
+
+
+
+
 최장 증가 부분 수열은 면접에서 매우 빈출되는 DP 주제다.
 
 #### O(n²) DP
@@ -1070,6 +1526,19 @@ LIS 변형:
 
 ### Interval DP
 
+```mermaid
+flowchart TD
+  I["Interval (l,r)"] --> K[Try split point k]
+  K --> L["dp(l,k)"]
+  K --> R["dp(k+1,r)"]
+  L --> M["Combine with cost(l,k,r)"]
+  R --> M
+  M --> ANS["best value for dp(l,r)"]
+```
+
+
+
+
 구간 DP는 구간 `[i, j]`를 상태로 두고, 구간을 분할하는 모든 경계점 `k`를 시도하는 패턴이다.
 
 일반 형태: $dp[i][j] = \min_{i \leq k < j}(dp[i][k] + dp[k+1][j] + cost(i, j))$
@@ -1114,6 +1583,17 @@ public static int matrixChain(int[] dims) {
 
 ### 기타 DP 패턴
 
+```mermaid
+flowchart LR
+  DP[Dynamic Programming Patterns] --> BIT[Bitmask DP]
+  DP --> TREE[Tree DP]
+  DP --> DIGIT[Digit DP]
+  DP --> KNUTH[Optimization tricks]
+```
+
+
+
+
 #### 비트마스크 DP
 
 집합을 비트마스크로 표현하는 DP. 원소 수가 작을 때(보통 ≤ 20) 사용한다.
@@ -1141,6 +1621,20 @@ public static int matrixChain(int[] dims) {
 ## 9. String Algorithms
 
 ### KMP (Knuth-Morris-Pratt)
+
+```mermaid
+flowchart TD
+  A["compare text(i) and pattern(j)"] --> B{Match?}
+  B -->|Yes| C["i++, j++"]
+  C --> D{j == m?}
+  D -->|Yes| E["record match<br/>j = lps(j-1)"]
+  D -->|No| A
+  B -->|No and j > 0| F["j = lps(j-1)"]
+  F --> A
+  B -->|No and j == 0| G["i++"]
+  G --> A
+```
+
 
 KMP는 텍스트 T에서 패턴 P를 O(n + m)에 검색하는 알고리즘이다. 불일치(mismatch) 시 불필요한 비교를 건너뛰는 **실패 함수(Failure Function, LPS 배열)** 가 핵심이다.
 
@@ -1216,6 +1710,17 @@ KMP의 핵심 직관: 불일치 시 패턴의 이미 일치한 부분에서 "접
 **Boyer-Moore**: 패턴을 **뒤에서 앞으로** 비교하며, Bad Character Rule과 Good Suffix Rule로 대폭 건너뛴다. 실전에서 가장 빠른 단일 패턴 매칭 (텍스트 에디터의 Ctrl+F 등). 알파벳이 클수록 효율적.
 
 ### Aho-Corasick
+
+```mermaid
+flowchart TD
+  T1[Build trie from patterns] --> T2[Build failure links by BFS]
+  T2 --> T3[Scan text character by character]
+  T3 --> T4["Follow goto/fail transitions"]
+  T4 --> T5[Emit matched patterns]
+```
+
+
+
 
 Aho-Corasick은 **여러 패턴을 동시에** 텍스트에서 검색하는 알고리즘이다. Trie + KMP의 실패 함수를 결합한 오토마톤(automaton)을 구성한다.
 
@@ -1310,6 +1815,19 @@ class AhoCorasick {
 | **검색 엔진** | 키워드 하이라이팅, 다중 키워드 검색 |
 
 ### 문자열 해싱 (Rabin-Karp)
+
+```mermaid
+flowchart TD
+  A[Compute pattern hash] --> B[Compute first window hash]
+  B --> C{hash matches?}
+  C -->|Yes| D[Verify substring]
+  C -->|No| E[Roll hash to next window]
+  D --> E
+  E --> F[Repeat until end]
+```
+
+
+
 
 Rabin-Karp는 롤링 해시를 사용해 패턴 매칭을 수행한다. 단일 패턴에서는 KMP보다 느릴 수 있지만, **다중 패턴**, **부분 문자열 중복 검사** 등에서 강력하다.
 

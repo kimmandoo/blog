@@ -1,4 +1,4 @@
----
+﻿---
 title: CS단권화 - Database
 date: 2026-02-27
 category: CS
@@ -9,6 +9,19 @@ tags: [cs, database]
 ## 1. Introduction
 
 ### 데이터베이스의 역사
+
+```mermaid
+timeline
+  title Database Evolution
+  1960s : Hierarchical/Network DB
+  1970s : Relational Model (SQL)
+  2000s : NoSQL for web-scale workloads
+  2010s : NewSQL (distributed ACID)
+  Now : Polyglot persistence
+```
+
+
+
 
 초기 컴퓨팅 환경에서는 데이터를 파일 단위로 관리하는 방식이 일반적이었다. 하지만 데이터 규모가 커지고 동시 사용자 수가 증가하면서, 중복과 불일치 문제를 체계적으로 해결할 필요가 생겼다.
 
@@ -21,6 +34,18 @@ tags: [cs, database]
 - **현재 Polyglot Persistence**: RDB와 NoSQL을 목적에 맞게 조합. 캐시(Redis) + 주 DB(PostgreSQL) + 검색(Elasticsearch) + 분석(ClickHouse)
 
 ### File system vs DBMS
+
+```mermaid
+flowchart LR
+  APP[Application] --> FS[File API]
+  APP --> DB[DBMS SQL]
+  FS --> F1[Manual locking and parsing]
+  DB --> D1["Transactions + indexes + optimizer"]
+  DB --> D2["Recovery + concurrency control"]
+```
+
+
+
 
 파일 시스템은 단순 저장에 강점이 있지만, 동시성 제어, 트랜잭션, 인덱싱, 질의 최적화, 복구 같은 고급 기능은 제한적이다. 반면 DBMS는 데이터 일관성과 접근 성능을 체계적으로 보장한다.
 
@@ -39,6 +64,18 @@ tags: [cs, database]
 
 ### DBMS의 역할
 
+```mermaid
+flowchart LR
+  APP[Application SQL] --> PARSER["Parser/Analyzer"]
+  PARSER --> OPT[Optimizer]
+  OPT --> EXEC[Executor]
+  EXEC --> BUF[Buffer Manager]
+  BUF --> IO["Index/Heap Access"]
+  EXEC --> WAL[WAL Logger]
+  IO --> DISK[(Data Files)]
+```
+
+
 DBMS는 단순 저장소가 아니라 데이터 운영 플랫폼이다. 핵심 역할:
 
 1. **스키마 관리**: DDL로 테이블/인덱스/뷰 정의. 스키마 변경(ALTER)의 온라인/오프라인 처리가 운영 이슈
@@ -51,6 +88,23 @@ DBMS는 단순 저장소가 아니라 데이터 운영 플랫폼이다. 핵심 �
 **메모리 관리**: DBMS는 자체 버퍼 풀을 운영해 OS 페이지 캐시와 별도로 메모리를 관리한다. 이는 OS보다 데이터 접근 패턴을 잘 알기 때문이다. InnoDB의 버퍼 풀, PostgreSQL의 shared_buffers가 대표적.
 
 ### OLTP vs OLAP
+
+```mermaid
+flowchart TD
+  subgraph OLTP["OLTP"]
+    TP["Transactional DB <br/>MySQL · PostgreSQL"]
+    TP_C["짧은 트랜잭션<br/>행 단위 접근<br/>높은 동시성"]
+  end
+  TP --> ETL["CDC / ETL"]
+  ETL --> WH
+  subgraph OLAP["OLAP"]
+    WH["Data Warehouse<br/>ClickHouse · BigQuery"]
+    BI["분석 쿼리 / BI Dashboard"]
+    OLAP_C["대량 집계 스캔<br/>컬럼 지향 저장<br/>스타 스키마"]
+    WH --> BI
+  end
+```
+
 
 | 비교 | OLTP | OLAP |
 |------|------|------|
@@ -67,6 +121,19 @@ DBMS는 단순 저장소가 아니라 데이터 운영 플랫폼이다. 핵심 �
 **스타 스키마 / 스노우플레이크 스키마**: OLAP용 데이터 모델링. 중앙의 팩트 테이블(예: 주문)에 디멘전 테이블(사용자, 상품, 시간)이 연결되는 구조. 스타 스키마는 디멘전이 비정규화되어 조인이 적고, 스노우플레이크 스키마는 디멘전이 정규화되어 공간 효율적이다.
 
 ### CAP Theorem
+
+```mermaid
+graph TD
+  C[Consistency]
+  A[Availability]
+  P[Partition Tolerance]
+  C ---|"CA: 단일 노드<br/>RDBMS"| A
+  A ---|"AP: Cassandra<br/>DynamoDB"| P
+  P ---|"CP: ZooKeeper<br/>etcd"| C
+  Note["분할 발생 시 CP 또는 AP 중 선택"]
+  P -.-> Note
+```
+
 
 CAP 정리는 분산 시스템에서 일관성(Consistency), 가용성(Availability), 분할 내성(Partition tolerance)을 동시에 완벽히 만족하기 어렵다는 원칙이다.
 
@@ -87,6 +154,34 @@ CAP 정리는 분산 시스템에서 일관성(Consistency), 가용성(Availabil
 
 ### Entity-Relationship Model
 
+```mermaid
+erDiagram
+  CUSTOMER ||--o{ ORDER : places
+  ORDER ||--|{ ORDER_ITEM : contains
+  PRODUCT ||--o{ ORDER_ITEM : included_in
+  CUSTOMER {
+    bigint customer_id PK
+    string name
+    string email
+  }
+  ORDER {
+    bigint order_id PK
+    datetime ordered_at
+    string status
+  }
+  PRODUCT {
+    bigint product_id PK
+    string name
+    decimal price
+  }
+  ORDER_ITEM {
+    bigint order_id FK
+    bigint product_id FK
+    int quantity
+  }
+```
+
+
 ER 모델은 현실 세계의 객체(Entity), 속성(Attribute), 관계(Relationship)를 추상화해 데이터 구조를 설계하는 방법이다.
 
 ER 모델 구성 요소:
@@ -100,6 +195,18 @@ ER 모델 구성 요소:
 - 이력 관리: 현재 값만 저장할 것인지, 변경 이력을 추적할 것인지 설계 초기에 결정해야 한다
 
 ### ERD 설계
+
+```mermaid
+flowchart LR
+  C[Conceptual Model] --> L[Logical Model]
+  L --> P[Physical Model]
+  C --> E["Entities/Relationships"]
+  L --> N["Keys/Normalization"]
+  P --> I["Index/Partition/Storage"]
+```
+
+
+
 
 ERD는 엔티티 간 관계(1:1, 1:N, N:M)와 키 구조를 시각적으로 표현한다.
 
@@ -116,6 +223,15 @@ ERD는 엔티티 간 관계(1:1, 1:N, N:M)와 키 구조를 시각적으로 표�
 Anti-pattern: "일단 만들고 나중에 수정" → 서비스 성장 후 테이블 구조 변경은 마이그레이션 비용이 매우 크다. 초기 설계에 시간을 투자하는 것이 전체 비용을 줄인다.
 
 ### Normalization
+
+```mermaid
+flowchart LR
+  A[Unnormalized] --> B[1NF<br/>Atomic values]
+  B --> C[2NF<br/>No partial dependency]
+  C --> D[3NF<br/>No transitive dependency]
+  D --> E[BCNF<br/>Determinant is candidate key]
+```
+
 
 정규화는 데이터 중복과 갱신 이상(anomaly)을 줄이기 위한 설계 원칙이다. 테이블을 적절히 분해해 데이터 무결성을 높인다.
 
@@ -160,6 +276,18 @@ BCNF 분해의 트레이드오프: 함수 종속 보존(dependency preservation)
 
 ### Denormalization
 
+```mermaid
+flowchart TD
+  N[Normalized schema] --> B["Read bottleneck?"]
+  B -->|Yes| D["Add redundant/derived columns"]
+  D --> C[Maintain consistency rules]
+  C --> R[Lower join cost]
+  B -->|No| K[Keep normalized]
+```
+
+
+
+
 비정규화는 읽기 성능 향상을 위해 일부 중복을 의도적으로 허용하는 전략이다.
 
 비정규화 기법:
@@ -179,6 +307,16 @@ BCNF 분해의 트레이드오프: 함수 종속 보존(dependency preservation)
 ## 3. Relational Model
 
 ### Relational Algebra
+
+```mermaid
+flowchart LR
+  A[Students] --> S1["σ age > 20"]
+  B[Enrollments] --> S2["σ year = 2026"]
+  S1 --> J[⋈ student_id]
+  S2 --> J
+  J --> P["π name, course_id"]
+```
+
 
 관계 대수는 관계형 질의의 이론적 기반이다. SQL 최적화기는 내부적으로 이런 연산 트리 형태로 실행 계획을 구성한다.
 
@@ -200,6 +338,17 @@ BCNF 분해의 트레이드오프: 함수 종속 보존(dependency preservation)
 
 ### Tuple / Domain
 
+```mermaid
+flowchart TD
+  REL["Relation/Table"] --> TUP["Tuple (row)"]
+  REL --> ATTR["Attributes (columns)"]
+  ATTR --> DOM["Domain/type constraints"]
+  DOM --> VAL[Valid value set]
+```
+
+
+
+
 Tuple은 테이블의 한 행(row)으로, 관계형 모델에서 하나의 사실(fact)을 표현한다. Domain은 속성이 가질 수 있는 값의 집합(타입/제약)을 의미한다.
 
 Domain 설계의 실전 중요성:
@@ -208,6 +357,25 @@ Domain 설계의 실전 중요성:
 - **Enum/Check 제약**: 유효한 값 범위를 도메인 수준에서 강제. 예: 상태 코드가 'ACTIVE', 'INACTIVE', 'SUSPENDED'만 허용
 
 ### Keys (PK, FK, Composite, Candidate)
+
+```mermaid
+erDiagram
+  CUSTOMER ||--o{ ORDER : places
+  ORDER {
+    bigint order_id PK
+    bigint customer_id FK
+    datetime ordered_at
+  }
+  ORDER_ITEM {
+    bigint order_id PK
+    bigint product_id PK
+    int quantity
+  }
+  ORDER ||--|{ ORDER_ITEM : has
+```
+
+
+
 
 - **Candidate Key**: 튜플을 유일하게 식별할 수 있는 최소 속성 집합. 하나의 테이블에 여러 후보키가 존재할 수 있다
 - **Primary Key (PK)**: 후보키 중 선택된 대표 식별자. NOT NULL + UNIQUE
@@ -229,6 +397,19 @@ Auto Increment vs UUID:
 
 ### Constraints
 
+```mermaid
+flowchart TD
+  INS["INSERT/UPDATE"] --> NN{NOT NULL}
+  NN --> UQ{UNIQUE}
+  UQ --> CK{CHECK}
+  CK --> FK{FOREIGN KEY}
+  FK --> OK[Commit accepted]
+  FK --> ERR[Constraint violation]
+```
+
+
+
+
 제약 조건은 데이터 무결성의 마지막 방어선이다.
 
 주요 제약:
@@ -247,6 +428,12 @@ Auto Increment vs UUID:
 ## 4. SQL Deep Dive
 
 ### Query Execution Order
+
+```mermaid
+flowchart LR
+  F[FROM and JOIN] --> W[WHERE] --> G[GROUP BY] --> H[HAVING] --> S[SELECT] --> D[DISTINCT] --> O[ORDER BY] --> L["LIMIT/OFFSET"]
+```
+
 
 논리적 실행 순서:
 ```text
@@ -273,6 +460,16 @@ LIMIT/OFFSET     ← 결과 행 수 제한
 - ORDER BY에서는 SELECT의 별칭을 사용할 수 있다 (SELECT 후이므로)
 
 ### Join 종류 (Nested Loop / Hash Join / Merge Join)
+
+```mermaid
+flowchart TD
+  Q[Join request] --> C1{Small outer + index on inner?}
+  C1 -->|Yes| NL[Nested Loop Join]
+  C1 -->|No| C2{Equality join and hash fits memory?}
+  C2 -->|Yes| HJ[Hash Join]
+  C2 -->|No| MJ["Merge Join<br/>(sorted inputs)"]
+```
+
 
 조인은 실행 엔진이 데이터 크기/인덱스/정렬 상태를 고려해 전략을 선택한다.
 
@@ -305,6 +502,18 @@ R과 S를 조인 키로 정렬 (이미 정렬되어 있으면 생략)
 - 적합: 양측이 조인 키로 이미 정렬되어 있을 때. 범위 조인에도 사용 가능
 
 ### Subquery
+
+```mermaid
+flowchart TD
+  O[Outer query] --> S[Subquery]
+  S --> T{Type}
+  T --> SC[Scalar subquery]
+  T --> EX["EXISTS/IN"]
+  T --> COR[Correlated subquery per outer row]
+```
+
+
+
 
 서브쿼리는 질의 내부에 포함된 질의다.
 
@@ -343,6 +552,17 @@ WHERE e.salary > d.avg_sal;
 
 ### Window Function
 
+```mermaid
+flowchart LR
+  R[Rows] --> P[PARTITION BY]
+  P --> O[ORDER BY]
+  O --> F[Window Frame]
+  F --> W["ROW_NUMBER / SUM OVER / LAG"]
+```
+
+
+
+
 윈도우 함수는 행을 그룹화하되 결과 행 수를 유지한 채 순위/누적/이전값 비교를 수행한다.
 
 구문: `function() OVER (PARTITION BY ... ORDER BY ... ROWS/RANGE BETWEEN ... AND ...)`
@@ -373,6 +593,17 @@ FROM orders;
 
 ### Index Hint
 
+```mermaid
+flowchart TD
+  Q[SQL Query] --> OPT[Optimizer default plan]
+  Q --> H[Hinted plan path]
+  H --> IDX["Force/Prefer index"]
+  IDX --> EXEC[Execute with hinted access path]
+```
+
+
+
+
 인덱스 힌트는 옵티마이저 선택을 보조하거나 강제하는 장치다.
 
 ```sql
@@ -397,6 +628,17 @@ SELECT * FROM orders WHERE user_id = 123;
 ## 5. Storage Engine
 
 ### Page 구조
+
+```mermaid
+flowchart TD
+  P[DB Page] --> HDR[Page Header]
+  P --> SLOTS[Slot Directory]
+  P --> FREE[Free Space]
+  P --> ROWS["Tuple/Record Area"]
+```
+
+
+
 
 스토리지 엔진은 디스크 I/O의 기본 단위로 **페이지(page)**를 사용한다. InnoDB 기본 16KB, PostgreSQL 8KB.
 
@@ -424,6 +666,18 @@ SELECT * FROM orders WHERE user_id = 123;
 
 ### Heap File
 
+```mermaid
+flowchart LR
+  HF[Heap File] --> PG1[Page 1]
+  HF --> PG2[Page 2]
+  HF --> PG3[Page 3]
+  PG1 --> R1[unordered rows]
+  PG2 --> R2[unordered rows]
+```
+
+
+
+
 Heap file은 레코드를 특정 정렬 없이 저장하는 방식이다. 새 레코드는 여유 공간이 있는 아무 페이지에 삽입된다.
 
 장점: 삽입이 빠르다 (정렬 유지 불필요). 순차 스캔(전체 읽기)에 적합
@@ -434,6 +688,16 @@ Heap file은 레코드를 특정 정렬 없이 저장하는 방식이다. 새 �
 PostgreSQL은 기본적으로 Heap 구조를 사용하고, 인덱스는 별도 B-Tree로 관리한다(Non-clustered 기본). InnoDB는 PK B+ Tree에 데이터를 직접 저장하는 Clustered 구조가 기본이다.
 
 ### Clustered vs Non-clustered
+
+```mermaid
+flowchart LR
+  CI[Clustered Index] --> C1[Data rows stored in key order]
+  NCI["Non-clustered Index"] --> N1[Index leaf points to row locator]
+  N1 --> N2[Extra lookup may be required]
+```
+
+
+
 
 **Clustered Index (클러스터드 인덱스)**:
 - 테이블 데이터 자체를 인덱스 키 순서로 물리/논리적으로 정렬 저장
@@ -463,6 +727,18 @@ Secondary Index (B+ Tree):
 
 ### Slotted Page
 
+```mermaid
+flowchart TD
+  H[Header] --> SP[Slot Pointer Array]
+  SP --> R1[Record A]
+  SP --> R2[Record B]
+  SP --> R3[Record C]
+  R1 --> MOVE["Records can move, slot id stays stable"]
+```
+
+
+
+
 Slotted page는 가변 길이 레코드를 효율적으로 관리하는 페이지 내부 구조다.
 
 구조: 페이지 헤더 + 슬롯 디렉터리(고정 크기 배열) + 빈 공간 + 데이터 영역
@@ -475,6 +751,20 @@ Slotted page는 가변 길이 레코드를 효율적으로 관리하는 페이�
 레코드 삭제: 슬롯을 "삭제 표시"로 만들고, 공간은 나중에 재사용. 페이지 내 단편화가 심해지면 compaction(레코드 재배치)을 수행한다.
 
 ### WAL (Write Ahead Logging)
+
+```mermaid
+sequenceDiagram
+  participant Tx as Transaction
+  participant WAL as WAL File
+  participant DB as Data Page
+  Tx->>WAL: append redo/undo log
+  WAL-->>Tx: fsync complete
+  Tx->>DB: write dirty page (later)
+  Note over WAL,DB: On crash: redo committed, undo incomplete
+```
+
+
+
 
 WAL은 데이터 페이지를 디스크에 쓰기 전에 변경 로그를 먼저 기록하는 원칙이다.
 
@@ -500,6 +790,25 @@ WAL이 효율적인 이유:
 
 ### B-Tree
 
+```mermaid
+graph TD
+  R(("30 | 60")) --> N1(("10 | 20"))
+  R --> N2(("40 | 50"))
+  R --> N3(("70 | 80"))
+  N1 --> L1["1 · 5 · 9"]
+  N1 --> L2["11 · 15 · 19"]
+  N1 --> L3["21 · 25 · 29"]
+  N2 --> L4["31 · 35 · 39"]
+  N2 --> L5["41 · 45 · 49"]
+  N2 --> L6["51 · 55 · 59"]
+  N3 --> L7["61 · 65 · 69"]
+  N3 --> L8["71 · 75 · 79"]
+  N3 --> L9["81 · 85 · 89"]
+  L1 ~~~ L2 ~~~ L3 ~~~ L4 ~~~ L5 ~~~ L6 ~~~ L7 ~~~ L8 ~~~ L9
+```
+
+
+
 B-Tree는 균형 다진 트리(balanced multi-way tree) 구조로 탐색/삽입/삭제를 `O(log n)`에 처리한다.
 
 B-Tree 성질 (차수 m):
@@ -515,6 +824,27 @@ B-Tree 성질 (차수 m):
 삽입/삭제 시 노드 분할(split)/병합(merge)으로 균형을 유지한다. 분할이 루트까지 전파되면 트리 높이가 1 증가한다.
 
 ### B+ Tree
+
+```mermaid
+graph TD
+  R((Root))
+  I1((Internal))
+  I2((Internal))
+  L1[Leaf 1]
+  L2[Leaf 2]
+  L3[Leaf 3]
+  L4[Leaf 4]
+  R --> I1
+  R --> I2
+  I1 --> L1
+  I1 --> L2
+  I2 --> L3
+  I2 --> L4
+  L1 --- L2
+  L2 --- L3
+  L3 --- L4
+```
+
 
 B+ Tree는 B-Tree의 변형으로, 실제 DBMS 인덱스의 사실상 표준이다.
 
@@ -535,6 +865,17 @@ Leaf:  [1,5,7]->[10,12,15]->[20,22,25]->[30,35,40]
 
 ### Hash Index
 
+```mermaid
+flowchart LR
+  K[Search key] --> H[Hash function]
+  H --> BKT[Bucket]
+  BKT --> E1[Entry]
+  BKT --> E2[Overflow chain]
+```
+
+
+
+
 해시 인덱스는 동등 비교(=)에 매우 빠르지만 범위 질의(`<`, `>`, `BETWEEN`, `ORDER BY`)에는 부적합하다.
 
 구조: 해시 함수로 키를 버킷 번호에 매핑. 버킷에 레코드 포인터를 저장.
@@ -549,6 +890,17 @@ Leaf:  [1,5,7]->[10,12,15]->[20,22,25]->[30,35,40]
 **Linear Hashing**: 라운드 로빈 방식으로 순서대로 버킷을 분할. 디렉터리 불필요.
 
 ### Covering Index
+
+```mermaid
+flowchart TD
+  Q["SELECT name FROM users WHERE email = ?"] --> I["Index on (email, name)"]
+  I --> C{All needed columns in index?}
+  C -->|Yes| O["Index-only scan"]
+  C -->|No| T["Lookup table/heap row"]
+```
+
+
+
 
 커버링 인덱스는 쿼리에 필요한 모든 컬럼을 인덱스만으로 제공해 테이블 본문(heap/clustered index) 접근을 없애는 전략이다.
 
@@ -571,6 +923,17 @@ CREATE INDEX idx_user_age ON users(age) INCLUDE (name, email);
 
 ### Composite Index
 
+```mermaid
+flowchart LR
+  IDX["Index (A,B,C)"] --> P1[Supports A]
+  IDX --> P2["Supports A,B"]
+  IDX --> P3["Supports A,B,C"]
+  IDX --> X["Does not directly support only B,C"]
+```
+
+
+
+
 복합 인덱스는 여러 컬럼을 순서대로 결합한다. 순서가 성능을 결정한다.
 
 **Leftmost Prefix Rule (선두 컬럼 규칙)**: 복합 인덱스 (A, B, C)에서:
@@ -586,6 +949,18 @@ CREATE INDEX idx_user_age ON users(age) INCLUDE (name, email);
 3. **정렬(ORDER BY) 컬럼 포함**: 인덱스 순서와 정렬 순서가 일치하면 추가 정렬 불필요 (filesort 회피)
 
 ### Index Scan vs Full Scan
+
+```mermaid
+flowchart TD
+  Q[Query predicate] --> SEL{Selective enough?}
+  SEL -->|Yes| IS[Index Scan]
+  SEL -->|No| FS[Full Table Scan]
+  IS --> COST["lower random I/O if selective"]
+  FS --> COST
+```
+
+
+
 
 인덱스 스캔이 항상 빠른 것은 아니다.
 
@@ -609,6 +984,16 @@ CREATE INDEX idx_user_age ON users(age) INCLUDE (name, email);
 
 ### ACID
 
+```mermaid
+mindmap
+  root((ACID))
+    Atomicity
+    Consistency
+    Isolation
+    Durability
+```
+
+
 - **Atomicity (원자성)**: 트랜잭션의 모든 연산이 성공하거나, 모두 실패한 것처럼 되돌아간다. 구현: WAL의 Undo 로그. ROLLBACK 시 변경을 역순으로 되돌림
 - **Consistency (일관성)**: 트랜잭션 전후 모든 제약조건(PK, FK, CHECK 등)이 만족된다. DB 제약과 애플리케이션 로직이 함께 보장
 - **Isolation (격리성)**: 동시 실행되는 트랜잭션이 서로 간섭하지 않는 것처럼 보인다. 격리 수준에 따라 정도가 다름. 구현: 락, MVCC
@@ -617,6 +1002,17 @@ CREATE INDEX idx_user_age ON users(age) INCLUDE (name, email);
 ACID에서 가장 미묘한 것은 Isolation이다. 완전한 격리(Serializable)는 성능 비용이 크므로, 대부분의 시스템은 더 약한 격리 수준을 기본으로 사용한다.
 
 ### Isolation Level
+
+```mermaid
+flowchart LR
+  R0[Read Uncommitted] --> R1[Read Committed]
+  R1 --> R2[Repeatable Read]
+  R2 --> R3[Serializable]
+  R0 -. dirty read possible .-> X1[Anomalies]
+  R1 -. non-repeatable read possible .-> X1
+  R2 -. write skew/phantom depending engine .-> X1
+```
+
 
 | 격리 수준 | Dirty Read | Non-repeatable Read | Phantom Read | 성능 |
 |-----------|-----------|-------------------|-------------|------|
@@ -642,6 +1038,21 @@ ACID에서 가장 미묘한 것은 Isolation이다. 완전한 격리(Serializabl
 
 ### MVCC
 
+```mermaid
+sequenceDiagram
+  participant T1 as Tx1
+  participant T2 as Tx2
+  participant DB as DB (MVCC)
+  T1->>DB: BEGIN (snapshot S1)
+  T2->>DB: BEGIN (snapshot S2)
+  T1->>DB: UPDATE row -> new version v2
+  T2->>DB: SELECT row
+  DB-->>T2: returns version visible in S2
+  T1->>DB: COMMIT
+  T2->>DB: COMMIT or retry on conflict
+```
+
+
 MVCC(Multi-Version Concurrency Control)는 다중 버전 데이터를 통해 읽기와 쓰기 충돌을 줄이는 방식이다. 읽기가 쓰기를 블로킹하지 않고, 쓰기가 읽기를 블로킹하지 않는다.
 
 **PostgreSQL MVCC 구현**:
@@ -659,6 +1070,16 @@ MVCC의 장점: 읽기-쓰기 간 블로킹 없음 → OLTP 환경에서 매우 
 MVCC의 비용: 오래된 버전 관리(VACUUM/Purge), 스냅샷 관리 메모리, 긴 트랜잭션이 있으면 오래된 버전을 정리하지 못해 bloat 발생
 
 ### Lock (Shared / Exclusive)
+
+```mermaid
+graph TD
+  S1["Tx A: S lock"] --> R[Row X]
+  S2["Tx B: S lock"] --> R
+  X1["Tx C: X lock request"] -. blocked until S released .-> R
+```
+
+
+
 
 - **Shared Lock (S-lock, 공유 잠금)**: 읽기 목적. 여러 트랜잭션이 동시에 S-lock을 획득 가능. S-lock이 걸린 자원에 X-lock은 불가
 - **Exclusive Lock (X-lock, 배타 잠금)**: 쓰기 목적. X-lock이 걸린 자원에 다른 어떤 잠금도 불가
@@ -678,6 +1099,17 @@ MVCC의 비용: 오래된 버전 관리(VACUUM/Purge), 스냅샷 관리 메모�
 **Gap Lock / Next-Key Lock (InnoDB)**: 인덱스 레코드 사이의 "간격"을 잠그는 것. Phantom Read 방지 목적. 예: 인덱스에 10, 20이 있을 때 "10-20 사이 간격"을 잠가 다른 트랜잭션의 INSERT를 차단한다.
 
 ### Deadlock
+
+```mermaid
+graph LR
+  T1((Tx1)) -->|waits for| L2["Lock B"]
+  L2 -->|held by| T2((Tx2))
+  T2 -->|waits for| L1["Lock A"]
+  L1 -->|held by| T1
+```
+
+
+
 
 데드락은 서로가 상대 락 해제를 기다리며 진행이 멈춘 상태다.
 
@@ -706,6 +1138,18 @@ TX2: Lock(B) → Lock(A) 대기
 
 ### Cost Based Optimizer
 
+```mermaid
+flowchart TD
+  SQL[SQL Query] --> R1[Rewrite rules]
+  R1 --> P1[Generate candidate plans]
+  P1 --> C1["Estimate cardinality + I/O/CPU cost"]
+  C1 --> P2[Choose lowest cost plan]
+  P2 --> EX[Execute]
+```
+
+
+
+
 CBO(Cost-Based Optimizer)는 후보 실행 계획들의 비용을 추정해 최적 계획을 선택한다.
 
 옵티마이저 동작 과정:
@@ -724,6 +1168,17 @@ CBO(Cost-Based Optimizer)는 후보 실행 계획들의 비용을 추정해 최�
 조인 순서 탐색: N개 테이블의 가능한 조인 순서는 N!개. N이 클 때는 동적 프로그래밍(최적) 또는 유전 알고리즘/탐욕법(근사)으로 탐색 공간을 줄인다. PostgreSQL은 12개 이상 테이블 조인 시 유전 알고리즘(GEQO)을 사용한다.
 
 ### Execution Plan 분석
+
+```mermaid
+flowchart TD
+  EX["EXPLAIN/ANALYZE"] --> N1["Access method (scan type)"]
+  EX --> N2[Join order & join type]
+  EX --> N3[Estimated vs actual rows]
+  N3 --> ACT["Tune indexes/statistics/query"]
+```
+
+
+
 
 실행 계획(EXPLAIN/EXPLAIN ANALYZE)은 쿼리 성능 문제 진단의 출발점이다.
 
@@ -753,6 +1208,16 @@ Hash Join (cost=10.50..100.00 rows=50 width=120) (actual time=0.5..2.0 rows=42 l
 
 ### Cardinality Estimation
 
+```mermaid
+flowchart TD
+  PRED[Predicate] --> STAT["Histograms/NDV/correlation stats"]
+  STAT --> EST[Estimated row count]
+  EST --> PLAN[Join order and operator choice]
+```
+
+
+
+
 카디널리티 추정은 각 연산 단계에서 출력되는 행 수를 예측하는 과정이다.
 
 추정 기법:
@@ -767,6 +1232,16 @@ Hash Join (cost=10.50..100.00 rows=50 width=120) (actual time=0.5..2.0 rows=42 l
 - 잘못된 메모리 할당: Sort/Hash에 할당량이 부족해 디스크 스필(spill) 발생
 
 ### Statistics
+
+```mermaid
+flowchart LR
+  DATA[Table data distribution] --> ANALYZE[Collect statistics]
+  ANALYZE --> CATALOG[System catalog stats]
+  CATALOG --> OPT[Optimizer cost model]
+```
+
+
+
 
 통계 정보는 옵티마이저의 핵심 입력이다.
 
@@ -793,6 +1268,16 @@ ALTER TABLE t ALTER COLUMN c SET STATISTICS 1000;  -- 히스토그램 버킷 수
 
 ### 2PL (Two Phase Locking)
 
+```mermaid
+flowchart LR
+  G[Growing phase<br/>acquire locks] --> P[Lock point]
+  P --> S[Shrinking phase<br/>release locks]
+  S --> E[No new lock allowed]
+```
+
+
+
+
 2PL은 직렬화 가능성(Serializability)을 보장하는 고전적 동시성 제어 기법이다.
 
 두 단계:
@@ -807,6 +1292,22 @@ ALTER TABLE t ALTER COLUMN c SET STATISTICS 1000;  -- 히스토그램 버킷 수
 2PL과 데드락: 2PL은 교착 상태를 방지하지 않는다. 잠금 그래프에서 사이클이 형성될 수 있다. 별도의 데드락 탐지/예방이 필요하다.
 
 ### Optimistic Lock
+
+```mermaid
+sequenceDiagram
+  participant T1 as Tx1
+  participant T2 as Tx2
+  participant DB
+  T1->>DB: read row (version=5)
+  T2->>DB: read row (version=5)
+  T1->>DB: update ... where version=5
+  DB-->>T1: success (version=6)
+  T2->>DB: update ... where version=5
+  DB-->>T2: 0 rows -> conflict/retry
+```
+
+
+
 
 낙관적 잠금(OCC, Optimistic Concurrency Control)은 충돌이 드물다는 가정 하에, 읽기 시 잠금 없이 진행하고 커밋 시 충돌을 검증한다.
 
@@ -832,6 +1333,17 @@ WHERE id = 1 AND version = 5;
 
 ### Timestamp Ordering
 
+```mermaid
+flowchart TD
+  OP["Read/Write operation"] --> TS["Compare with readTS/writeTS"]
+  TS --> OK{Order valid?}
+  OK -->|Yes| APPLY[Apply operation]
+  OK -->|No| ABORT["Abort/restart transaction"]
+```
+
+
+
+
 타임스탬프 기반 순서 제어(T/O)는 각 트랜잭션에 시작 시 타임스탬프를 부여하고, 타임스탬프 순서대로 실행된 것과 동일한 결과를 보장한다.
 
 규칙:
@@ -844,6 +1356,16 @@ WHERE id = 1 AND version = 5;
 실전 시스템에서 순수 T/O는 드물고, MVCC와 결합된 형태(Snapshot Isolation, Serializable Snapshot Isolation)가 일반적이다.
 
 ### SSI (Serializable Snapshot Isolation)
+
+```mermaid
+graph LR
+  T1((Tx1)) -->|rw-antidependency| T2((Tx2))
+  T2 -->|rw-antidependency| T3((Tx3))
+  T3 -->|potential dangerous structure| T1
+```
+
+
+
 
 SSI는 Snapshot Isolation의 성능을 유지하면서 직렬화 가능성을 보장하는 현대적 동시성 제어 기법이다. SI의 약점인 **Write Skew** 이상 현상을 추가 검증으로 방지한다.
 
@@ -896,6 +1418,17 @@ COMMIT;  -- 커밋 시 rw-conflict 검사, 위반 시 serialization failure
 
 ### DB별 동시성 제어 비교
 
+```mermaid
+flowchart LR
+  DB[DB Engine] --> PG["PostgreSQL: MVCC + SSI"]
+  DB --> MY["InnoDB: MVCC + next-key lock"]
+  PG --> P1["Snapshot tuples + VACUUM"]
+  MY --> M1["Undo log + purge"]
+```
+
+
+
+
 #### PostgreSQL 동시성 모델
 
 | 격리 수준 | 내부 구현 | 특징 |
@@ -935,6 +1468,21 @@ InnoDB MVCC 특이점:
 | 장기 트랜잭션 영향 | 테이블 bloat (VACUUM 불가) | Undo Log 누적, 읽기 성능 저하 |
 
 ### ORM 수준 낙관적 잠금 패턴
+
+```mermaid
+sequenceDiagram
+  participant App
+  participant ORM
+  participant DB
+  App->>ORM: load entity(version=7)
+  App->>ORM: modify fields
+  ORM->>DB: UPDATE ... WHERE id=? AND version=7
+  DB-->>ORM: affected rows 1 or 0
+  ORM-->>App: success or OptimisticLockException
+```
+
+
+
 
 애플리케이션/ORM 레벨에서 구현하는 낙관적 잠금은 DB의 격리 수준과 독립적으로 동작하며, 비즈니스 로직의 동시성 충돌을 방어한다.
 
@@ -1015,6 +1563,15 @@ Product findByIdOptimistic(@Param("id") Long id);
 
 ### Sharding
 
+```mermaid
+flowchart TD
+  App[Application] --> Router[Shard Router]
+  Router --> S1["Shard A<br/>user_id 0-999k"]
+  Router --> S2["Shard B<br/>user_id 1M-1.99M"]
+  Router --> S3["Shard C<br/>user_id 2M+"]
+```
+
+
 샤딩은 데이터를 여러 노드로 수평 분할해 저장하는 방식이다.
 
 샤딩 전략:
@@ -1031,6 +1588,18 @@ Product findByIdOptimistic(@Param("id") Long id);
 
 ### Replication
 
+```mermaid
+flowchart LR
+  W[Write Traffic] --> P["Primary/Leader"]
+  P --> R1[Replica 1]
+  P --> R2[Replica 2]
+  P --> R3[Replica 3]
+  Q[Read Traffic] --> R1
+  Q --> R2
+  Q --> R3
+```
+
+
 복제는 동일 데이터를 여러 노드에 유지해 가용성과 읽기 처리량을 높인다.
 
 복제 유형:
@@ -1041,6 +1610,20 @@ Product findByIdOptimistic(@Param("id") Long id);
 **복제 지연 (Replication Lag)**: 비동기 복제에서 프라이머리와 레플리카의 데이터 차이. 읽기가 레플리카에서 이루어지면 최근 쓰기 결과가 보이지 않을 수 있다 (eventual consistency). 해결 전략: "쓰고 자기가 읽을 때"는 프라이머리에서 읽기, 또는 causal consistency 보장 (읽기 시 최소 LSN 조건 부여).
 
 ### Leader-Follower
+
+```mermaid
+flowchart TD
+  W[Write] --> L[Leader]
+  L --> F1[Follower 1]
+  L --> F2[Follower 2]
+  L --> F3[Follower 3]
+  R[Read] --> F1
+  R --> F2
+  R --> F3
+```
+
+
+
 
 리더-팔로워(Primary-Replica) 구조에서는 쓰기를 리더가 담당하고 팔로워가 복제본을 유지한다.
 
@@ -1058,6 +1641,19 @@ Failover의 위험:
 
 ### Distributed Transaction
 
+```mermaid
+flowchart TD
+  S1[Service A local tx] --> E1[Event]
+  E1 --> S2[Service B local tx]
+  S2 --> E2[Event]
+  E2 --> S3[Service C local tx]
+  S3 --> OK[All succeed] 
+  S2 --> COMP["On failure -> compensating tx"]
+```
+
+
+
+
 분산 트랜잭션은 여러 노드/서비스에 걸친 원자성을 보장하려는 시도다.
 
 분산 트랜잭션이 어려운 이유:
@@ -1072,6 +1668,22 @@ Failover의 위험:
 - **Outbox Pattern**: 로컬 트랜잭션으로 비즈니스 데이터와 이벤트를 같은 DB에 저장(outbox 테이블). 별도 프로세스가 outbox에서 이벤트를 읽어 메시지 브로커에 발행. 최소 1회 전달 보장
 
 ### 2PC / 3PC
+
+```mermaid
+sequenceDiagram
+  participant C as Coordinator
+  participant P1 as Participant 1
+  participant P2 as Participant 2
+  C->>P1: PREPARE?
+  C->>P2: PREPARE?
+  P1-->>C: YES
+  P2-->>C: YES
+  C->>P1: COMMIT
+  C->>P2: COMMIT
+  P1-->>C: ACK
+  P2-->>C: ACK
+```
+
 
 **2PC (Two-Phase Commit)**:
 1. **Prepare Phase**: 코디네이터가 모든 참여자에게 "커밋 준비됐나?" 질의. 참여자는 로그를 디스크에 기록하고 "준비됨(Yes)" 또는 "거부(No)" 응답
@@ -1089,6 +1701,17 @@ Failover의 위험:
 
 ### Key-Value
 
+```mermaid
+flowchart LR
+  K[Key] --> H["Hash/partition"]
+  H --> N["Node/slot"]
+  N --> V[Value blob]
+  V --> O["get/set/del in O(1) average"]
+```
+
+
+
+
 키-값 저장소는 가장 단순한 모델로, 키로 값을 조회/저장한다. 복잡한 쿼리는 불가능하지만 단일 키 연산의 지연이 매우 낮다.
 
 대표 시스템:
@@ -1103,6 +1726,17 @@ Redis 내부:
 
 ### Document
 
+```mermaid
+flowchart TD
+  D["Document JSON/BSON"] --> F1[Flexible schema]
+  D --> F2[Nested fields]
+  D --> F3[Secondary indexes on paths]
+  F3 --> Q[Query by field predicates]
+```
+
+
+
+
 도큐먼트 DB는 JSON/BSON 유사 구조를 저장해 스키마 유연성이 높다.
 
 대표 시스템:
@@ -1116,6 +1750,17 @@ Redis 내부:
 
 ### Column Family
 
+```mermaid
+flowchart TD
+  RK[Row Key] --> CF1["Column Family: profile"]
+  RK --> CF2["Column Family: metrics"]
+  CF1 --> C1["name,email"]
+  CF2 --> C2["ts->value wide columns"]
+```
+
+
+
+
 컬럼 패밀리 모델은 행 키(row key) + 컬럼 패밀리(column family) + 컬럼(column) + 타임스탬프로 데이터를 조직한다. 대규모 분산 쓰기/읽기에 강하다.
 
 대표 시스템:
@@ -1128,6 +1773,17 @@ Cassandra 데이터 모델링 원칙:
 - **클러스터링 키**: 파티션 내 정렬 순서 결정. 시계열 데이터에서 타임스탬프를 클러스터링 키로 설정하면 최신 데이터부터 효율적으로 읽을 수 있음
 
 ### Graph DB
+
+```mermaid
+graph LR
+  U1((User A)) -- FRIEND --> U2((User B))
+  U2 -- FRIEND --> U3((User C))
+  U3 -- BOUGHT --> P1((Product X))
+  U1 -- VIEWED --> P1
+```
+
+
+
 
 그래프 DB는 노드(정점)-간선(엣지)-속성 모델로 데이터를 저장하며, 관계 탐색(graph traversal)에 특화된다.
 
@@ -1157,6 +1813,20 @@ SELECT DISTINCT u.name FROM friends f JOIN users u ON f.friend_id = u.id;
 ```
 
 ### When to use NoSQL
+
+```mermaid
+flowchart TD
+  RQ[Requirement] --> Q1{Need complex joins + strict ACID?}
+  Q1 -->|Yes| RDB[RDBMS]
+  Q1 -->|No| Q2{High-scale/simple access pattern?}
+  Q2 -->|Key lookup| KV["Key-Value"]
+  Q2 -->|Flexible schema| DOC[Document]
+  Q2 -->|Massive write/time-series| COL[Column Family]
+  Q2 -->|Relationship traversal| GDB[Graph DB]
+```
+
+
+
 
 NoSQL은 "RDB를 대체"가 아니라 "문제 특성에 맞는 선택"이다.
 

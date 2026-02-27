@@ -1,4 +1,4 @@
----
+﻿---
 title: CS단권화 - OS
 date: 2026-02-27
 category: CS
@@ -8,6 +8,19 @@ tags: [cs, os]
 ## 1. OS Overview
 
 ### Kernel
+
+```mermaid
+flowchart TD
+  A[User Programs] --> B[System Call Interface]
+  B --> C[Kernel Space]
+  C --> C1[Scheduler]
+  C --> C2[Memory Manager]
+  C --> C3[File System]
+  C --> C4[Network Stack]
+  C --> C5[Device Drivers]
+  C5 --> D[Hardware]
+```
+
 
 운영체제의 커널(Kernel)은 하드웨어와 소프트웨어 사이에서 자원 관리의 중심 역할을 수행하는 핵심 계층이다. CPU 스케줄링, 메모리 할당, 파일 시스템, 네트워크 스택, 디바이스 제어 같은 기능은 대부분 커널 내부에서 동작한다. 사용자 프로그램은 직접 하드웨어를 제어하지 않고 커널이 제공하는 인터페이스를 통해 간접적으로 접근한다.
 
@@ -21,6 +34,19 @@ tags: [cs, os]
 
 ### User Mode vs Kernel Mode
 
+```mermaid
+sequenceDiagram
+  participant U as User Mode
+  participant CPU as CPU
+  participant K as Kernel Mode
+  U->>CPU: syscall / trap
+  CPU->>K: privilege switch (Ring3 -> Ring0)
+  K->>K: validate args + execute privileged op
+  K-->>CPU: return value
+  CPU-->>U: switch back (Ring0 -> Ring3)
+```
+
+
 CPU는 보호 모드에서 권한 수준을 구분한다. 일반 애플리케이션은 User Mode(비특권 모드)에서 실행되고, 커널 코드는 Kernel Mode(특권 모드)에서 실행된다. User Mode에서는 I/O 포트 접근, 페이지 테이블 직접 수정, 인터럽트 제어와 같은 민감 연산이 금지된다.
 
 이 분리는 안정성과 보안을 위한 핵심 장치다. 사용자 코드 버그가 전체 시스템을 즉시 망가뜨리지 않도록 격리하고, 커널이 모든 민감 자원 접근을 중재한다. 권한 전환은 시스템 콜 또는 인터럽트/예외 트랩을 통해 발생한다.
@@ -32,6 +58,21 @@ x86 아키텍처에서는 Ring 0(커널)부터 Ring 3(사용자)까지 4단계 �
 `vDSO`(virtual Dynamic Shared Object)는 이런 전환 비용을 줄이기 위한 최적화다. `gettimeofday` 같은 읽기 전용 커널 데이터 접근은 실제 모드 전환 없이 사용자 공간에 매핑된 커널 데이터를 직접 읽어 성능을 높인다.
 
 ### System Call
+
+```mermaid
+sequenceDiagram
+  participant U as User App
+  participant L as libc
+  participant K as Kernel
+  participant D as Device/FS
+  U->>L: write(fd, buf, n)
+  L->>K: syscall(number, args)
+  K->>D: validate + execute I/O
+  D-->>K: result
+  K-->>L: return code
+  L-->>U: bytes written / errno
+```
+
 
 시스템 콜은 사용자 프로그램이 커널 기능을 요청하는 표준 진입점이다. 파일 열기(`open`), 읽기/쓰기(`read`, `write`), 프로세스 생성(`fork`), 소켓 통신(`socket`) 등이 대표적이다. 시스템 콜 호출 시 사용자 공간에서 커널 공간으로 컨텍스트가 전환되며, 이 전환 비용은 성능 최적화에서 중요한 고려사항이다.
 
@@ -58,6 +99,20 @@ close(fd);                              // sys_close → 커널: fd 테이블 �
 
 ### Process Control Block
 
+```mermaid
+stateDiagram-v2
+  [*] --> New
+  New --> Ready
+  Ready --> Running
+  Running --> Ready: preempted
+  Running --> Waiting: I/O wait
+  Waiting --> Ready: event complete
+  Running --> Terminated: exit()
+  Terminated --> Zombie: parent not waited
+  Zombie --> [*]: wait()/reap
+```
+
+
 PCB(Process Control Block)는 프로세스의 메타데이터를 담는 커널 자료구조다. 프로세스 ID, 실행 상태, 레지스터 저장 영역, 메모리 매핑 정보, 열린 파일 디스크립터, 스케줄링 우선순위 등이 포함된다. 컨텍스트 스위칭 시 커널은 현재 실행 중인 프로세스의 CPU 상태를 PCB에 저장하고, 다음 프로세스의 PCB에서 상태를 복원한다.
 
 Linux에서 PCB는 `task_struct` 구조체로 구현되며, 그 크기는 수 KB에 달한다. 주요 필드:
@@ -72,6 +127,16 @@ Linux에서 PCB는 `task_struct` 구조체로 구현되며, 그 크기는 수 KB
 프로세스 상태 전이: `New → Ready → Running → (Waiting/Blocked) → Ready → Running → Terminated`. `Zombie` 상태는 프로세스가 종료되었지만 부모가 아직 `wait()`으로 종료 상태를 수거하지 않은 상태로, `task_struct`가 남아 PID를 점유한다. 대량 좀비 누적은 PID 고갈로 이어질 수 있으므로, 부모 프로세스는 반드시 자식의 종료를 처리해야 한다. 부모가 먼저 종료되면 `init`(PID 1)이 고아 프로세스를 입양해 좀비를 수거한다.
 
 ### Context Switching
+
+```mermaid
+flowchart TD
+  A["Timer interrupt / block event"] --> B[Save current registers to PCB]
+  B --> C[Scheduler picks next task]
+  C --> D[Load next task context]
+  D --> E["Switch address space / stack"]
+  E --> F[Resume execution]
+```
+
 
 컨텍스트 스위칭은 CPU가 한 실행 흐름(프로세스/스레드)에서 다른 실행 흐름으로 전환되는 과정이다. 레지스터 저장/복원, 스케줄러 결정, 메모리 문맥 전환(TLB/캐시 영향)이 수반되며 순수 계산 작업이 아닌 오버헤드로 작용한다. 따라서 스위칭 빈도를 줄이고 locality를 살리는 것이 시스템 성능에 유리하다.
 
@@ -90,6 +155,30 @@ Linux에서 PCB는 `task_struct` 구조체로 구현되며, 그 크기는 수 KB
 
 ### Multi-threading
 
+```mermaid
+flowchart LR
+  subgraph one_to_one["1:1 모델 (Linux NPTL)"]
+    direction LR
+    A1[User Thread] --> AK1[Kernel Thread]
+    A2[User Thread] --> AK2[Kernel Thread]
+  end
+  subgraph n_to_one["N:1 모델 (Green Thread)"]
+    direction LR
+    B1[User Thread] --> BK1[Kernel Thread]
+    B2[User Thread] --> BK1
+    B3[User Thread] --> BK1
+  end
+  subgraph m_to_n["M:N 모델 (Go goroutine)"]
+    direction LR
+    C1[User Thread] --> CK1[Kernel Thread]
+    C2[User Thread] --> CK1
+    C3[User Thread] --> CK2[Kernel Thread]
+  end
+```
+
+
+
+
 멀티스레딩은 하나의 프로세스 주소 공간을 공유하는 여러 실행 단위를 병렬(또는 동시)로 운용하는 모델이다. 스레드 간 데이터 공유가 쉬워 협업 작업에 유리하지만, 공유 자원 경쟁과 동기화 복잡성이 커진다. CPU 코어 수가 늘수록 병렬 처리 이점이 커지지만, 락 경합이 심하면 오히려 성능이 저하될 수 있다.
 
 스레드 모델은 구현 수준에 따라 세 가지로 나뉜다:
@@ -102,6 +191,25 @@ Amdahl's Law는 병렬화의 한계를 표현한다: 프로그램에서 직렬 �
 False sharing 문제도 주의해야 한다. 서로 다른 스레드가 같은 캐시 라인에 있는 서로 다른 변수를 수정하면, 논리적으로 공유하지 않음에도 캐시 라인 무효화(cache line bouncing)가 발생해 성능이 급락한다. 패딩이나 `alignas(64)` 같은 캐시 라인 정렬 기법으로 방지한다.
 
 ### Thread vs Process
+
+```mermaid
+flowchart TD
+  subgraph P1[Process A]
+    T1[Thread A1]
+    T2[Thread A2]
+    M1["Shared Heap/Code"]
+    T1 --- M1
+    T2 --- M1
+  end
+  subgraph P2[Process B]
+    T3[Thread B1]
+    M2[Isolated Address Space]
+    T3 --- M2
+  end
+```
+
+
+
 
 프로세스는 주소 공간이 분리되어 격리가 강하지만 생성/전환 비용이 상대적으로 크다. 스레드는 같은 주소 공간을 공유하므로 생성과 통신 비용이 낮지만 메모리 안전성 측면에서 사고 반경이 넓다. 실무에서는 장애 격리가 중요한 경계(서비스 단위)는 프로세스로 분리하고, 내부 병렬 처리(워크풀)는 스레드로 구성하는 전략을 자주 사용한다.
 
@@ -128,6 +236,20 @@ IPC(Inter-Process Communication) 메커니즘:
 
 ### FCFS
 
+```mermaid
+gantt
+  title FCFS Example
+  dateFormat  X
+  axisFormat %L
+  section CPU
+  P1 :a1, 0, 24
+  P2 :a2, 24, 3
+  P3 :a3, 27, 3
+```
+
+
+
+
 FCFS(First-Come, First-Served)는 도착 순서대로 CPU를 할당한다. 구현이 단순하고 예측 가능하지만, 긴 작업이 앞에 오면 짧은 작업들이 오래 대기하는 Convoy 효과가 발생한다. 인터랙티브 시스템에서는 응답성이 떨어질 수 있다.
 
 FCFS는 비선점형(Non-preemptive) 스케줄링이다. 한번 CPU를 할당받으면 작업이 완료되거나 I/O 대기에 들어갈 때까지 CPU를 유지한다.
@@ -145,6 +267,20 @@ Convoy 효과의 실무 영향: 배치 처리 시스템에서 대용량 ETL 작�
 
 ### SJF
 
+```mermaid
+gantt
+  title SJF Example
+  dateFormat  X
+  axisFormat %L
+  section CPU
+  P2 :b1, 0, 3
+  P3 :b2, 3, 3
+  P1 :b3, 6, 24
+```
+
+
+
+
 SJF(Shortest Job First)는 실행 시간이 짧은 작업을 먼저 선택해 평균 대기 시간을 줄인다. 이론적으로 평균 대기 시간 최적에 가깝지만, 실제로는 작업 길이를 정확히 예측하기 어렵다. 긴 작업이 계속 밀릴 수 있어 starvation 가능성도 있다.
 
 SJF의 수학적 최적성은 증명 가능하다. 비선점형 스케줄링 시 평균 대기 시간을 최소화하는 최적 전략이 바로 SJF다. 실행 시간 예측은 보통 과거 CPU burst 기록을 이용한 지수 평균(Exponential Averaging)으로 수행한다:
@@ -156,6 +292,23 @@ $$\tau_{n+1} = \alpha \cdot t_n + (1-\alpha) \cdot \tau_n$$
 선점형 변형인 SRTF(Shortest Remaining Time First)는 새 작업이 도착할 때마다 잔여 시간이 가장 짧은 작업으로 전환한다. 평균 대기 시간을 더 줄이지만 컨텍스트 스위칭 빈도가 증가하고, 긴 작업의 starvation이 더 심해질 수 있다.
 
 ### Round Robin
+
+```mermaid
+gantt
+  title Round Robin (q=4)
+  dateFormat  X
+  axisFormat %L
+  section CPU
+  P1 :c1, 0, 4
+  P2 :c2, 4, 4
+  P3 :c3, 8, 4
+  P1 :c4, 12, 4
+  P2 :c5, 16, 2
+  P3 :c6, 18, 1
+```
+
+
+
 
 Round Robin은 고정된 시간 할당량(quantum)만큼 번갈아 실행한다. 시분할 환경에서 공정성과 응답성을 확보하기 좋다. 단, quantum이 너무 짧으면 컨텍스트 스위칭 오버헤드가 커지고, 너무 길면 FCFS처럼 동작해 대화형 응답성이 떨어진다.
 
@@ -170,6 +323,22 @@ MLFQ(Multi-Level Feedback Queue)는 RR을 확장한 실전 스케줄링이다. �
 
 ### Priority Scheduling
 
+```mermaid
+flowchart TD
+  RQ[Ready Queue] --> H[High Priority]
+  RQ --> M[Medium Priority]
+  RQ --> L[Low Priority]
+  H --> CPU["CPU runs highest non-empty queue"]
+  M --> CPU
+  L --> CPU
+  CPU --> AGE["Aging boosts long-waiting tasks"]
+  AGE --> M
+  AGE --> H
+```
+
+
+
+
 우선순위 기반 스케줄링은 높은 우선순위 작업을 먼저 실행한다. 실시간 성격의 태스크를 빠르게 처리하기 유리하지만, 낮은 우선순위 작업 기아가 생길 수 있다. 이를 완화하기 위해 대기 시간이 길수록 우선순위를 올려주는 aging 기법을 적용한다.
 
 우선순위는 정적(static) 또는 동적(dynamic)으로 설정된다:
@@ -183,6 +352,16 @@ Priority Inversion(우선순위 역전) 문제: 낮은 우선순위 태스크가
 Linux에서 `nice` 값(-20~19)은 일반 태스크 우선순위를 조정한다. 실시간 태스크는 `chrt` 명령이나 `sched_setscheduler()`로 SCHED_FIFO/SCHED_RR 정책과 우선순위(1~99)를 설정하며, 항상 일반(SCHED_NORMAL) 태스크보다 먼저 스케줄링된다.
 
 ### CFS (Completely Fair Scheduler)
+
+```mermaid
+flowchart LR
+  A[Runnable tasks] --> B["RB-Tree by vruntime"]
+  B --> C[Pick leftmost node]
+  C --> D[Run on CPU]
+  D --> E[Update vruntime]
+  E --> B
+```
+
 
 Linux의 CFS는 가상 실행 시간(vruntime)을 기준으로 "가장 덜 실행된" 태스크를 선택해 공정성을 추구한다. Red-Black Tree로 런큐를 관리하여 삽입/삭제/선택의 균형을 유지한다. 단순한 고정 우선순위보다 일반 목적 워크로드에서 일관된 체감 성능을 제공한다.
 
@@ -202,6 +381,15 @@ Linux 6.6부터는 EEVDF(Earliest Eligible Virtual Deadline First)가 CFS를 대
 ## 4. Memory Management
 
 ### Paging
+
+```mermaid
+flowchart LR
+  VA[Virtual Address]
+  VA --> SPLIT["VPN, Offset"]
+  SPLIT --> PT[Page Table]
+  PT --> PFN[Physical Frame Number]
+  PFN --> PA["Physical Address = PFN + Offset"]
+```
 
 페이징은 가상 주소 공간과 물리 메모리를 고정 크기 블록(페이지/프레임)으로 분할해 매핑한다. 외부 단편화를 줄이고, 가상 메모리 관리가 단순해진다. 대신 페이지 테이블 메모리 오버헤드와 주소 변환 비용이 발생한다.
 
@@ -223,6 +411,18 @@ x86-64에서는 4단계 페이지 테이블(PML4 → PDPT → PD → PT)을 사�
 
 ### Segmentation
 
+```mermaid
+flowchart LR
+  LA["Logical Address = Segment:Offset"] --> ST[Segment Table]
+  ST --> CHK{offset < limit?}
+  CHK -->|No| EX[Segmentation Fault]
+  CHK -->|Yes| BASE["Physical = base + offset"]
+  BASE --> MEM[Physical Memory Access]
+```
+
+
+
+
 세그멘테이션은 코드/데이터/스택처럼 논리 단위로 메모리를 나눠 관리한다. 개발자 관점에서 의미 있는 경계를 반영하기 좋지만, 가변 크기 할당으로 외부 단편화가 생기기 쉽다. 현대 시스템은 주로 페이징 기반이며, 세그멘테이션 개념은 보호/권한 모델 설명에 자주 등장한다.
 
 세그멘테이션에서 가상 주소는 `(세그먼트 번호, 오프셋)` 쌍으로 구성된다. Segment Table에서 세그먼트 번호로 base 주소와 limit(크기)를 조회한다. `오프셋 < limit` 검증 후 `base + 오프셋`으로 물리 주소를 계산한다. limit 초과 접근은 Segmentation Fault를 발생시킨다.
@@ -230,6 +430,19 @@ x86-64에서는 4단계 페이지 테이블(PML4 → PDPT → PD → PT)을 사�
 x86의 역사적 세그멘테이션: 초기 x86(리얼 모드)에서는 16비트 세그먼트 레지스터(CS, DS, SS, ES)로 메모리를 20비트까지 확장했다. 보호 모드에서는 GDT/LDT(Global/Local Descriptor Table)가 세그먼트별 권한(읽기/쓰기/실행), 특권 레벨(DPL), base/limit을 관리한다. x86-64에서는 세그멘테이션이 사실상 비활성화(flat model)되어 페이징만으로 메모리를 관리하지만, FS/GS 세그먼트는 TLS(Thread Local Storage) 등 특수 목적으로 여전히 사용된다.
 
 ### Virtual Memory
+
+```mermaid
+flowchart LR
+  A[Virtual Address] --> B{TLB Lookup}
+  B -->|Hit| E[Physical Address]
+  B -->|Miss| C[Page Table Walk]
+  C -->|Present| E
+  C -->|Not Present| D[Page Fault Handler]
+  D --> F["Load page from disk/swap"]
+  F --> E
+  E --> G[RAM Access]
+```
+
 
 가상 메모리는 실제 RAM보다 큰 주소 공간을 프로세스에 제공한다. 사용 빈도가 낮은 페이지는 디스크(스왑)로 내리고 필요한 시점에 다시 로드한다(demand paging). 이로써 메모리 효율과 프로세스 격리가 향상되지만, 페이지 폴트가 과도하면 심각한 성능 저하(Thrashing)가 발생한다.
 
@@ -247,6 +460,21 @@ Thrashing 대응:
 - **Linux OOM Killer**: 메모리가 극단적으로 부족하면 `oom_score`가 가장 높은 프로세스를 강제 종료
 
 ### Page Replacement
+
+```mermaid
+flowchart TD
+  A[Page fault] --> B{Free frame exists?}
+  B -->|Yes| C[Allocate frame]
+  B -->|No| D[Select victim page]
+  D --> E{Dirty?}
+  E -->|Yes| F[Write back to disk]
+  E -->|No| G["Skip write-back"]
+  F --> H[Load requested page]
+  G --> H
+  C --> H
+  H --> I["Update page table + TLB"]
+```
+
 
 메모리가 가득 찼을 때 어떤 페이지를 내보낼지 결정하는 정책이다.
 
@@ -268,6 +496,19 @@ Belady's Anomaly: FIFO에서는 프레임 수를 늘려도 오히려 페이지 �
 
 ### TLB
 
+```mermaid
+flowchart TD
+  A[CPU issues virtual address] --> B{TLB hit?}
+  B -->|Yes| C[Get PFN from TLB]
+  B -->|No| D[Page table walk]
+  D --> E[Update TLB entry]
+  C --> F[Access physical memory]
+  E --> F
+```
+
+
+
+
 TLB(Translation Lookaside Buffer)는 페이지 테이블 변환 결과를 캐시하는 고속 하드웨어다. TLB hit 시 주소 변환이 매우 빠르고, miss 시 페이지 테이블 워크가 발생해 지연이 커진다. 성능 분석에서 TLB miss rate은 매우 중요한 지표다.
 
 TLB 구조와 동작:
@@ -288,6 +529,21 @@ TLB 친화적 설계: Huge Page 사용(하나의 엔트리가 2MB~1GB 커버), �
 
 ### Race Condition
 
+```mermaid
+sequenceDiagram
+  participant T1 as Thread 1
+  participant X as Shared Counter
+  participant T2 as Thread 2
+  T1->>X: read x=0
+  T2->>X: read x=0
+  T1->>X: write x=1
+  T2->>X: write x=1
+  Note over X: Expected 2, actual 1
+```
+
+
+
+
 Race Condition은 여러 실행 흐름이 공유 상태를 동시 접근할 때, 실행 순서에 따라 결과가 달라지는 문제다. 테스트에서 재현이 어렵고 운영 환경에서 간헐적으로 나타나 디버깅 난도가 높다. 원자성 보장, 불변 구조 사용, 임계구역 최소화가 핵심 대응 전략이다.
 
 Race Condition의 구체적 유형:
@@ -304,6 +560,17 @@ atomic_fetch_add(&counter, 1);  // 하드웨어 CAS 기반 원자적 증가
 Memory Ordering 문제: 컴파일러 최적화(명령어 재배치)와 CPU의 out-of-order 실행으로, 기대하는 실행 순서와 실제 메모리 접근 순서가 다를 수 있다. Memory Barrier(fence)와 `std::atomic`(C++), `volatile`(Java) 같은 메커니즘으로 순서를 강제해야 한다.
 
 ### Mutex
+
+```mermaid
+stateDiagram-v2
+  [*] --> Unlocked
+  Unlocked --> Locked: lock()
+  Locked --> Locked: lock() from others (blocked)
+  Locked --> Unlocked: unlock()
+```
+
+
+
 
 Mutex는 상호 배제를 제공해 한 시점에 하나의 스레드만 임계구역에 들어가게 한다. 사용이 직관적이지만 락 범위가 넓으면 병렬성이 감소한다. 락 획득/해제 순서 규칙을 정하지 않으면 데드락 위험이 커진다.
 
@@ -327,6 +594,19 @@ if (pthread_mutex_trylock(&lock) == 0) {
 Recursive Mutex는 같은 스레드가 동일 뮤텍스를 여러 번 획득 가능(내부 카운터 관리). 재귀 함수에서 데드락을 방지하지만, 설계 결함을 숨길 수 있어 가급적 사용을 피하는 것이 권장된다.
 
 ### Semaphore
+
+```mermaid
+flowchart TD
+  A["sem_wait()"] --> B{count > 0?}
+  B -->|Yes| C["decrement count and enter"]
+  B -->|No| D[block in wait queue]
+  E["sem_post()"] --> F["increment count"]
+  F --> G{waiters exist?}
+  G -->|Yes| H[wake one waiter]
+```
+
+
+
 
 세마포어는 정수 카운터 기반 동기화 도구로, 동시에 접근 가능한 자원 수를 제어할 때 유용하다. binary semaphore는 mutex와 유사하게 쓸 수 있고, counting semaphore는 풀(pool) 자원 제한에 적합하다.
 
@@ -354,6 +634,20 @@ void release_connection() {
 ```
 
 ### Monitor
+
+```mermaid
+flowchart TD
+  ENTER["thread enters monitor"] --> LOCK["implicit mutual-exclusion lock"]
+  LOCK --> CS["execute critical section"]
+  CS --> WAIT{"condition met?"}
+  WAIT -->|No| CVWAIT["wait and release lock"]
+  CVWAIT --> WAKE["notify waiting thread"]
+  WAKE --> LOCK
+  WAIT -->|Yes| EXIT["leave monitor"]
+```
+
+
+
 
 모니터는 락과 조건 변수를 추상화한 고수준 동기화 모델이다. 공유 상태 접근을 특정 모니터 내부 메서드로 제한해 안전성을 높인다. Java의 `synchronized` + `wait/notify` 조합이 전형적인 모니터 패턴이다.
 
@@ -384,6 +678,15 @@ class BoundedBuffer<T> {
 
 ### Deadlock
 
+```mermaid
+graph LR
+  P1((P1)) -->|holds| R1["R1 lock"]
+  R1 -->|requested by| P2((P2))
+  P2 -->|holds| R2["R2 lock"]
+  R2 -->|requested by| P1
+```
+
+
 데드락은 서로가 상대 자원을 기다리며 영원히 진행하지 못하는 상태다. 예방(조건 제거), 회피(안전 상태 유지), 탐지/복구 전략으로 대응한다.
 
 #### Coffman Condition
@@ -407,6 +710,20 @@ class BoundedBuffer<T> {
 
 ### Inode
 
+```mermaid
+flowchart LR
+  PATH["/home/user/a.txt"] --> DIR["Directory Entry<br/>name → inode#"]
+  DIR --> INO["inode #12345"]
+  INO --> META["metadata<br/>mode / uid / size / timestamps"]
+  INO --> PTR["data block pointers"]
+  PTR --> D1[(Block 1)]
+  PTR --> D2[(Block 2)]
+  PTR --> D3[(Block N)]
+```
+
+
+
+
 inode는 파일의 메타데이터(권한, 소유자, 크기, 타임스탬프, 데이터 블록 포인터 등)를 저장하는 구조다. 파일명은 디렉터리 엔트리에 있고, inode는 실제 데이터 위치를 가리킨다. 하드링크는 같은 inode를 여러 이름으로 참조하는 메커니즘이다.
 
 inode의 상세 구조 (ext4 기준):
@@ -426,6 +743,21 @@ ext4에서는 전통적 블록 포인터 대신 **extent** 구조를 사용한�
 
 ### Directory Structure
 
+```mermaid
+graph TD
+  ROOT["/"]
+  ROOT --> ETC["/etc"]
+  ROOT --> HOME["/home"]
+  HOME --> U1["/home/alice"]
+  U1 --> DOC["~/docs"]
+  U1 --> BIN["~/bin"]
+  ROOT --> VAR["/var"]
+  VAR --> LOG["/var/log"]
+```
+
+
+
+
 디렉터리는 "이름 -> inode 번호" 매핑 테이블로 볼 수 있다. 트리 구조를 통해 계층적 네임스페이스를 제공하고 경로 탐색 성능/무결성을 위해 다양한 인덱싱 기법이 사용된다.
 
 디렉터리 구현 방식:
@@ -439,6 +771,22 @@ VFS(Virtual File System): Linux는 VFS 추상 계층을 두어 다양한 파일 
 
 ### Journaling
 
+```mermaid
+sequenceDiagram
+  participant App
+  participant FS as Filesystem
+  participant J as Journal
+  participant D as Data Area
+  App->>FS: write metadata + data
+  FS->>J: append intent/transaction
+  FS->>J: commit record
+  FS->>D: apply changes (checkpoint)
+  Note over FS,J: Crash before checkpoint -> replay journal
+```
+
+
+
+
 저널링 파일시스템은 메타데이터(또는 데이터까지) 변경 로그를 먼저 기록한 후 실제 반영한다. 전원 장애 등 비정상 종료 후 복구 시간을 크게 줄이고 일관성을 개선한다. 다만 로그 기록 오버헤드가 존재한다.
 
 저널링 모드:
@@ -449,6 +797,19 @@ VFS(Virtual File System): Linux는 VFS 추상 계층을 두어 다양한 파일 
 저널 복구: 완료 표시(commit record)가 있는 트랜잭션은 redo(재반영), 없는 트랜잭션은 무시(자연 undo). 저널은 순환 버퍼로 운용되며 가득 차면 체크포인팅으로 공간을 확보한다.
 
 ### ext4 / NTFS 구조
+
+```mermaid
+flowchart LR
+  EXT4[ext4] --> E1[Block Groups]
+  EXT4 --> E2["inode table + journal"]
+  EXT4 --> E3["extent-based allocation"]
+  NTFS[NTFS] --> N1["MFT (Master File Table)"]
+  NTFS --> N2["USN Journal + LogFile"]
+  NTFS --> N3["attributes/streams"]
+```
+
+
+
 
 ext4는 inode 기반 + 저널링 + extent를 활용해 Linux 환경에서 범용적으로 사용된다. NTFS는 MFT(Master File Table) 중심 구조를 가지며 Windows 권한 모델, 저널링, 대용량 파일 처리에 강점을 가진다. 두 파일시스템 모두 메타데이터 중심 설계를 통해 장애 복구와 성능 균형을 맞춘다.
 
@@ -468,6 +829,22 @@ ext4는 inode 기반 + 저널링 + extent를 활용해 Linux 환경에서 범용
 ## 7. I/O System
 
 ### Interrupt
+
+```mermaid
+sequenceDiagram
+  participant Dev as Device
+  participant ICU as APIC/Interrupt Ctrl
+  participant CPU as CPU
+  participant ISR as ISR (Top Half)
+  participant BH as Bottom Half
+  Dev->>ICU: interrupt signal
+  ICU->>CPU: vector delivery
+  CPU->>ISR: enter handler
+  ISR->>BH: defer heavy work
+  ISR-->>CPU: iret
+  BH->>CPU: process queued work
+```
+
 
 인터럽트는 하드웨어/소프트웨어 이벤트가 CPU의 현재 흐름을 잠시 중단하고 인터럽트 핸들러를 실행하게 하는 메커니즘이다. 폴링보다 효율적이며, 네트워크 패킷 도착/디스크 I/O 완료 통지에 핵심적이다.
 
@@ -493,6 +870,21 @@ ext4는 inode 기반 + 저널링 + extent를 활용해 Linux 환경에서 범용
 
 ### DMA
 
+```mermaid
+sequenceDiagram
+  participant CPU
+  participant DMA
+  participant DEV as Device
+  participant RAM
+  CPU->>DMA: setup src/dst/len
+  DMA->>DEV: start transfer
+  DEV->>RAM: direct data transfer
+  DMA-->>CPU: interrupt on completion
+```
+
+
+
+
 DMA(Direct Memory Access)는 CPU 개입을 최소화하고 장치가 메모리에 직접 데이터를 전송하도록 한다. 대량 I/O에서 CPU 부하를 줄이고 처리량을 높이는 데 효과적이다.
 
 DMA 전송 과정:
@@ -509,6 +901,21 @@ DMA 모드:
 **IOMMU**: DMA의 물리 주소 직접 사용은 보안 위험. IOMMU는 장치 DMA 주소를 가상 주소로 변환해 허가된 영역만 접근하도록 제한한다. 가상화 환경의 장치 패스스루에도 필수적이다.
 
 ### Buffer Cache
+
+```mermaid
+flowchart TD
+  R["read(fd)"] --> HIT{page cache hit?}
+  HIT -->|Yes| RET[return cached data]
+  HIT -->|No| IO[read from disk]
+  IO --> FILL[fill page cache]
+  FILL --> RET
+  W["write(fd)"] --> DIRTY[mark dirty page]
+  DIRTY --> WB[background writeback]
+  WB --> DISK[(disk)]
+```
+
+
+
 
 버퍼 캐시는 디스크 블록을 메모리에 캐싱해 반복 I/O 지연을 줄인다. 파일 읽기 성능 체감에 큰 영향을 주며, write-back 정책에서는 지연 쓰기를 통해 성능을 높이되 내구성 보장을 위해 fsync 전략이 중요하다.
 
@@ -530,6 +937,18 @@ Read-Ahead: 커널이 순차 읽기 패턴을 감지하면 자동으로 후속 �
 ## 8. Synchronization
 
 ### Spinlock
+
+```mermaid
+stateDiagram-v2
+  [*] --> Unlocked
+  Unlocked --> Locked: atomic CAS success
+  Locked --> Spinning: CAS fail (busy-wait)
+  Spinning --> Locked: lock released + CAS success
+  Locked --> Unlocked: unlock()
+```
+
+
+
 
 스핀락은 락이 풀릴 때까지 스레드가 잠들지 않고 busy-wait하는 락이다. 대기 시간이 매우 짧고 컨텍스트 스위칭이 더 비쌀 때 유리하다. 커널의 짧은 임계구역에서 자주 쓰인다.
 
@@ -556,6 +975,20 @@ void spin_unlock(spinlock_t *lock) {
 
 ### RW Lock
 
+```mermaid
+flowchart TD
+  IDLE[No holder] --> R1[Reader acquires]
+  R1 --> Rn[Multiple readers allowed]
+  IDLE --> W[Writer acquires exclusively]
+  Rn --> WAITW[Writer waits]
+  WAITW --> W
+  W --> IDLE
+  Rn --> IDLE
+```
+
+
+
+
 RW Lock(Read-Write Lock)은 읽기 다중 허용, 쓰기 단독 허용 정책을 제공한다. 읽기 비중이 압도적으로 높은 워크로드에서 처리량 개선 효과가 크다. 하지만 쓰기 기아를 막기 위한 정책(writer preference 등)을 반드시 고려해야 한다.
 
 RW Lock 정책 변형:
@@ -568,6 +1001,22 @@ RW Lock 정책 변형:
 **RCU (Read-Copy-Update)**: Linux 커널의 핵심 동기화. 읽기 경로에서 락/원자적 연산을 전혀 사용하지 않아 극도로 빠르다. 수정 시 복사본을 만들어 수정 후 포인터를 원자적으로 교체하고, 모든 reader가 이전 버전 접근을 완료한 후(grace period) 기존 데이터를 해제한다. 읽기 99%+ 워크로드에서 최상의 확장성을 제공한다.
 
 ### Condition Variable
+
+```mermaid
+sequenceDiagram
+  participant C as Consumer
+  participant M as Mutex+CV
+  participant P as Producer
+  C->>M: lock + wait(not_empty)
+  M-->>C: sleep (mutex released)
+  P->>M: lock, push item
+  P->>M: notify_one()
+  M-->>C: wake + re-lock mutex
+  C->>M: pop item and unlock
+```
+
+
+
 
 조건 변수는 특정 조건이 만족될 때까지 스레드를 효율적으로 대기시키는 동기화 도구다. 보통 mutex와 함께 사용하며, `wait` 시 락을 원자적으로 해제하고 신호 수신 후 다시 획득한다. 바쁜 대기 없이 생산자-소비자 패턴을 구현할 때 필수적이다.
 
@@ -607,6 +1056,18 @@ int consumer() {
 
 ### Hypervisor & VM
 
+```mermaid
+flowchart TD
+  HW[Physical Hardware]
+  HW --> HV[Hypervisor]
+  HV --> VM1["VM 1: Guest OS + Apps"]
+  HV --> VM2["VM 2: Guest OS + Apps"]
+  HV --> VM3["VM 3: Guest OS + Apps"]
+```
+
+
+
+
 가상화는 물리 하드웨어 위에 여러 독립적인 실행 환경을 만드는 기술이다. 서버 통합, 격리, 이식성을 위해 사용한다.
 
 하이퍼바이저 유형:
@@ -629,6 +1090,20 @@ I/O 가상화:
 - **SR-IOV**: 물리 NIC가 여러 가상 기능(VF)을 하드웨어 수준에서 제공. 하이퍼바이저를 우회해 네이티브에 가까운 I/O 성능
 
 ### Linux Namespace
+
+```mermaid
+flowchart LR
+  P[Container Process]
+  P --> PID[PID Namespace]
+  P --> NET[NET Namespace]
+  P --> MNT[MNT Namespace]
+  P --> UTS[UTS Namespace]
+  P --> IPC[IPC Namespace]
+  P --> USER[USER Namespace]
+```
+
+
+
 
 네임스페이스는 프로세스가 보는 시스템 리소스의 **범위(view)를 격리**하는 커널 기능이다. 컨테이너 기술의 핵심 빌딩 블록이다.
 
@@ -659,6 +1134,20 @@ PID 1 (init)         PID 1 (컨테이너의 init 프로세스)
 
 ### Linux Cgroup (Control Groups)
 
+```mermaid
+flowchart TD
+  ROOT["/sys/fs/cgroup"]
+  ROOT --> SVC["service.slice"]
+  SVC --> CTR["container.scope"]
+  CTR --> CPU["cpu.max"]
+  CTR --> MEM["memory.max"]
+  CTR --> IO["io.max"]
+  CTR --> PIDS["pids.max"]
+```
+
+
+
+
 cgroup은 프로세스 그룹의 **리소스 사용량을 제한/모니터링/격리**하는 커널 기능이다. 네임스페이스가 "보이는 범위"를 격리한다면, cgroup은 "사용할 수 있는 양"을 제한한다.
 
 cgroup v2 (통합 계층, Linux 4.5+):
@@ -681,6 +1170,19 @@ OOM Killer와 메모리 cgroup:
 - `memory.high`: 조절 임계값. 초과 시 프로세스가 직접 메모리 회수를 수행하게 해 속도를 늦춤
 
 ### Container Runtime (Docker/OCI)
+
+```mermaid
+flowchart TD
+  CLI[docker run] --> CD[containerd]
+  CD --> SHIM["containerd-shim"]
+  SHIM --> RUNC[runc]
+  RUNC --> NS[namespaces setup]
+  RUNC --> CG[cgroups setup]
+  RUNC --> PROC[start container process]
+```
+
+
+
 
 컨테이너는 네임스페이스 + cgroup + 루트 파일시스템 격리의 조합이다. VM과 달리 커널을 공유해 시작 시간이 빠르고 오버헤드가 작다.
 
@@ -729,6 +1231,18 @@ VM vs Container:
 ## 10. Boot Process
 
 ### UEFI & Boot Sequence
+
+```mermaid
+flowchart TD
+  A[Power On] --> B[UEFI POST]
+  B --> C["Bootloader (GRUB)"]
+  C --> D["Kernel + initramfs"]
+  D --> E[Kernel Init]
+  E --> F["switch_root / mount rootfs"]
+  F --> G[PID 1 systemd]
+  G --> H["Services + Login"]
+```
+
 
 시스템 전원 투입부터 사용자 로그인까지의 부팅 과정은 면접에서 시스템 이해도를 평가하는 중요 주제다.
 
