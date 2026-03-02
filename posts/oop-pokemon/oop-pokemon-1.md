@@ -5,6 +5,8 @@ category: "OOP"
 tags: ["pokemon-oop"]
 ---
 
+![image](/images/oop-pokemon/oop-pokemon.png)
+
 갑자기 알고리즘에 아래 영상이 나왔다.
 
 https://www.youtube.com/watch?v=CyRtTwKeulE&list=PL-Q0gZw34HDQsmf28du1qmp2vGT6PX4Ob&index=18
