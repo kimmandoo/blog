@@ -431,13 +431,24 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-  F[FROM and JOIN] --> W[WHERE] --> G[GROUP BY] --> H[HAVING] --> S[SELECT] --> D[DISTINCT] --> O[ORDER BY] --> L["LIMIT/OFFSET"]
+  F[FROM] --> J["JOIN and ON"]
+  J --> W[WHERE]
+  W --> G[GROUP BY]
+  G --> H[HAVING]
+  H --> WIN[WINDOW]
+  WIN --> S[SELECT]
+  S --> D[DISTINCT]
+  D --> U["UNION/INTERSECT/EXCEPT"]
+  U --> O[ORDER BY]
+  O --> L["LIMIT/OFFSET"]
 ```
 
 
 논리적 실행 순서:
 ```text
-FROM (+ JOIN)    ← 테이블 결정, 조인 수행
+FROM             ← 기본 테이블(들) 확정
+  ↓
+JOIN + ON        ← 조인 결합과 조인 조건 평가
   ↓
 WHERE            ← 행 필터링 (집계 전)
   ↓
@@ -445,9 +456,13 @@ GROUP BY         ← 그룹화
   ↓
 HAVING           ← 그룹 필터링 (집계 후)
   ↓
+WINDOW           ← 윈도우 함수 평가 (OVER)
+  ↓
 SELECT           ← 컬럼 선택, 표현식 계산
   ↓
 DISTINCT         ← 중복 제거
+  ↓
+UNION/INTERSECT/EXCEPT ← 집합 연산
   ↓
 ORDER BY         ← 정렬 (SELECT 별칭 사용 가능)
   ↓
@@ -458,6 +473,27 @@ LIMIT/OFFSET     ← 결과 행 수 제한
 - WHERE 절에서 집계 함수를 사용할 수 없다 (GROUP BY 전이므로). 집계 조건은 HAVING에 작성
 - WHERE에서 SELECT의 별칭을 사용할 수 없다 (SELECT 전이므로). 단, MySQL은 예외적으로 일부 허용
 - ORDER BY에서는 SELECT의 별칭을 사용할 수 있다 (SELECT 후이므로)
+
+실무에서 자주 헷갈리는 포인트:
+- **LEFT JOIN + WHERE 필터 함정**: RIGHT 테이블 컬럼 조건을 WHERE에 두면 NULL 행이 제거되어 INNER JOIN처럼 동작할 수 있다
+- **WINDOW 함수 위치**: 윈도우 함수(`ROW_NUMBER`, `SUM() OVER`)는 GROUP BY/HAVING 이후, ORDER BY 이전 단계에서 평가된다
+- **논리 순서 vs 물리 계획**: 문법상 순서와 달리 옵티마이저는 조인 순서/접근 방법을 재배치한다. 결과는 같아야 하지만 실행 비용은 크게 달라진다
+
+```sql
+-- 의도: 주문이 없어도 사용자를 유지하고 싶다
+-- 잘못된 예: WHERE에서 필터하면 LEFT JOIN 의미가 깨질 수 있음
+SELECT u.id, o.status
+FROM users u
+LEFT JOIN orders o ON o.user_id = u.id
+WHERE o.status = 'PAID';
+
+-- 권장: 조인 조건으로 이동해 OUTER 특성 유지
+SELECT u.id, o.status
+FROM users u
+LEFT JOIN orders o
+  ON o.user_id = u.id
+ AND o.status = 'PAID';
+```
 
 ### Join 종류 (Nested Loop / Hash Join / Merge Join)
 
@@ -599,6 +635,9 @@ flowchart TD
   Q --> H[Hinted plan path]
   H --> IDX["Force/Prefer index"]
   IDX --> EXEC[Execute with hinted access path]
+  EXEC --> CHECK["EXPLAIN ANALYZE validate"]
+  CHECK --> KEEP["Keep with review date"]
+  CHECK --> DROP["Rollback hint"]
 ```
 
 
@@ -622,6 +661,16 @@ SELECT * FROM orders WHERE user_id = 123;
 - 옵티마이저가 잡지 못하는 데이터 분포 특성이 있을 때
 
 장기 해법: `ANALYZE` 명령으로 통계 갱신, 인덱스 구조 재설계, 쿼리 패턴 변경이 근본적이다. 힌트는 "응급 처치"로만 사용해야 한다.
+
+힌트가 오히려 독이 되는 경우:
+- **데이터 분포 변화**: 월말/이벤트 트래픽처럼 분포가 바뀌면 예전 힌트가 최악 경로가 될 수 있다
+- **DB 버전 업그레이드**: 옵티마이저가 개선되었는데 힌트가 이를 막아 성능이 역행할 수 있다
+- **쿼리 파라미터 편향**: 특정 값에서만 빠른 힌트를 전체 요청에 강제하면 평균 지연이 증가한다
+
+운영 규칙(권장):
+1. 힌트 적용 전/후를 `EXPLAIN ANALYZE`와 p95/p99 지연으로 비교해 근거를 남긴다
+2. 힌트 SQL에 티켓 번호와 적용 이유를 주석으로 기록한다
+3. 통계 재수집/인덱스 재설계가 완료되면 힌트를 제거하는 만료 조건을 함께 정의한다
 
 ---
 
@@ -920,6 +969,17 @@ EXPLAIN에서 "Using index" (MySQL) 또는 "Index Only Scan" (PostgreSQL)이 표
 ```sql
 CREATE INDEX idx_user_age ON users(age) INCLUDE (name, email);
 ```
+
+PostgreSQL 주의점: `Index Only Scan`이 보이더라도 모든 경우에 heap 접근이 0은 아니다. 가시성(visibility) 확인을 위해 Visibility Map의 all-visible 비트가 꺼진 페이지는 heap 확인이 필요하다. 즉, 갱신이 잦은 테이블에서는 index-only 이점이 줄어들 수 있다.
+
+설계 체크리스트:
+- WHERE/JOIN/ORDER BY에 쓰는 컬럼을 먼저 키 컬럼으로 배치한다
+- SELECT에만 필요한 컬럼은 가능하면 `INCLUDE`로 넣어 키 팽창을 줄인다
+- 커버링 인덱스 추가 전, 쓰기 비용(INSERT/UPDATE/DELETE) 증가와 인덱스 크기 증가를 반드시 같이 평가한다
+
+실무 트레이드오프:
+- 장점: 랜덤 I/O 감소, 지연 단축, CPU 캐시 효율 개선
+- 단점: 인덱스 저장공간 증가, DML write amplification, 버퍼 캐시 압박
 
 ### Composite Index
 
@@ -1811,6 +1871,17 @@ WITH RECURSIVE friends AS (
 )
 SELECT DISTINCT u.name FROM friends f JOIN users u ON f.friend_id = u.id;
 ```
+
+그래프 DB가 불리한 경우:
+- **대규모 집계/OLAP 중심**: 전체 스캔 + 대량 집계는 컬럼형/관계형 엔진이 더 유리한 경우가 많다
+- **관계 깊이보다 정형 조인이 많은 업무**: 다중 조건 조인, 복잡한 정렬/집계는 RDBMS가 더 단순하고 안정적이다
+- **슈퍼노드(hub) 편향**: 팔로워 수가 매우 큰 노드가 있으면 트래버설 폭이 급증해 지연이 튄다
+- **분산 그래프 샤딩**: 서로 다른 파티션을 자주 넘는 탐색은 네트워크 hop 비용이 커진다
+
+선택 기준:
+1. 핵심 질의가 "몇 단계 이웃 탐색"인지, 아니면 "대량 집계/리포팅"인지 먼저 분류한다
+2. 온라인 트래버설은 Graph DB, 분석 집계는 별도 OLAP 스토어로 분리하는 다중 저장소 전략을 고려한다
+3. 깊이 제한, 타임아웃, 슈퍼노드 완화(샘플링/가중치 컷오프) 같은 가드레일을 운영 정책으로 둔다
 
 ### When to use NoSQL
 
