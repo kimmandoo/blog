@@ -12,6 +12,7 @@ import rehypeHighlight from 'rehype-highlight';
 import rehypeSlug from 'rehype-slug';
 import rehypeKatex from 'rehype-katex';
 import { calculateReadingTime } from './readingTime';
+import { normalizeFrontmatterDate, parseDateValue } from './date';
 import GithubSlugger from 'github-slugger';
 
 const postsDirectory = path.join(process.cwd(), 'posts');
@@ -81,7 +82,7 @@ export function getSortedPostsData(): PostData[] {
       return {
         slug,
         title: matterResult.data.title || slug,
-        date: matterResult.data.date || new Date().toISOString(),
+        date: normalizeFrontmatterDate(matterResult.data.date),
         excerpt: matterResult.data.excerpt || '',
         category: matterResult.data.category || '',
         tags: matterResult.data.tags || [],
@@ -96,8 +97,8 @@ export function getSortedPostsData(): PostData[] {
   // Sort posts by date (newest first)
   // Convert dates to timestamps to handle both Date objects and string dates consistently
   return allPostsData.sort((a, b) => {
-    const dateA = new Date(a.date).getTime();
-    const dateB = new Date(b.date).getTime();
+    const dateA = parseDateValue(a.date)?.getTime() ?? 0;
+    const dateB = parseDateValue(b.date)?.getTime() ?? 0;
     return dateB - dateA;
   });
 }
@@ -165,7 +166,7 @@ export async function getPostData(slug: string): Promise<PostData> {
     slug,
     content: contentHtml,
     title: matterResult.data.title || slug,
-    date: matterResult.data.date || new Date().toISOString(),
+    date: normalizeFrontmatterDate(matterResult.data.date),
     excerpt: matterResult.data.excerpt || '',
     category: matterResult.data.category || '',
     tags: matterResult.data.tags || [],
@@ -332,9 +333,9 @@ export function getAdjacentPosts(currentSlug: string): { previous: PostData | nu
   }
   
   return {
-    // Previous post (newer, lower index)
-    previous: currentIndex > 0 ? posts[currentIndex - 1] : null,
-    // Next post (older, higher index)
-    next: currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null,
+    // With newest-first sorting, "previous" should point to the older post
+    previous: currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null,
+    // and "next" should point to the newer post
+    next: currentIndex > 0 ? posts[currentIndex - 1] : null,
   };
 }

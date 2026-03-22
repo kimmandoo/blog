@@ -2,11 +2,11 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { format } from 'date-fns';
 import { CategoryBadge } from '@/components/CategoryBadge';
 import { TagBadge } from '@/components/TagBadge';
 import { SearchBar } from '@/components/SearchBar';
 import { themeConfig } from '@/config/theme.config';
+import { formatDisplayDate, toMetadataDate } from '@/lib/date';
 import { PostData } from '@/lib/posts';
 
 interface PostListProps {
@@ -169,8 +169,11 @@ export function PostList({
                   <div className="flex items-start gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                        <time className={`text-xs font-medium ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
-                          {format(new Date(post.date), 'yyyy.MM.dd')}
+                        <time
+                          dateTime={toMetadataDate(post.date) ?? post.date}
+                          className={`text-xs font-medium ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}
+                        >
+                          {formatDisplayDate(post.date)}
                         </time>
                         {post.readingTime && (
                           <span className={`text-xs ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>

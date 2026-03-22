@@ -12,6 +12,7 @@ import rehypeHighlight from 'rehype-highlight';
 import rehypeSlug from 'rehype-slug';
 import rehypeKatex from 'rehype-katex';
 import { calculateReadingTime } from './readingTime';
+import { normalizeFrontmatterDate, parseDateValue } from './date';
 import GithubSlugger from 'github-slugger';
 
 const psDirectory = path.join(process.cwd(), 'posts', 'ps');
@@ -70,7 +71,7 @@ export function getSortedPSData(): PSData[] {
       return {
         slug,
         title: matterResult.data.title || slug,
-        date: matterResult.data.date || new Date().toISOString(),
+        date: normalizeFrontmatterDate(matterResult.data.date),
         excerpt: matterResult.data.excerpt || '',
         category: matterResult.data.category || '',
         tags: matterResult.data.tags || [],
@@ -84,8 +85,8 @@ export function getSortedPSData(): PSData[] {
   // Sort posts by date (newest first)
   // Convert dates to timestamps to handle both Date objects and string dates consistently
   return allData.sort((a, b) => {
-    const dateA = new Date(a.date).getTime();
-    const dateB = new Date(b.date).getTime();
+    const dateA = parseDateValue(a.date)?.getTime() ?? 0;
+    const dateB = parseDateValue(b.date)?.getTime() ?? 0;
     return dateB - dateA;
   });
 }
@@ -139,7 +140,7 @@ export async function getPSData(slug: string): Promise<PSData> {
     slug,
     content: contentHtml,
     title: matterResult.data.title || slug,
-    date: matterResult.data.date || new Date().toISOString(),
+    date: normalizeFrontmatterDate(matterResult.data.date),
     excerpt: matterResult.data.excerpt || '',
     category: matterResult.data.category || '',
     tags: matterResult.data.tags || [],
@@ -205,7 +206,7 @@ export function getAdjacentPS(currentSlug: string): { previous: PSData | null; n
   }
   
   return {
-    previous: currentIndex > 0 ? items[currentIndex - 1] : null,
-    next: currentIndex < items.length - 1 ? items[currentIndex + 1] : null,
+    previous: currentIndex < items.length - 1 ? items[currentIndex + 1] : null,
+    next: currentIndex > 0 ? items[currentIndex - 1] : null,
   };
 }

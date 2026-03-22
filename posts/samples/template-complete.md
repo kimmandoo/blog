@@ -20,8 +20,8 @@
 # - Used in meta tags for SEO and social sharing
 title: "Complete Guide: Using All Post Features"
 
-# Required: Publication date in YYYY-MM-DD format
-# - Must be in ISO format: "YYYY-MM-DD"
+# Required: Publication date in YYYY-MM-DD or YYYY-MM-DD HH:mm format
+# - Recommended string format: "YYYY-MM-DD" or "YYYY-MM-DD HH:mm"
 # - Used for sorting posts (newest first)
 # - Displayed on post cards and post pages
 date: "2025-01-20"

@@ -14,6 +14,9 @@ export function CodeBlockEnhancer() {
       const pre = codeElement.parentElement;
       if (!pre) return;
 
+      // Mermaid blocks are handled by MermaidRenderer.
+      if (codeElement.classList.contains('language-mermaid')) return;
+
       // Skip if already wrapped
       if (pre.parentElement?.classList.contains('code-block-wrapper')) return;
 

@@ -49,7 +49,7 @@ git push
 ## 📝 마크다운 Front Matter 필드
 
 - `title`: 글 제목 (필수)
-- `date`: 작성 날짜 (필수) - 형식: "YYYY-MM-DD"
+- `date`: 작성 날짜 (필수) - 형식: `"YYYY-MM-DD"` 또는 `"YYYY-MM-DD HH:mm"`
 - `excerpt`: 홈페이지에 표시될 요약 (선택)
 
 ## 🎨 디자인 특징

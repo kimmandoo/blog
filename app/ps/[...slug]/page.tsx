@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { getPSData, getAllPSSlugs, getAdjacentPS, getSortedPSData } from '@/lib/ps';
-import { format } from 'date-fns';
 import { Comments } from '@/components/Comments';
 import { CodeBlockEnhancer } from '@/components/CodeBlock';
 import { MermaidRenderer } from '@/components/MermaidRenderer';
@@ -12,6 +11,7 @@ import { PostNavigation } from '@/components/PostNavigation';
 import { PSSidebar } from '@/components/PSSidebar';
 import { PSTopBar } from '@/components/PSTopBar';
 import { themeConfig } from '@/config/theme.config';
+import { formatDisplayDate, toMetadataDate } from '@/lib/date';
 
 export async function generateStaticParams() {
   const items = getAllPSSlugs();
@@ -28,6 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   try {
     const item = await getPSData(slugString);
     const itemUrl = `${seo.siteUrl}/ps/${slugString}`;
+    const publishedTime = toMetadataDate(item.date);
     
     // Auto-generate OG image with post metadata
     const ogParams = new URLSearchParams({
@@ -49,7 +50,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         siteName: seo.openGraph.siteName,
         title: item.title,
         description: item.excerpt || item.title,
-        publishedTime: item.date,
+        ...(publishedTime && { publishedTime }),
         authors: [site.title],
         tags: item.tags,
         images: [
@@ -107,8 +108,11 @@ export default async function PSPost({ params }: { params: Promise<{ slug: strin
             <article>
               <header className={`pb-8 mb-8 border-b border-gray-200 dark:border-gray-800`}>
                 <div className="flex flex-wrap items-center gap-3 mb-4">
-                  <time className="text-sm text-gray-500 dark:text-gray-400">
-                    {format(new Date(item.date), 'yyyy.MM.dd')}
+                  <time
+                    dateTime={toMetadataDate(item.date) ?? item.date}
+                    className="text-sm text-gray-500 dark:text-gray-400"
+                  >
+                    {formatDisplayDate(item.date)}
                   </time>
                   {item.readingTime && (
                     <span className="text-sm text-gray-500 dark:text-gray-400">

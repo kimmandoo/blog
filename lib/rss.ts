@@ -1,5 +1,6 @@
 import { PostData } from './posts';
 import { themeConfig } from '@/config/theme.config';
+import { parseDateValue } from './date';
 
 /**
  * Escapes XML special characters to prevent XML injection attacks
@@ -13,6 +14,21 @@ function escapeXml(str: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&apos;');
+}
+
+function getRssDescription(post: PostData): string {
+  return post.excerpt?.trim() || post.title;
+}
+
+function getLatestPostDate(posts: PostData[]): Date {
+  return posts.reduce((latest, post) => {
+    const parsed = parseDateValue(post.date);
+    if (!parsed) {
+      return latest;
+    }
+
+    return parsed.getTime() > latest.getTime() ? parsed : latest;
+  }, parseDateValue(posts[0]?.date) ?? new Date());
 }
 
 /**
@@ -36,7 +52,7 @@ function escapeXml(str: string): string {
  */
 export function generateRssFeed(posts: PostData[]): string {
   const { site, seo } = themeConfig;
-  const buildDate = new Date().toUTCString();
+  const buildDate = getLatestPostDate(posts).toUTCString();
   
   // Extract language code from locale (e.g., 'ko_KR' -> 'ko')
   const language = seo.openGraph.locale.split('_')[0];
@@ -45,10 +61,10 @@ export function generateRssFeed(posts: PostData[]): string {
   const rssItems = posts
     .map((post) => {
       const postUrl = `${seo.siteUrl}/posts/${post.slug}`;
-      const pubDate = new Date(post.date).toUTCString();
+      const pubDate = (parseDateValue(post.date) ?? new Date()).toUTCString();
 
       const title = escapeXml(post.title);
-      const description = escapeXml(post.excerpt || '');
+      const description = escapeXml(getRssDescription(post));
       const escapedUrl = escapeXml(postUrl);
       const categories = post.tags?.map(tag => `    <category>${escapeXml(tag)}</category>`).join('\n') || '';
 

@@ -7,126 +7,148 @@ tags: ["pokemon-oop"]
 
 ![image](/images/oop-pokemon/oop-pokemon.png)
 
-갑자기 알고리즘에 아래 영상이 나왔다.
+갑자기 유튜브 알고리즘이 아래 영상을 추천해 줬다.
 
 https://www.youtube.com/watch?v=CyRtTwKeulE&list=PL-Q0gZw34HDQsmf28du1qmp2vGT6PX4Ob&index=18
 
-OOP로 포켓몬 배틀 시스템을 설명하는 영상인데, 평소 좋아하던 게임이라 더욱 눈길이 갔고 이건 내 역량을 높이는 데도 도움이 될 것이라고 판단했다.
+OOP로 포켓몬 배틀 시스템을 설명하는 영상인데 평소 좋아하던 게임이라 더 눈길이 갔다. 그냥 재미로 보기 시작했는데 보고 나니 "이걸 글로도 정리해두면 좋겠다"는 생각이 들었다.
 
-그래서 이 영상을 기반으로 하여 글을 써보겠다. 영상길이가 1시간이라 시리즈로 글을 작성하게 될 것 같다.
+영상 길이가 제법 있어서 한 편에 다 넣기는 어렵고, 시리즈로 나눠 적어보려고 한다.
 
 ## Battles & Battlers
+
+포켓몬 배틀 시스템을 구축하기 전에 제일 먼저 정의해야될 게 있다.
+
+> "무엇이 상태를 들고 있고, 무엇이 규칙을 진행시키는가?"
+
+이걸 분리하지 않으면 금방 꼬인다. 포켓몬 하나하나가 자기 HP, 타입, 상태이상, 능력치 랭크, PP를 들고 있어야 한다는 건 바로 알 수 있다. 그런데 턴 진행, 날씨, 기술에 따른 룸 효과, 교체, 승패 판정 같은 건 포켓몬 한 마리 안에 들어가면 이상하지 않을까?
+
+그래서 이 구조에서는 `Battler`와 `Battle`을 나눠 생각한다.
 
 ```mermaid
 classDiagram
     class Battle {
         +Battler attacker
         +Battler defender
-        ...
+        +FieldState field
+        +TurnState turn
     }
 
     class Battler {
         +String name
         +List~Element~ elements
         +int hp
-        ...
+        +Status status
+        +Stats stats
     }
 
     Battle --> Battler
 ```
 
-포켓몬은 공격/수비가 번갈아 일어는 턴 제 게임이다.
+`Battler`는 개체(포켓몬)의 상태를 담는다. HP가 얼마인지, 불 타입인지, 마비에 걸렸는지, 공격 랭크가 몇 단계 올라갔는지 같은 것들이 여기에 들어간다.
 
-공격/수비가 가능한 객체들을 Battler라고 정의하고, 이 객체는 턴이 진행되고 있을 Battle에 속한다.(has-a 관계)
+반대로 `Battle`은 배틀 규칙을 수행한다. 지금 몇 턴째인지(쾌청같은 날씨기술이 여기에 영향을 받는다), 날씨가 뭔지, 현재 행동의 주체와 대상이 누구인지, 배틀이 끝났는지 같은 정보는 개체와 분리하여 모아두는 편이 낫다.
 
-여기서 한 가지 더 명확히 하고 넘어가자.
+```text
+Battler = 개별 포켓몬의 상태
+Battle  = 배틀 전체의 문맥과 진행
+```
 
-Battler는 “개체(포켓몬/트레이너)의 상태”를 들고 있는 쪽이다. HP, 타입, PP, 상태이상, 능력치 랭크처럼 개별 상태가 여기에 모인다.
+실제 배틀에서는 "이번 행동에서 누가 주체고 누가 대상이냐"가 계속 바뀐다. 공격자와 방어자가 고정 속성이 아니기 때문에 `attacker`, `defender`는 영원한 정체성이라기보다 현재 행동에서 맡는 역할에 가깝다.
 
-Battle은 “규칙을 진행시키는 오케스트레이션” 쪽이다. 턴 진행, 배틀 종료 조건 판단, 필드 상태(날씨/룰/턴 카운트 등) 같은 공유 상태가 여기에 모인다.
+예를 들어 리자몽이 `화염방사`를 쓰는 순간에는 리자몽이 공격자고 상대가 방어자다. 다음 턴 상대가 `락슬라이드`를 누르면 역할은 반대로 바뀐다. 그러니 Move나 Effect가 매번 "사용자"와 "대상"을 파라미터로 길게 받는 것보다, 현재 문맥을 들고 있는 `Battle`에서 꺼내 쓰는 편이 더 가볍고 자연스럽다.
 
-또, attacker/defender는 고정 속성이라기보다 “이번 턴(혹은 이번 액션)에서의 역할(role)”에 가깝다. 
-
-그래서 실제 구현에서는 Battle 안에 source/target 같은 현재 행동 컨텍스트(혹은 이를 가리키는 포인터)가 존재한다고 생각하면 Execute(Battle) 시그니처가 자연스럽다.
+```mermaid
+flowchart LR
+    A[Battle] --> B[현재 공격자]
+    A --> C[현재 방어자]
+    A --> D[필드 상태]
+    A --> E[턴 정보]
+```
 
 ## Move
 
+이제 Battle 안에서 플레이어가 할 수 있는 행동을 생각해보자.
+
+기술을 쓸 수도 있고, 아이템을 쓸 수도 있고, 교체를 할 수도 있고, 야생이라면 도망가기를 누를 수도 있다. 형태 다르지만, 전부 "하나의 배틀 내에서 이번 턴에 선택된 행동"이다.
+
+그래서 이 글에서는 이런 선택지를 모두 `Move`라는 공통 타입으로 묶는다.
+
 ```mermaid
 classDiagram
-
     class IMove {
         <<interface>>
         +Execute(Battle battle) void
     }
 
-    class WithPrecondition {
-        -ICondition~Battle~ condition
-        -IMove move
-    }
-
-    class WithApplicability {
-        -ICondition~Battler~ condition
-        -IMove move
-    }
-
-    class Move {
+    class SkillMove {
         +String name
         +Element element
         +IAttempt attempt
     }
 
-    %% 구현 관계
-    WithPrecondition ..|> IMove
-    WithApplicability ..|> IMove
-    Move ..|> IMove
+    class WithPrecondition {
+        +ICondition~Battle~ condition
+        +IMove move
+    }
 
-    %% 포함(구성) 관계
-    WithApplicability --> IMove
+    class WithApplicability {
+        +ICondition~Battler~ condition
+        +IMove move
+    }
+
+    IMove <|.. SkillMove
+    IMove <|.. WithPrecondition
+    IMove <|.. WithApplicability
     WithPrecondition --> IMove
+    WithApplicability --> IMove
 ```
 
-Move를 공격/수비자의 입장에서 각 턴의 행동이라고 생각하면 되겠다.
+여기서 `IMove`는 "이 배틀에서 실행된다" 정도만 약속한다. 기술도, 교체도, 아이템도 결국은 전부 Execute 한 번으로 들어온다.
 
-포켓몬이 기술을 쓸 수도 있고, 아이템을 사용할 수 도 있고, 교체를 할 수도 있고, 도망갈 수도 있다. 이 모든 행동들을 move라고 정의한다.
+```text
+기술 쓰기   = Move
+교체하기   = Move
+아이템 쓰기 = Move
+도망가기   = Move
+```
 
-그래서 이 모든 행동들이 포용될 수 있게, `IMove`에는 단지 해당 battle에서 턴을 실행하는 Execute만 존재한다.
+이렇게 묶어두면 상위 로직이 편해진다. 지금 선택된 게 기술인지 교체인지 매번 `if`로 나누지 않아도 된다. 그냥 "이번에 고른 Move를 실행한다"라고만 보면 된다.
 
-플레이어가 선택할 수 있는 모든 선택지의 super type이 `IMove`다.
+여기 다이어그램에 적힌 구현은 모든 Move를 다 보여주려는 게 아니라 "기술 계열 Move"를 대표 예시로 세워 둔 것이다. 그래서 `SkillMove`는 이름, 타입, Attempt를 들고 있지만, 교체나 아이템 같은 다른 Move는 별도의 구현체로 붙는다고 보면 된다.
 
-여기서 Execute(Battle)만 있는 게 너무 단순해 보일 수 있는데, 의도는 “Move/Attempt가 누가(source) 실행하고 누구(target)에게 적용되는지”를 별도 파라미터로 받지 않고, Battle이 들고 있는 현재 행동 컨텍스트를 통해 접근하게 하려는 것이다.
+```text
+IMove     = 모든 행동의 공통 타입
+SkillMove = 그중 기술 계열 구현체 하나
+```
 
-즉, battle 안에는 (직접 속성이든, 컨텍스트 객체든) “이번 행동의 주체/대상”이 항상 들어있다고 보면 된다.
+아무 Move나 언제든 실행되는 건 아니기 때문에 실제 배틀은 그렇게 단순하지 않다. 배틀이 이미 끝났다면 어떤 입력도 더 실행되면 안 되고, 기술을 눌렀어도 PP가 0이면 그대로 처리하면 안 된다.
 
-구현체로 Move가 붙어있는데, `IAttempt`의 역할이 이제 잘 떠오를 것이다. 위에서 미리 나열한 행동들에 대한 구체적인 수행이다.
+그래서 `Move` 주위에 조건을 감싸는 두 겹의 래퍼를 둘 수 있다.
 
-이건 Attempt 구현체에서 다시 보고, WithPrecondition, WithApplicability에 대해 마저 보고 넘어가자.
+`WithPrecondition`은 "이 행동을 지금 실행해도 되나?"를 Battle 문맥에서 묻는다. 배틀이 끝났는지, 현재 단계가 행동 입력을 받는 상태인지 같은 건 여기서 걸러진다.
 
-`ICondition<T>`으로 표현된 제네릭 타입을 갖는 조건을 갖고있다.
+`WithApplicability`는 "이 행동이 지금 이 포켓몬에게 제대로 적용되나?"를 묻는다. PP가 남았는지, 선택한 행동이 봉인되지 않았는지 같은 규칙이 여기에 해당한다. 그래서 `WithApplicability`는 Battle 전체보다, 현재 행동 주체 Battler에게 붙는 조건으로 보는 편이 더 자연스럽다.
 
-Precondition이 갖고있는 조건은 Battle에 대한 것이고 Applicability는 배틀 대상인 포켓몬, Battler에 대한 것이다.
+둘이 비슷해 보여도 보는 범위가 조금 다르다.
 
-이 둘은 이름이 비슷해서 헷갈릴 수 있는데, 목적이 다르다.
+```text
+Precondition  = 배틀 전체 문맥에서 실행 가능한가?
+Applicability = 지금 선택된 행동이 현재 주체에게 적용 가능한가?
+```
 
-- Precondition: “이 턴/이 배틀에서 실행 자체가 가능한가?”
-    -  배틀이 이미 종료 상태면(상대가 도망쳤다/전멸했다) 어떤 입력도 더 실행하면 안 된다.
+이렇게 감싸두면 "배틀이 끝났으면 실행하지 마" 같은 공통 규칙을 모든 Move 구현체에 반복해서 넣지 않아도 된다. 새 규칙이 생겨도 기존 Move를 뜯지 않고 래퍼를 하나 더 씌우면 된다.
 
-- Applicability: “이 행동이 이 Battler에게 적용 가능한가?”
-    - PP가 0이면 기술 선택은 가능하더라도 실제로는 기술이 나가지 않고(혹은) 발버둥치기같은 대체 행동으로 바뀐다.
+## Attempt
 
-is-a, has-a 관계도 보면, 일단 세 클래스 모두 IMove에 대해 is-a 관계인데, 조건 두 개는 has-a 관계다.
+Move가 "무슨 행동을 선택했는가"라면, Attempt는 "그 행동이 실제로 어떻게 풀리느냐"를 의미한다.
 
-이 조건 두개는 IMove에 조건을 더 추가하는 Decorator이기 때문이다.
+예를 들어 `물기`를 선택했다고 해도 그 안에 작은 단계가 더 들어 있다. 기술 애니메이션이 나오고, 명중 판정을 하고, 맞았으면 데미지를 주고, 풀죽음 같은 추가 효과를 체크하고, 마지막에 후처리를 한다.
 
-약간의 디자인패턴적인 얘기를 첨가하면, Decorator로 분리했을 때 좋아지는 건 두 가지다.
-
-1. 중복 제거: “배틀이 끝났으면 아무것도 하지 마” 같은 로직을 모든 Move 구현체에 복붙하지 않는다.
-2. 확장 용이: 새로운 규칙이나 제약이 추가돼도 기존 Move 코드를 안 건드리고 wrapper를 하나 더 씌우면 된다.
-
-## Attempts
+이 단계들을 한 덩어리로 잡는 게 `Attempt`다.
 
 ```mermaid
 classDiagram
-
     class IAttempt {
         <<interface>>
         +Execute(Battle battle) void
@@ -145,66 +167,68 @@ classDiagram
     }
 
     class Combo {
-        +Animation animation
         +ICondition~Battle~ accuracy
         +INumber hits
         +IEffect every
     }
 
-    %% 인터페이스 구현
-    Attempt ..|> IAttempt
-    Cascade ..|> IAttempt
-    Combo ..|> IAttempt
-
-    %% 구성 관계
+    IAttempt <|.. Attempt
+    IAttempt <|.. Cascade
+    IAttempt <|.. Combo
     Cascade --> IAttempt
 ```
 
-super 타입으로 정의된 IAttempt는 IMove와 같은 signature를 갖고 있다.
+`Attempt`는 단계가 이어지는 흐름으로 읽으면 이해가 쉽다.
 
-Attempt먼저 보자.
+```mermaid
+flowchart LR
+    A[연출/로그] --> B[명중 판정]
+    B -->|명중| C[onHit]
+    B -->|실패| D[onMiss]
+    C --> E[after]
+    D --> E
+```
 
-animation 속성은 상대방/내 포켓몬의 hp변화같은 각 attempt 마다 달라질 것들을 대비해 넣어두었고, ICondition 타입으로 정의된 accuracy는 확률을 의미한다.
+핵심은 마지막의 `after`다. 맞았든 빗나갔든, 어떤 후처리는 항상 돌아야 한다. 반동, 상태 정리, 로그 출력, 다음 단계로 넘길 정보 기록 같은 것들이 여기 붙는다.
 
-게임 내에서 환경상태, 아이템 도핑 상태, 상대방이 나에게 건 디버프/버프들과 같이 Battle 내에서 받게 된 영향에 따라 accuracy가 달라지기 때문에 Battle을 타입을 갖는 ICondition으로 되어있다.
+이 구조가 필요한 이유는 포켓몬 기술이 조금만 복잡해져도 한 함수 안에서 관리하기 어려워지기 때문이다. "명중 시 데미지 + 10% 마비 + 마지막에 반동" 정도만 되어도 벌써 분기가 많아진다. 그런데 이걸 Attempt라는 틀 안에 넣어두면 적어도 단계 순서는 고정된다.
 
-여기서 중요한 건 Attempt가 사실상 실행 파이프라인을 갖는다는 점이다. 이 규약이 있어야 Effect를 조합해도 결과가 예측 가능해진다.
+## Cascade 와 Combo
 
-1. animation/로그/연출
-2. accuracy 평가(명중 판정)
-3. hit면 onHit / miss면 onMiss
-4. after(반동, 다음 트리거, 상태 정리 같은 후처리)
+여기서 한 걸음 더 가면 마구햘퀴기같이 "여러 번 맞는 기술"을 어떻게 볼 것인가가 나온다.
 
-즉, Attempt는 명중 여부에 따라 분기하고, 마지막에 항상(after) 후처리를 수행하는 계약을 제공한다.
+겉으로 보기에 다단히트 기술은 전부 비슷해 보이지만 내부 규칙까지 꼭 같진 않다. 어떤 건 같은 타격을 여러 번 반복하는 느낌이고, 어떤 건 각 단계가 서로 다른 타격처럼 이어진다.
 
-이 accuracy에 따라 onHit, onMiss를 타고, 그 후에 최종적으로 after를 탄다.
+그래서 여기서는 `Cascade`와 `Combo`를 나눠 생각해볼 수 있다.
 
-세 함수는 IEffect로 묶여있는 데, 어떤 걸 구현할 지에 따라서 계속 생성자를 확장하는 형태로 나아간다.
+```mermaid
+flowchart TB
+    A[Cascade] --> B[1단계 Attempt]
+    B --> C[2단계 Attempt]
+    C --> D[3단계 Attempt]
 
-이 지점이 OOP 설계에서 자주 터지는 부분이라고 생각한다..
+    E[Combo] --> F[같은 효과 반복]
+    F --> G[hit 수만큼 반복]
+```
 
-기술이 조금만 복잡해져도 “명중 시 데미지 + 급소 + 상태이상 + 흡혈 + 반동 + 능력치 변화…” 같은 조합이 생길텐데, 그걸 생성자 파라미터로 처리하려고하면 매우 골치아파질 것이다.
+먼저 Cascade는 “이전 단계의 결과가 다음 단계에 영향을 주는 구조”다. 이건 단순히 공격을 여러 번 하는 게 아니라, 하나의 상태가 계속 이어지면서 진행되는 흐름이다.
 
-그래서 IEffect를 인터페이스로 빼고, 이후에는 Composite/Decorator 방식으로 효과를 조합 가능한 단위로 만드는 방향으로 추상화시키면 확장에 용이하고 유연한 처리가 가능해진다.
+대표적인 예가 구르기다. 이 기술은 5턴 동안 계속 사용되면서 매번 위력이 증가하는데, 중요한 건 “이전 턴이 성공했는지”가 다음 턴의 위력에 직접 영향을 준다는 점이다. 중간에 빗나가면 위력 증가가 끊기고 처음부터 다시 시작된다.
 
-Cascade는 IAttempt와 has-a 관계인데, attempts의 나열이고 Combo는 각 Attempt가 어떤 accuracy, hits, every 값을 갖고 있는 지 알고있다.
+비슷하게 연속자르기도 같은 구조다. 맞을수록 위력이 올라가고, 실패하면 초기화된다. 이 두 기술의 핵심은 “현재 상태(state)”에 있다. 현재 몇 배까지 강화됐는지가 계속 유지되고, 그 상태를 기반으로 다음 공격이 계산된다. 이런 구조는 단순 반복으로는 표현이 안 되고 “시작 → 지속 → 종료”라는 단계가 있는 흐름이다. 그래서 Cascade는 본질적으로 state machine이라고 볼 수 있다.
 
-Cascade는 Combo와 같이 봐야된다.
+반대로 Combo는 완전히 다르다. 이건 “같은 공격을 여러 번 독립적으로 수행하는 것”이다. 각 타격은 서로 영향을 주지 않는다. 대표적인 예가 연속뺨치기다. 2~5번 공격하지만 각 타격은 완전히 별개로 데미지가 들어간다. 첫 번째 공격이 크리티컬이든, 빗나가든, 두 번째 공격에는 아무 영향이 없다. 그냥 같은 연산을 여러 번 반복할 뿐이다.
 
-둘 다 “여러 번 때린다”로 보이지만, 핵심 차이는 단계/중단 규칙에 있다.
+씨기관총도 동일하다. 몇 번 때리느냐만 다르고, 구조는 단순 반복이다. 이런 경우는 상태를 유지할 필요도 없고 이전 결과를 기억할 필요도 없다. 그래서 Combo는 본질적으로 stateless loop다.
 
-Cascade는 여러 Attempt를 “순서대로” 실행한다. 중간 단계마다 위력/판정이 달라질 수 있고, 어떤 단계에서 실패하면 그 시점에서 중단될 수 있다.
+이 둘을 나누는 이유는 단순히 개념 정리가 아니라, 실제 구현에서 차이가 크기 때문이다. Cascade를 Combo처럼 구현하면 구르기같은 기술이 매번 같은 데미지를 내는 버그가 생긴다. 반대로 Combo를 Cascade처럼 만들면, 다단히트 공격이 점점 강해지는 이상한 결과가 나온다. 완전히 다른 게임이 되어버린다.
 
-Combo는 하나의 Attempt가 내부적으로 N번 반복되는 모델이다. 기본적으로는 “같은 효과를 반복한다”에 가깝고, 반복 단위(매 타격마다 연출/효과)를 every로 표현한다.
+또 하나 중요한 차이는 “중단 조건”이다. Cascade는 흐름이 끊기면 전체가 종료되어야한다. 한 번 빗나가면 이후 강화는 전부 초기화되는 게 맞다. 반면 Combo는 중간에 한 번 실패해도 나머지 공격은 계속 진행된다.
 
-예를 들면 카포에라의 트리플 킥이 Cascade고, Combo의 예시는 마구찌르기 같은 것이다.
+이벤트 처리도 다르다. Cascade는 시작, 진행, 종료 각각에 대한 처리가 필요하지만 Combo는 각 히트마다 동일한 처리만 하면 된다.
 
-> [트리플 킥] 카포에라라면 위력 90짜리를 세 번으로 나눠서(15, 30, 45) 때릴 수 있는 기술이 된다. 따라서 왕의징표석과 조합했을 때나 대타출동을 이용하는 상대를 박살낼 때 쓸만할 것 같지만, 세 번의 공격에 각각 명중 판정이 행해지고 그 중 한 번이라도 빗나가면 공격이 바로 중단되는 형식이라는 문제가 있다. 
+말이 길었는데 결국 이걸 판단하는 기준은 하나다.
 
-마구찌르기의 경우에는 한 번 빗나가면 그대로 끝난다. 이렇게 바로 중단되는 규칙 차이가 Cascade/Combo를 나누는 지점이다.
+“이전 타격 결과가 다음 타격에 영향을 주는가?”
 
-Combo에서 hits가 원시 타입이 아니라 INumber로 정의된 이유는 여러 환경에 의해서 값이 다르게 작용할 것을 고려했기 때문이다.
-
-every는 그냥 김밥말이같은 걸 생각하면 된다. 각 attempt마다 무조건 보여주는 그런 것이다.
-
-이제 IEffect나 accuracy가 계산되는 방식같은 걸 제대로 관찰하기 위해 ICondition을 알아봐야하는데, 이건 다음 글에 이어서 작성하겠다.
+영향을 준다면 Cascade이고, 아니라면 Combo다.

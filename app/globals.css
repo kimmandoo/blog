@@ -881,32 +881,188 @@ html.dark .prose figcaption {
 }
 
 /* Mermaid Diagram Styles */
-.mermaid-container {
+.mermaid {
+  position: relative;
   margin: 1.5rem 0;
   padding: 1rem;
   background: #f9fafb;
   border: 1px solid #e5e7eb;
   border-radius: 0.5rem;
-  overflow-x: auto;
+  overflow: auto;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
 }
 
-html.dark .mermaid-container {
+.mermaid--loading {
+  min-height: 160px;
+}
+
+.mermaid--error {
+  align-items: stretch;
+  background: #fff7ed;
+  border-color: #fdba74;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  transform-origin: center center;
+}
+
+.mermaid__svg-wrap {
+  width: 100%;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  cursor: grab;
+  touch-action: pan-x pan-y pinch-zoom;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+.mermaid__svg-wrap--portrait svg {
+  margin-inline: auto;
+}
+
+.mermaid--panning .mermaid__svg-wrap,
+.mermaid__svg-wrap.grabbing {
+  cursor: grabbing;
+}
+
+.mermaid__zoom-controls {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.mermaid__zoom-btn {
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #111827;
+  border-radius: 9999px;
+  min-width: 2.5rem;
+  height: 2rem;
+  padding: 0 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.mermaid__zoom-btn:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+@media (max-width: 640px) {
+  .mermaid {
+    padding: 0.75rem;
+    gap: 0.625rem;
+  }
+
+  .mermaid__zoom-controls {
+    justify-content: stretch;
+    flex-wrap: wrap;
+  }
+
+  .mermaid__zoom-btn {
+    flex: 1 1 calc(33.333% - 0.5rem);
+    min-width: 0;
+    min-height: 2.5rem;
+    padding: 0 0.625rem;
+    font-size: 0.8125rem;
+  }
+}
+
+.mermaid__fallback {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.875rem;
+  color: #9a3412;
+}
+
+.mermaid__skeleton {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+}
+
+.mermaid__skeleton-bar {
+  height: 10px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, rgba(148, 163, 184, 0.25) 25%, rgba(148, 163, 184, 0.45) 50%, rgba(148, 163, 184, 0.25) 75%);
+  background-size: 200% 100%;
+  animation: mermaid-skeleton-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes mermaid-skeleton-pulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+html.dark .mermaid {
   background: #1f2937;
   border-color: #374151;
 }
 
+html.dark .mermaid--error {
+  background: rgba(124, 45, 18, 0.25);
+  border-color: rgba(194, 65, 12, 0.7);
+}
+
+html.dark .mermaid__zoom-btn {
+  background: #111827;
+  color: #f9fafb;
+  border-color: #374151;
+}
+
+html.dark .mermaid__zoom-btn:hover {
+  background: #1f2937;
+  border-color: #6b7280;
+}
+
+html.dark .mermaid__fallback {
+  color: #fdba74;
+}
+
 @media (prefers-color-scheme: dark) {
-  html:not(.light):not(.dark) .mermaid-container {
+  html:not(.light):not(.dark) .mermaid {
     background: #1f2937;
     border-color: #374151;
   }
-}
 
-.mermaid-container svg {
-  max-width: 100%;
-  height: auto;
+  html:not(.light):not(.dark) .mermaid--error {
+    background: rgba(124, 45, 18, 0.25);
+    border-color: rgba(194, 65, 12, 0.7);
+  }
+
+  html:not(.light):not(.dark) .mermaid__zoom-btn {
+    background: #111827;
+    color: #f9fafb;
+    border-color: #374151;
+  }
+
+  html:not(.light):not(.dark) .mermaid__zoom-btn:hover {
+    background: #1f2937;
+    border-color: #6b7280;
+  }
+
+  html:not(.light):not(.dark) .mermaid__fallback {
+    color: #fdba74;
+  }
 }
 
 /* Shimmer animation for stats bars */

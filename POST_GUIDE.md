@@ -20,7 +20,7 @@ date: "2025-01-20"
   - Used in browser tab and meta tags
   - Example: `"Getting Started with Next.js"`
 
-- **`date`** (string, required): Publication date in YYYY-MM-DD format
+- **`date`** (string, required): Publication date in `YYYY-MM-DD` or `YYYY-MM-DD HH:mm` format
   - Must be in ISO format: `"2025-01-20"`
   - Used for sorting posts (newest first)
   - Displayed on post cards and post pages

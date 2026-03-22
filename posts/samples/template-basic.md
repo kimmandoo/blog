@@ -15,7 +15,7 @@
 # Required: Your post title (shown as main heading and in browser tab)
 title: "Your Post Title Here"
 
-# Required: Publication date in YYYY-MM-DD format
+# Required: Publication date in YYYY-MM-DD or YYYY-MM-DD HH:mm format
 # This is used for sorting posts (newest first)
 date: "2025-01-20"
 draft: true

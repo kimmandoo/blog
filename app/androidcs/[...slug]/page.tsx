@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { getAndroidCSData, getAllAndroidCSSlugs, getSortedAndroidCSData } from '@/lib/androidcs';
-import { format } from 'date-fns';
 import { CodeBlockEnhancer } from '@/components/CodeBlock';
 import { MermaidRenderer } from '@/components/MermaidRenderer';
 import { TableOfContents } from '@/components/TableOfContents';
@@ -12,6 +11,7 @@ import { themeConfig } from '@/config/theme.config';
 import { AndroidCSSidebar } from '@/components/AndroidCSSidebar';
 import { AndroidCSNavigation } from '@/components/AndroidCSNavigation';
 import { AndroidTopBar } from '@/components/AndroidTopBar';
+import { formatDisplayDate, toMetadataDate } from '@/lib/date';
 
 export async function generateStaticParams() {
   const items = getAllAndroidCSSlugs();
@@ -24,12 +24,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const slugString = slug.join('/');
   const { seo, site } = themeConfig;
-  
+
   try {
     const item = await getAndroidCSData(slugString);
     const itemUrl = `${seo.siteUrl}/androidcs/${slugString}`;
-    
-    // Auto-generate OG image with post metadata
+    const publishedTime = toMetadataDate(item.date);
+
     const ogParams = new URLSearchParams({
       title: item.title,
       ...(item.category && { category: item.category }),
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       ...(item.tags?.length && { tags: item.tags.join(',') }),
     });
     const ogImageUrl = `${seo.siteUrl}/og?${ogParams.toString()}`;
-    
+
     return {
       title: item.title,
       description: item.excerpt || item.title,
@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         siteName: seo.openGraph.siteName,
         title: item.title,
         description: item.excerpt || item.title,
-        publishedTime: item.date,
+        ...(publishedTime && { publishedTime }),
         authors: [site.title],
         tags: item.tags,
         images: [
@@ -81,7 +81,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function AndroidCSPost({ params }: { params: Promise<{ slug: string[] }> }) {
   const { slug } = await params;
   const slugString = slug.join('/');
-  
+
   let item;
   try {
     item = await getAndroidCSData(slugString);
@@ -93,21 +93,15 @@ export default async function AndroidCSPost({ params }: { params: Promise<{ slug
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
-      {/* Reading Progress Bar */}
       <ReadingProgressBar readingTime={item.readingTime} />
-      
+
       <AndroidTopBar />
 
-      {/* GitBook-style Layout */}
       <div className="flex max-w-screen-2xl mx-auto">
-        {/* Left Sidebar - Navigation */}
         <AndroidCSSidebar items={allItems} currentSlug={slugString} />
 
-        {/* Main Content Area */}
         <main className="flex-1 min-w-0 lg:flex lg:gap-8">
-          {/* Article Content */}
           <article className="flex-1 min-w-0 px-8 py-12 max-w-4xl mx-auto lg:mx-0">
-            {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-8">
               <Link href="/androidcs" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                 Android
@@ -126,24 +120,29 @@ export default async function AndroidCSPost({ params }: { params: Promise<{ slug
               <span className="text-gray-900 dark:text-gray-100">{item.title}</span>
             </nav>
 
-            {/* Header */}
             <header className="mb-12">
               <h1 className={`text-4xl md:text-5xl font-bold ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} mb-6 leading-tight`}>
                 {item.title}
               </h1>
-              
+
               {item.excerpt && (
                 <p className={`text-xl ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} leading-relaxed mb-6`}>
                   {item.excerpt}
                 </p>
               )}
-              
+
               <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
-                <time className="flex items-center gap-1.5">
+                <time
+                  dateTime={toMetadataDate(item.date) ?? item.date}
+                  className="flex items-center gap-1.5"
+                >
                   <svg className="w-4 h-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
                     <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  {format(new Date(item.date), 'yyyy년 MM월 dd일')}
+                  {formatDisplayDate(item.date, {
+                    dateFormat: 'yyyy년 MM월 dd일',
+                    dateTimeFormat: 'yyyy년 MM월 dd일 HH:mm',
+                  })}
                 </time>
                 {item.readingTime && (
                   <span className="flex items-center gap-1.5">
@@ -154,7 +153,7 @@ export default async function AndroidCSPost({ params }: { params: Promise<{ slug
                   </span>
                 )}
               </div>
-              
+
               {item.tags && item.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-4">
                   {item.tags.map((tag) => (
@@ -166,12 +165,11 @@ export default async function AndroidCSPost({ params }: { params: Promise<{ slug
               )}
             </header>
 
-            {/* Content */}
             <div className="pb-12 border-b border-gray-200 dark:border-gray-800">
               <CodeBlockEnhancer />
               <MermaidRenderer />
-              
-              <div 
+
+              <div
                 className={`prose ${themeConfig.prose.size} dark:prose-invert max-w-none
                   prose-headings:font-semibold prose-headings:text-black dark:prose-headings:text-white prose-headings:scroll-mt-20
                   prose-h1:${themeConfig.prose.h1} prose-h1:mb-6 prose-h1:mt-12
@@ -193,16 +191,13 @@ export default async function AndroidCSPost({ params }: { params: Promise<{ slug
               />
             </div>
 
-            {/* Previous/Next Navigation */}
             <AndroidCSNavigation allItems={allItems} currentSlug={slugString} />
 
-            {/* Comments Section */}
             <div className="mt-12">
               <Comments />
             </div>
           </article>
 
-          {/* Right Sidebar - Table of Contents (Desktop only) */}
           {item.toc && item.toc.length > 0 && (
             <aside className="hidden xl:block sticky top-[64px] h-[calc(100vh-64px)] w-64 py-12 pr-8 overflow-y-auto">
               <TableOfContents items={item.toc} />

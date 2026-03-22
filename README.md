@@ -102,7 +102,7 @@ More content...
 ### Required Fields
 
 - **`title`** (string): The post title
-- **`date`** (string): Publication date in `YYYY-MM-DD` format
+- **`date`** (string): Publication date in `YYYY-MM-DD` or `YYYY-MM-DD HH:mm` format
 
 ### Optional Fields
 

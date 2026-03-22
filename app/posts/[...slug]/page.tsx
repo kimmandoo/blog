@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { getPostData, getAllPostSlugs, getAdjacentPosts } from '@/lib/posts';
-import { format } from 'date-fns';
 import { Comments } from '@/components/Comments';
 import { CodeBlockEnhancer } from '@/components/CodeBlock';
 import { MermaidRenderer } from '@/components/MermaidRenderer';
@@ -11,6 +10,7 @@ import { ReadingProgressBar } from '@/components/ReadingProgressBar';
 import { ShareButtons } from '@/components/ShareButtons';
 import { PostNavigation } from '@/components/PostNavigation';
 import { themeConfig } from '@/config/theme.config';
+import { formatDisplayDate, toMetadataDate } from '@/lib/date';
 
 export async function generateStaticParams() {
   const posts = getAllPostSlugs();
@@ -27,6 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   try {
     const post = await getPostData(slugString);
     const postUrl = `${seo.siteUrl}/posts/${slugString}`;
+    const publishedTime = toMetadataDate(post.date);
     
     // Use the first image from the post content if available, otherwise auto-generate
     let ogImageUrl: string;
@@ -63,7 +64,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         siteName: seo.openGraph.siteName,
         title: post.title,
         description: post.excerpt || post.title,
-        publishedTime: post.date,
+        ...(publishedTime && { publishedTime }),
         authors: [site.title],
         tags: post.tags,
         images: [
@@ -139,8 +140,11 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
             <article>
           <header className={`pb-8 mb-8 ${themeConfig.colors.light.border.secondary} ${themeConfig.colors.dark.border.secondary} border-b`}>
             <div className="flex flex-wrap items-center gap-3 mb-4">
-              <time className={`text-sm ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
-                {format(new Date(post.date), 'yyyy.MM.dd')}
+              <time
+                dateTime={toMetadataDate(post.date) ?? post.date}
+                className={`text-sm ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}
+              >
+                {formatDisplayDate(post.date)}
               </time>
               {post.readingTime && (
                 <span className={`text-sm ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
