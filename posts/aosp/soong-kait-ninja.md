@@ -10,8 +10,7 @@ AOSP 빌드를 처음 접하면 Soong, kati, Ninja가 동시에 등장한다.
 
 구조는 생각보다 단순하다.
 
-Soong과 kati는 “무엇을 어떻게 만들지”를 정리해서 그래프로 만든다
-Ninja는 그 그래프를 실제로 실행한다.
+Soong과 kati는 “무엇을 어떻게 만들지”를 정리해서 그래프로 만들고, Ninja는 그 그래프를 실제로 실행한다.
 
 ## Soong: Android.bp를 기반으로 빌드 그래프 생성
 
@@ -24,7 +23,70 @@ Soong은 Android.bp를 읽어서 모듈을 분석하고, 각각의 조건에 맞
 
 즉 Soong은 실제로 컴파일을 수행하는 도구가 아니라 "어떤 컴파일이 이루어져야 하는지”를 정의하는 단계에 가깝다.
 
+예를 들어 hello.cpp를 빌드하는 아주 단순한 C++ 바이너리가 있다고 해보자.
+
+```bp
+cc_binary {
+    name: "hello",
+    srcs: ["hello.cpp"],
+    shared_libs: ["liblog"],
+    cflags: ["-Wall"],
+}
+```
+
+이 Android.bp를 Soong이 읽으면, 내부적으로는 대략 이런 정보를 정리하게 된다.
+
+- 모듈 이름은 hello
+- 소스 파일은 hello.cpp
+- `liblog`에 의존
+- `-Wall` 옵션을 넣어 컴파일
+- 최종 결과물은 실행 파일
+
+Soong은 이 선언을 바탕으로 어떤 컴파일 명령과 링크 명령이 필요한지 계산해서, Ninja가 실행할 수 있는 규칙으로 바꾼다.
+
+Android.bp는 빌드 의도를 선언하는 파일에 가깝다는 걸 알 수 있다.
+
+### variant가 붙는 경우
+
+AOSP에서는 같은 모듈이라도 대상 환경에 따라 여러 형태로 나뉜다.
+
+```bp
+cc_library {
+    name: "libsample",
+    srcs: ["sample.cpp"],
+    vendor_available: true,
+    shared_libs: ["libbase"],
+}
+```
+
+이 경우 Soong은 단순히 libsample 하나만 보는 게 아니라
+
+- system에서 쓰는 변형
+- vendor에서 쓰는 변형
+- arm / arm64 같은 아키텍처별 변형
+
+이런 식으로 내부적으로 여러 variant를 만든다.
+
+그래서 빌드 에러를 볼 때도 “모듈이 안 된다”가 아니라 어느 variant에서 안 되는가를 봐야 한다.
+
+예를 들어 이런 에러가 뜬다면:
+
+> error: vendor variant of "libsample" cannot link against "libplatform_only"
+
+이건 그냥 라이브러리 에러가 아니라 vendor variant 규칙 위반이다.
+
 ## kati: Android.mk를 Ninja로 변환
+
+```mk
+LOCAL_PATH := $(call my-dir)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := hello
+LOCAL_SRC_FILES := hello.cpp
+LOCAL_SHARED_LIBRARIES := liblog
+LOCAL_CFLAGS := -Wall
+include $(BUILD_EXECUTABLE)
+```
 
 AOSP에는 아직도 Android.mk 기반 코드가 남아 있다. 이걸 그대로 Make로 실행하면 속도와 관리 측면에서 문제가 생긴다.
 
@@ -47,13 +109,31 @@ Make는 대규모 프로젝트에서 해석 비용이 크고, 증분 빌드나 �
 
 이렇게 두 경로를 모두 Ninja로 가게 하고, 실제 빌드는 Ninja가 담당하도록 구성되어 있다.
 
-## Ninja: 빌드 그래프 실행
+Soong이나 kati를 거치고 나면 최종적으로 Ninja가 읽을 수 있는 규칙이 만들어진다. 형태는 대략 이런 느낌이다.
 
-Ninja는 역할이 명확하다.  이미 만들어진 빌드 그래프를 기반으로 필요한 작업만 실행한다.
+```ninja
+rule cxx
+  command = clang++ -c $in -o $out $cflags
+  description = Compile $in
 
-동작 방식도 단순하다.  입력 파일이 변경되었는지 확인하고 변경된 부분에 영향을 받는 타깃만 다시 빌드한다
+rule link
+  command = clang++ $in -o $out $ldflags
+  description = Link $out
 
-이 구조 덕분에 증분 빌드가 빠르게 동작한다.
+build out/obj/hello.o: cxx hello.cpp
+  cflags = -Wall
+
+build out/hello: link out/obj/hello.o
+  ldflags = -llog
+```
+
+rule은 어떤 명령을 실행할지를, build는 어떤 입력으로 어떤 출력을 만들지 정하는 것이다.
+
+Ninja는 여기 적힌 내용을 그대로 실행한다.
+
+Soong이나 kati처럼 “해석”을 오래 하는 게 아니라 이미 정리된 그래프를 따라가기만 한다.
+
+입력 파일이 변경되었는지 확인하고 변경된 부분에 영향을 받는 타깃만 다시 빌드하는 구조 덕분에 증분 빌드가 빠르게 동작한다.
 
 중요한 점은 증분 빌드를 “가능하게 만드는 것”은 Soong과 kati지만 실제로 증분 빌드를 수행하는 것은 Ninja라는 점이다.
 
@@ -65,10 +145,28 @@ Ninja는 역할이 명확하다.  이미 만들어진 빌드 그래프를 기반
 
 이렇게 되면 빌드가 안된다..!! 이 문제는 대부분 Ninja가 변경을 감지하지 못했기 때문이다.
 
-대표적인 원인은 다음과 같다.
+예를 들어 이런 규칙이 있다고 해보자.
 
-- depfile이 제대로 생성되지 않은 경우
-- 의존성 그래프가 누락된 경우
-- 중간 생성 파일이 그래프에 연결되지 않은 경우
+```ninja
+build out/obj/hello.o: cxx hello.cpp
+build out/hello: link out/obj/hello.o
+```
 
-이런 상황에서는 Ninja가 “변경 없음”으로 판단하기 때문에 재빌드가 일어나지 않기 때문에 clean을 통해 강제로 전체를 다시 빌드해야 한다.
+이 상태에서 hello.cpp를 수정하면 `out/obj/hello.o`가 다시 빌드되고, 그에 따라 `out/hello`도 다시 링크될 것이다.
+
+반대로 아무 입력도 안 바뀌면 Ninja는 아무 것도 안 한다.
+
+이게 증분 빌드의 기본 원리다.
+
+문제는 의존성이 빠져 있으면 이런 식으로 된다.
+
+```ninja
+build out/obj/hello.o: cxx hello.cpp
+```
+
+원래는 hello.h도 포함하고 있는데 depfile이 누락돼서 그래프에 안 잡혀 있다고 가정하면 hello.h를 바꿔도 Ninja는 그 사실을 모른다.
+그래서 out/obj/hello.o를 다시 만들지 않게 되는 것이다.
+
+이게 바꿨는데 빌드가 안 따라가는 원인이다...
+
+기존 산출물과 현재 소스 상태가 서로 안 맞는 상태가 돼서 Ninja가 “변경 없음”으로 판단하기 때문에 재빌드가 일어나지 않기 때문에 clean을 통해 강제로 전체를 다시 빌드해야 한다.
