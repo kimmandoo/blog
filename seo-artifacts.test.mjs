@@ -1,8 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
+import fs from 'node:fs';
+import path from 'node:path';
 
 const require = createRequire(import.meta.url);
+const buildDir = process.env.NEXT_DIST_DIR ?? '.next';
 
 function extractTagValue(block, tagName) {
   const match = block.match(new RegExp(`<${tagName}>([^<]+)</${tagName}>`));
@@ -15,13 +18,23 @@ async function getRouteBody(routeModulePath) {
   return response.text();
 }
 
+function getBuildArtifactPath(relativePath) {
+  return `./${path.posix.join(buildDir.replace(/\\/g, '/'), relativePath.replace(/\\/g, '/'))}`;
+}
+
+function getPrerenderRoute(routePath) {
+  const manifestPath = path.join(process.cwd(), buildDir, 'prerender-manifest.json');
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  return manifest.routes[routePath];
+}
+
 function extractBlocks(xml, tagName) {
   return Array.from(xml.matchAll(new RegExp(`<${tagName}>([\\s\\S]*?)</${tagName}>`, 'g')))
     .map((match) => match[1]);
 }
 
 test('robots.txt advertises the sitemap and blocks framework internals', async () => {
-  const body = await getRouteBody('./.next-build/server/app/robots.txt/route.js');
+  const body = await getRouteBody(getBuildArtifactPath('server/app/robots.txt/route.js'));
 
   assert.match(body, /^User-Agent: \*$/m);
   assert.match(body, /^Disallow: \/_next\/$/m);
@@ -29,7 +42,7 @@ test('robots.txt advertises the sitemap and blocks framework internals', async (
 });
 
 test('sitemap homepage lastmod tracks actual latest published content', async () => {
-  const xml = await getRouteBody('./.next-build/server/app/sitemap.xml/route.js');
+  const xml = await getRouteBody(getBuildArtifactPath('server/app/sitemap.xml/route.js'));
   const urlBlocks = extractBlocks(xml, 'url');
   const entries = urlBlocks.map((block) => ({
     loc: extractTagValue(block, 'loc'),
@@ -50,7 +63,7 @@ test('sitemap homepage lastmod tracks actual latest published content', async ()
 });
 
 test('rss feed uses a stable build date based on the newest item date', async () => {
-  const xml = await getRouteBody('./.next-build/server/app/feed.xml/route.js');
+  const xml = await getRouteBody(getBuildArtifactPath('server/app/feed.xml/route.js'));
   const lastBuildDate = extractTagValue(xml, 'lastBuildDate');
   const itemBlocks = extractBlocks(xml, 'item');
   const latestPubDate = itemBlocks.reduce((latest, block) => {
@@ -67,7 +80,7 @@ test('rss feed uses a stable build date based on the newest item date', async ()
 });
 
 test('rss feed gives every item a non-empty description', async () => {
-  const xml = await getRouteBody('./.next-build/server/app/feed.xml/route.js');
+  const xml = await getRouteBody(getBuildArtifactPath('server/app/feed.xml/route.js'));
   const itemBlocks = extractBlocks(xml, 'item');
 
   assert.ok(itemBlocks.length > 0);
@@ -76,4 +89,12 @@ test('rss feed gives every item a non-empty description', async () => {
     const description = extractTagValue(block, 'description');
     assert.ok(description && description.trim().length > 0);
   });
+});
+
+test('sitemap is configured to revalidate instead of staying permanently static', () => {
+  const sitemapRoute = getPrerenderRoute('/sitemap.xml');
+
+  assert.ok(sitemapRoute);
+  assert.equal(typeof sitemapRoute.initialRevalidateSeconds, 'number');
+  assert.ok(sitemapRoute.initialRevalidateSeconds > 0);
 });

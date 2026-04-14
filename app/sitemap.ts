@@ -5,6 +5,8 @@ import { getSortedPostsData } from '@/lib/posts';
 import { themeConfig } from '@/config/theme.config';
 import { parseDateValue } from '@/lib/date';
 
+export const revalidate = 3600;
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = themeConfig.seo.siteUrl.replace(/\/+$/, '');
   const posts = getSortedPostsData();
