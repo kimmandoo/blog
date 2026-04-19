@@ -52,11 +52,19 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       }
       setResolvedTheme(resolved);
       
-      // Update document class
+      // Keep dark/light classes mutually exclusive.
+      // For explicit light mode, set `.light` so system-dark fallback CSS does not leak in.
+      const root = document.documentElement;
       if (resolved === 'dark') {
-        document.documentElement.classList.add('dark');
+        root.classList.add('dark');
+        root.classList.remove('light');
       } else {
-        document.documentElement.classList.remove('dark');
+        root.classList.remove('dark');
+        if (theme === 'light') {
+          root.classList.add('light');
+        } else {
+          root.classList.remove('light');
+        }
       }
     };
 

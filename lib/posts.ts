@@ -57,28 +57,19 @@ function getAllMarkdownFiles(dir: string, baseDir: string = dir): string[] {
   return files;
 }
 
-export function getSortedPostsData(): PostData[] {
-  // Get all markdown files recursively
-  const fileNames = fs.existsSync(postsDirectory) 
+function getAllPostsData(): PostData[] {
+  const fileNames = fs.existsSync(postsDirectory)
     ? getAllMarkdownFiles(postsDirectory)
     : [];
-  
+
   const allPostsData = fileNames
     .map(fileName => {
-      // Remove ".md" from file name to get slug (keep folder structure)
       const slug = fileName.replace(/\.md$/, '').replace(/\\/g, '/');
-
-      // Read markdown file as string
       const fullPath = path.join(postsDirectory, fileName);
       const fileContents = fs.readFileSync(fullPath, 'utf8');
-
-      // Use gray-matter to parse the post metadata section
       const matterResult = matter(fileContents);
-      
-      // Calculate reading time
       const readingTime = calculateReadingTime(matterResult.content);
 
-      // Combine the data with the slug
       return {
         slug,
         title: matterResult.data.title || slug,
@@ -91,11 +82,8 @@ export function getSortedPostsData(): PostData[] {
         ...(matterResult.data as Omit<PostData, 'slug' | 'title' | 'date' | 'excerpt' | 'category' | 'tags' | 'draft' | 'readingTime'>),
       };
     })
-    // Filter out draft posts and separated sections
-    .filter(post => !post.draft && post.category !== 'PS' && post.category !== 'Rust');
+    .filter(post => !post.draft);
 
-  // Sort posts by date (newest first)
-  // Convert dates to timestamps to handle both Date objects and string dates consistently
   return allPostsData.sort((a, b) => {
     const dateA = parseDateValue(a.date)?.getTime() ?? 0;
     const dateB = parseDateValue(b.date)?.getTime() ?? 0;
@@ -103,24 +91,16 @@ export function getSortedPostsData(): PostData[] {
   });
 }
 
+export function getSortedPostsData(): PostData[] {
+  return getAllPostsData().filter(post => post.category !== 'PS' && post.category !== 'Rust');
+}
+
+export function getSortedPostsDataByCategory(category: string): PostData[] {
+  return getAllPostsData().filter(post => post.category === category);
+}
+
 export function getAllPostSlugs() {
-  const fileNames = fs.existsSync(postsDirectory)
-    ? getAllMarkdownFiles(postsDirectory)
-    : [];
-  
-  return fileNames
-    .filter(fileName => {
-      // Check if post is draft or separated section post
-      const fullPath = path.join(postsDirectory, fileName);
-      const fileContents = fs.readFileSync(fullPath, 'utf8');
-      const matterResult = matter(fileContents);
-      return !matterResult.data.draft && matterResult.data.category !== 'PS' && matterResult.data.category !== 'Rust';
-    })
-    .map(fileName => {
-      return {
-        slug: fileName.replace(/\.md$/, '').replace(/\\/g, '/'),
-      };
-    });
+  return getSortedPostsData().map((post) => ({ slug: post.slug }));
 }
 
 export async function getPostData(slug: string): Promise<PostData> {

@@ -13,8 +13,7 @@ export function ThemeToggle({ inline = false }: ThemeToggleProps) {
   
   // Hide the floating button on pages with their own inline toggle
   const isAndroidCSPage = pathname?.startsWith('/androidcs');
-  const isPSPage = pathname?.startsWith('/ps');
-  if (!inline && (isAndroidCSPage || isPSPage)) {
+  if (!inline && isAndroidCSPage) {
     return null;
   }
 

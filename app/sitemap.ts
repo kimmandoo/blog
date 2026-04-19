@@ -1,7 +1,6 @@
 import { MetadataRoute } from 'next';
 import { getSortedAndroidCSData } from '@/lib/androidcs';
-import { getSortedPSData } from '@/lib/ps';
-import { getSortedPostsData } from '@/lib/posts';
+import { getSortedPostsData, getSortedPostsDataByCategory } from '@/lib/posts';
 import { themeConfig } from '@/config/theme.config';
 import { parseDateValue } from '@/lib/date';
 
@@ -10,7 +9,7 @@ export const revalidate = 3600;
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = themeConfig.seo.siteUrl.replace(/\/+$/, '');
   const posts = getSortedPostsData();
-  const psPosts = getSortedPSData();
+  const codingTestPosts = getSortedPostsDataByCategory('PS');
   const androidPosts = getSortedAndroidCSData();
   const now = new Date();
 
@@ -36,7 +35,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }
     return latest ?? fallback;
   };
-  const siteLastModified = getLastModified([...posts, ...psPosts, ...androidPosts]);
+  const siteLastModified = getLastModified([...posts, ...androidPosts]);
 
   const postUrls = posts.map((post) => ({
     url: toAbsoluteUrl(`/posts/${encodeSlugPath(post.slug)}`),
@@ -45,15 +44,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  const psUrls = psPosts.map((post) => ({
-    url: toAbsoluteUrl(`/ps/${encodeSlugPath(post.slug)}`),
+  const androidUrls = androidPosts.map((post) => ({
+    url: toAbsoluteUrl(`/androidcs/${encodeSlugPath(post.slug)}`),
     lastModified: parseDateValue(post.date) ?? siteLastModified,
     changeFrequency: 'weekly' as const,
     priority: 0.6,
   }));
 
-  const androidUrls = androidPosts.map((post) => ({
-    url: toAbsoluteUrl(`/androidcs/${encodeSlugPath(post.slug)}`),
+  const codingTestUrls = codingTestPosts.map((post) => ({
+    url: toAbsoluteUrl(`/coding-test/${encodeSlugPath(post.slug)}`),
     lastModified: parseDateValue(post.date) ?? siteLastModified,
     changeFrequency: 'weekly' as const,
     priority: 0.6,
@@ -67,8 +66,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
-      url: toAbsoluteUrl('/ps'),
-      lastModified: getLastModified(psPosts, siteLastModified),
+      url: toAbsoluteUrl('/coding-test'),
+      lastModified: getLastModified(codingTestPosts, siteLastModified),
       changeFrequency: 'weekly' as const,
       priority: 0.7,
     },
@@ -91,7 +90,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const deduped = new Map<string, MetadataRoute.Sitemap[number]>();
 
-  for (const entry of [...staticUrls, ...postUrls, ...psUrls, ...androidUrls]) {
+  for (const entry of [...staticUrls, ...postUrls, ...androidUrls, ...codingTestUrls]) {
     const existing = deduped.get(entry.url);
     if (!existing) {
       deduped.set(entry.url, entry);

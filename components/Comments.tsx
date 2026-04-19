@@ -2,10 +2,17 @@
 
 import { useEffect, useRef } from 'react';
 import { themeConfig } from '@/config/theme.config';
+import { useTheme } from '@/components/ThemeProvider';
 
 export function Comments() {
   const commentsRef = useRef<HTMLDivElement>(null);
   const { enabled, giscus } = themeConfig.comments;
+  const { resolvedTheme } = useTheme();
+
+  const giscusTheme =
+    giscus.theme === 'preferred_color_scheme'
+      ? resolvedTheme
+      : giscus.theme;
 
   useEffect(() => {
     if (!enabled || !giscus.repo || !commentsRef.current) {
@@ -31,7 +38,7 @@ export function Comments() {
     script.setAttribute('data-reactions-enabled', giscus.reactionsEnabled);
     script.setAttribute('data-emit-metadata', giscus.emitMetadata);
     script.setAttribute('data-input-position', giscus.inputPosition);
-    script.setAttribute('data-theme', giscus.theme);
+    script.setAttribute('data-theme', giscusTheme);
     script.setAttribute('data-lang', giscus.lang);
     script.setAttribute('data-loading', 'lazy');
     script.crossOrigin = 'anonymous';
@@ -45,7 +52,29 @@ export function Comments() {
         scriptToRemove.remove();
       }
     };
-  }, [enabled, giscus]);
+  }, [enabled, giscus, giscusTheme]);
+
+  useEffect(() => {
+    if (!enabled || !commentsRef.current) {
+      return;
+    }
+
+    const iframe = commentsRef.current.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
+    if (!iframe?.contentWindow) {
+      return;
+    }
+
+    iframe.contentWindow.postMessage(
+      {
+        giscus: {
+          setConfig: {
+            theme: giscusTheme,
+          },
+        },
+      },
+      'https://giscus.app'
+    );
+  }, [enabled, giscusTheme]);
 
   if (!enabled) {
     return (

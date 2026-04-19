@@ -18,7 +18,7 @@ export function Navigation() {
         </svg>
       </Link>
       <Link
-        href="/ps"
+        href="/coding-test"
         className="group flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-gray-50 dark:bg-gray-800/60 text-gray-600 dark:text-gray-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-600 dark:hover:text-emerald-400 border border-gray-200 dark:border-gray-700 hover:border-emerald-200 dark:hover:border-emerald-800 transition-all duration-200"
       >
         <svg className="w-4 h-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
