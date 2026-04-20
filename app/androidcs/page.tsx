@@ -1,9 +1,13 @@
+import type { Metadata } from 'next';
 import { getSortedAndroidCSData } from '@/lib/androidcs';
 import { AndroidCSSidebar } from '@/components/AndroidCSSidebar';
 import { AndroidCSList } from '@/components/AndroidCSList';
 import { AndroidCSStats } from '@/components/AndroidCSStats';
 import { AndroidTopBar } from '@/components/AndroidTopBar';
 import { AndroidPageHeader } from '@/components/AndroidPageHeader';
+import { createAndroidCsPageMetadata } from '@/lib/metadata';
+
+export const metadata: Metadata = createAndroidCsPageMetadata();
 
 export default async function AndroidCSPage() {
   const allItems = getSortedAndroidCSData();

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import fs from 'node:fs';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 const require = createRequire(import.meta.url);
 const buildDir = process.env.NEXT_DIST_DIR ?? '.next';
@@ -33,6 +34,20 @@ function extractBlocks(xml, tagName) {
     .map((match) => match[1]);
 }
 
+function readBuildArtifact(relativePath) {
+  const absolutePath = path.join(process.cwd(), buildDir, relativePath);
+  return fs.readFileSync(absolutePath, 'utf8');
+}
+
+function extractCanonicalHref(html) {
+  const canonicalLink = html.match(/<link[^>]+rel="canonical"[^>]+href="([^"]+)"/i);
+  return canonicalLink ? canonicalLink[1] : null;
+}
+
+async function loadMetadataHelpers() {
+  return import(pathToFileURL(path.join(process.cwd(), 'lib', 'metadata.ts')).href);
+}
+
 test('robots.txt advertises the sitemap and blocks framework internals', async () => {
   const body = await getRouteBody(getBuildArtifactPath('server/app/robots.txt/route.js'));
 
@@ -49,7 +64,7 @@ test('sitemap homepage lastmod tracks actual latest published content', async ()
     lastmod: extractTagValue(block, 'lastmod'),
   }));
 
-  const homepage = entries.find((entry) => entry.loc === 'https://kimmandoo.vercel.app');
+  const homepage = entries.find((entry) => entry.loc?.replace(/\/$/, '') === 'https://kimmandoo.vercel.app');
   const latestLastmod = entries.reduce((latest, entry) => {
     if (!entry.lastmod) {
       return latest;
@@ -97,4 +112,36 @@ test('sitemap is configured to revalidate instead of staying permanently static'
   assert.ok(sitemapRoute);
   assert.equal(typeof sitemapRoute.initialRevalidateSeconds, 'number');
   assert.ok(sitemapRoute.initialRevalidateSeconds > 0);
+});
+
+test('section index pages advertise their own canonical URLs', () => {
+  const androidCsHtml = readBuildArtifact('server/app/androidcs.html');
+
+  assert.equal(extractCanonicalHref(androidCsHtml), 'https://kimmandoo.vercel.app/androidcs');
+});
+
+test('filtered home page metadata is noindex and canonicalizes to the root page', async () => {
+  const { createHomePageMetadata } = await loadMetadataHelpers();
+  const metadata = createHomePageMetadata({ tag: 'retrospect' });
+
+  assert.equal(metadata.robots?.index, false);
+  assert.equal(metadata.robots?.follow, true);
+  assert.equal(metadata.alternates?.canonical, 'https://kimmandoo.vercel.app/');
+});
+
+test('filtered coding-test page metadata is noindex and canonicalizes to the section root', async () => {
+  const { createCodingTestPageMetadata } = await loadMetadataHelpers();
+  const metadata = createCodingTestPageMetadata({ tag: 'ps' });
+
+  assert.equal(metadata.robots?.index, false);
+  assert.equal(metadata.robots?.follow, true);
+  assert.equal(metadata.alternates?.canonical, 'https://kimmandoo.vercel.app/coding-test');
+});
+
+test('coding-test index metadata canonicalizes to the section root by default', async () => {
+  const { createCodingTestPageMetadata } = await loadMetadataHelpers();
+  const metadata = createCodingTestPageMetadata({});
+
+  assert.equal(metadata.robots, undefined);
+  assert.equal(metadata.alternates?.canonical, 'https://kimmandoo.vercel.app/coding-test');
 });

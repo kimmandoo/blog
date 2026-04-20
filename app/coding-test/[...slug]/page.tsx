@@ -5,6 +5,7 @@ import { getPostData, getSortedPostsDataByCategory } from '@/lib/posts';
 import { CodeBlockEnhancer } from '@/components/CodeBlock';
 import { MermaidRenderer } from '@/components/MermaidRenderer';
 import { formatDisplayDate, toMetadataDate } from '@/lib/date';
+import { createPageMetadata } from '@/lib/metadata';
 
 export async function generateStaticParams() {
   const posts = getSortedPostsDataByCategory('PS');
@@ -22,8 +23,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     }
 
     return {
-      title: post.title,
-      description: post.excerpt || post.title,
+      ...createPageMetadata({
+        title: post.title,
+        description: post.excerpt || post.title,
+        canonicalPath: `/coding-test/${slugString}`,
+      }),
     };
   } catch {
     return { title: 'Post Not Found' };

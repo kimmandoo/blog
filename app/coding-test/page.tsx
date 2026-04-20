@@ -4,16 +4,20 @@ import { getPostData, getSortedPostsDataByCategory } from '@/lib/posts';
 import { CodeBlockEnhancer } from '@/components/CodeBlock';
 import { MermaidRenderer } from '@/components/MermaidRenderer';
 import { formatDisplayDate, toMetadataDate } from '@/lib/date';
+import { createCodingTestPageMetadata, getSearchParamValue } from '@/lib/metadata';
 
-export const metadata: Metadata = {
-  title: 'PS Thread',
-  description: 'PS',
-};
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ tag?: string | string[] }>;
+}): Promise<Metadata> {
+  return createCodingTestPageMetadata(await searchParams);
+}
 
 export default async function CodingTestPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tag?: string }>;
+  searchParams: Promise<{ tag?: string | string[] }>;
 }) {
   const { tag } = await searchParams;
   const codingTestPosts = getSortedPostsDataByCategory('PS');
@@ -24,7 +28,7 @@ export default async function CodingTestPage({
     return acc;
   }, {});
   const availableTags = Object.keys(tagCounts).sort((a, b) => a.localeCompare(b));
-  const selectedTag = tag?.trim() || '';
+  const selectedTag = getSearchParamValue(tag) || '';
   const filteredPosts = selectedTag
     ? codingTestPosts.filter((post) => (post.tags ?? []).includes(selectedTag))
     : codingTestPosts;

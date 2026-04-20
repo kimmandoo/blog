@@ -8,9 +8,12 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 import { Footer } from "@/components/Footer";
+import { toAbsolutePageUrl } from "@/lib/metadata";
 
 const { seo, site } = themeConfig;
-const ogImageUrl = `${seo.siteUrl}${seo.openGraph.defaultImage}`;
+const ogImageUrl = seo.openGraph.defaultImage.startsWith("http://") || seo.openGraph.defaultImage.startsWith("https://")
+  ? seo.openGraph.defaultImage
+  : toAbsolutePageUrl(seo.openGraph.defaultImage);
 
 export const metadata: Metadata = {
   metadataBase: new URL(seo.siteUrl),
@@ -58,7 +61,6 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: seo.siteUrl,
     types: {
       'application/rss+xml': `${seo.siteUrl}/feed.xml`,
     },

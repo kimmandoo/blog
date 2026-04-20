@@ -35,7 +35,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }
     return latest ?? fallback;
   };
-  const siteLastModified = getLastModified([...posts, ...androidPosts]);
+  const siteLastModified = getLastModified([...posts, ...androidPosts, ...codingTestPosts]);
 
   const postUrls = posts.map((post) => ({
     url: toAbsoluteUrl(`/posts/${encodeSlugPath(post.slug)}`),
