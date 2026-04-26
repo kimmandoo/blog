@@ -1,6 +1,4 @@
 {
-    "terminal.integrated.fontSize": 13,
-    "terminal.integrated.fontFamily": "'JetBrainsMono Nerd Font', monospace",
     "chat.tools.terminal.autoApprove": {
         "awk": true,
         "npx tsc": true
