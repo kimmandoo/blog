@@ -44,10 +44,10 @@ export function createPageMetadata({
     ...(noIndex
       ? {
           robots: {
-            index: false,
+            index: true,
             follow: true,
             googleBot: {
-              index: false,
+              index: true,
               follow: true,
               'max-video-preview': -1,
               'max-image-preview': 'large',
