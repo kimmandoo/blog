@@ -1,5 +1,4 @@
 import { MetadataRoute } from 'next';
-import { getSortedAndroidCSData } from '@/lib/androidcs';
 import { getSortedPostsData, getSortedPostsDataByCategory } from '@/lib/posts';
 import { themeConfig } from '@/config/theme.config';
 import { parseDateValue } from '@/lib/date';
@@ -10,7 +9,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = themeConfig.seo.siteUrl.replace(/\/+$/, '');
   const posts = getSortedPostsData();
   const codingTestPosts = getSortedPostsDataByCategory('PS');
-  const androidPosts = getSortedAndroidCSData();
   const now = new Date();
 
   const toAbsoluteUrl = (pathname: string) => {
@@ -35,20 +33,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }
     return latest ?? fallback;
   };
-  const siteLastModified = getLastModified([...posts, ...androidPosts, ...codingTestPosts]);
+  const siteLastModified = getLastModified([...posts, ...codingTestPosts]);
 
   const postUrls = posts.map((post) => ({
     url: toAbsoluteUrl(`/posts/${encodeSlugPath(post.slug)}`),
     lastModified: parseDateValue(post.date) ?? siteLastModified,
     changeFrequency: 'weekly' as const,
     priority: 0.8,
-  }));
-
-  const androidUrls = androidPosts.map((post) => ({
-    url: toAbsoluteUrl(`/androidcs/${encodeSlugPath(post.slug)}`),
-    lastModified: parseDateValue(post.date) ?? siteLastModified,
-    changeFrequency: 'weekly' as const,
-    priority: 0.6,
   }));
 
   const codingTestUrls = codingTestPosts.map((post) => ({
@@ -71,12 +62,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly' as const,
       priority: 0.7,
     },
-    {
-      url: toAbsoluteUrl('/androidcs'),
-      lastModified: getLastModified(androidPosts, siteLastModified),
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    },
   ];
 
   if (themeConfig.rss.enabled) {
@@ -90,7 +75,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const deduped = new Map<string, MetadataRoute.Sitemap[number]>();
 
-  for (const entry of [...staticUrls, ...postUrls, ...androidUrls, ...codingTestUrls]) {
+  for (const entry of [...staticUrls, ...postUrls, ...codingTestUrls]) {
     const existing = deduped.get(entry.url);
     if (!existing) {
       deduped.set(entry.url, entry);

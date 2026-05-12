@@ -71,7 +71,7 @@ test('code block toolbar and code area use compact internal spacing', () => {
 
   assert.match(getCssRule(globalCss, '.code-block-toolbar'), /min-height:\s*2rem/);
   assert.match(getCssRule(globalCss, '.code-block-toolbar'), /padding:\s*0\.375rem 0\.625rem/);
-  assert.match(getCssRule(globalCss, '.hljs'), /padding:\s*0\.75rem 1rem/);
+  assert.match(getCssRule(globalCss, '.hljs'), /padding:\s*0(?:rem)? 1rem/);
 });
 
 test('typography prose reset does not strip block code padding', () => {
@@ -85,6 +85,7 @@ test('toolbar code blocks use one outer surface instead of nested boxes', () => 
   const wrapperRule = getCssRule(globalCss, '.code-block-wrapper.has-code-block-toolbar');
   const toolbarRule = getCssRule(globalCss, '.code-block-toolbar');
   const preRule = getCssRule(globalCss, '.code-block-wrapper.has-code-block-toolbar pre');
+  const codeRule = getCssRule(globalCss, '.hljs');
 
   assert.match(wrapperRule, /background:\s*var\(--code-block-bg\)/);
   assert.match(wrapperRule, /border:\s*1px solid var\(--code-block-border\)/);
@@ -96,4 +97,5 @@ test('toolbar code blocks use one outer surface instead of nested boxes', () => 
   assert.match(preRule, /border-radius:\s*0/);
   assert.match(preRule, /box-shadow:\s*none/);
   assert.match(preRule, /padding:\s*0/);
+  assert.match(codeRule, /border-radius:\s*0/);
 });

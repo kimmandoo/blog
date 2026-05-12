@@ -34,16 +34,6 @@ function extractBlocks(xml, tagName) {
     .map((match) => match[1]);
 }
 
-function readBuildArtifact(relativePath) {
-  const absolutePath = path.join(process.cwd(), buildDir, relativePath);
-  return fs.readFileSync(absolutePath, 'utf8');
-}
-
-function extractCanonicalHref(html) {
-  const canonicalLink = html.match(/<link[^>]+rel="canonical"[^>]+href="([^"]+)"/i);
-  return canonicalLink ? canonicalLink[1] : null;
-}
-
 async function loadMetadataHelpers() {
   return import(pathToFileURL(path.join(process.cwd(), 'lib', 'metadata.ts')).href);
 }
@@ -75,6 +65,13 @@ test('sitemap homepage lastmod tracks actual latest published content', async ()
 
   assert.ok(homepage?.lastmod);
   assert.equal(homepage.lastmod, latestLastmod);
+});
+
+test('sitemap serves moved Android posts under posts and omits androidcs routes', async () => {
+  const xml = await getRouteBody(getBuildArtifactPath('server/app/sitemap.xml/route.js'));
+
+  assert.match(xml, /https:\/\/kimmandoo\.vercel\.app\/posts\/android\/callbackFlow/);
+  assert.doesNotMatch(xml, /\/androidcs/);
 });
 
 test('rss feed uses a stable build date based on the newest item date', async () => {
@@ -112,12 +109,6 @@ test('sitemap is configured to revalidate instead of staying permanently static'
   assert.ok(sitemapRoute);
   assert.equal(typeof sitemapRoute.initialRevalidateSeconds, 'number');
   assert.ok(sitemapRoute.initialRevalidateSeconds > 0);
-});
-
-test('section index pages advertise their own canonical URLs', () => {
-  const androidCsHtml = readBuildArtifact('server/app/androidcs.html');
-
-  assert.equal(extractCanonicalHref(androidCsHtml), 'https://kimmandoo.vercel.app/androidcs');
 });
 
 test('filtered home page metadata is noindex and canonicalizes to the root page', async () => {

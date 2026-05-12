@@ -75,10 +75,3 @@ export function createCodingTestPageMetadata(searchParams: SearchParams): Metada
     noIndex: Boolean(getSearchParamValue(searchParams.tag)),
   });
 }
-
-export function createAndroidCsPageMetadata(): Metadata {
-  return createPageMetadata({
-    title: 'Android CS',
-    canonicalPath: '/androidcs',
-  });
-}

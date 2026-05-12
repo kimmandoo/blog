@@ -204,7 +204,7 @@ html.dark :not(pre) > code:hover {
    ============================ */
 .hljs {
   display: block;
-  /* border-radius: var(--code-block-radius); */
+  border-radius: 0;
   padding: 0rem 1rem;
   background: transparent;
   color: inherit;
