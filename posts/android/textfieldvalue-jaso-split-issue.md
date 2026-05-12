@@ -46,13 +46,13 @@ sequenceDiagram
     User->>IME: 'ㄴ' 입력 (현재 '하' 상태)
     IME->>ViewModel: text="한", composition=(0,1)
     Note right of IME: "아직 조립 중"
-    
+
     ViewModel->>ViewModel: 객체 재생성 (composition 누락!)
     ViewModel->>TextField: text="한", composition=null
-    
+
     TextField->>IME: "현재 상태: '한', 조립중 아님"
     Note right of IME: "commit"
-    
+
     User->>IME: 다음 글자 입력
     IME->>TextField: 새 글자로 시작 (자소 분리 발생)
 ```
@@ -88,7 +88,7 @@ stateDiagram-v2
     초성 --> 중성: 모음 입력 (ㅏ)
     중성 --> 종성: 자음 입력 (ㄴ)
     종성 --> [*]: 다른 자음 입력 (commit)
-    
+
     note right of 종성
       이 상태에서 composition이 끊기면 '한'이 확정되고 다음 자음은 새 글자의 초성이 됨
     end note

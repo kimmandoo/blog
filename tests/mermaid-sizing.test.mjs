@@ -72,3 +72,25 @@ test('readSvgGeometry ignores non-numeric width and height attributes without a 
     null,
   );
 });
+
+test('readSvgGeometry accepts comma-separated viewBox values', () => {
+  assert.deepEqual(
+    readSvgGeometry({
+      viewBox: '0,0,320,180',
+      widthAttr: null,
+      heightAttr: null,
+    }),
+    { width: 320, height: 180 },
+  );
+});
+
+test('readSvgGeometry converts absolute CSS length units to pixels', () => {
+  assert.deepEqual(
+    readSvgGeometry({
+      viewBox: null,
+      widthAttr: '72pt',
+      heightAttr: '1in',
+    }),
+    { width: 96, height: 96 },
+  );
+});
