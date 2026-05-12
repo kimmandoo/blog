@@ -5,11 +5,12 @@ import { themeConfig } from '@/config/theme.config';
 import { Navigation } from '@/components/Navigation';
 import { SocialLinks } from '@/components/SocialLinks';
 import { createHomePageMetadata, getSearchParamValue } from '@/lib/metadata';
+import { parsePageParam } from '@/lib/pagination';
 
 export async function generateMetadata({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string | string[]; tag?: string | string[] }>;
+  searchParams: Promise<{ category?: string | string[]; tag?: string | string[]; page?: string | string[] }>;
 }): Promise<Metadata> {
   return createHomePageMetadata(await searchParams);
 }
@@ -17,11 +18,12 @@ export async function generateMetadata({
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string | string[]; tag?: string | string[] }>;
+  searchParams: Promise<{ category?: string | string[]; tag?: string | string[]; page?: string | string[] }>;
 }) {
-  const { category, tag } = await searchParams;
+  const { category, tag, page } = await searchParams;
   const selectedCategory = getSearchParamValue(category);
   const selectedTag = getSearchParamValue(tag);
+  const selectedPage = parsePageParam(page);
   const allPosts = getSortedPostsData();
   const allCategories = getAllCategories();
   const allTags = getAllTags();
@@ -59,6 +61,7 @@ export default async function Home({
           allTags={allTags}
           selectedCategory={selectedCategory}
           selectedTag={selectedTag}
+          currentPage={selectedPage}
         />
       </main>
     </div>

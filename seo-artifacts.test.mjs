@@ -129,6 +129,15 @@ test('filtered home page metadata is noindex and canonicalizes to the root page'
   assert.equal(metadata.alternates?.canonical, 'https://kimmandoo.vercel.app/');
 });
 
+test('paginated home page metadata is noindex and canonicalizes to the root page', async () => {
+  const { createHomePageMetadata } = await loadMetadataHelpers();
+  const metadata = createHomePageMetadata({ page: '2' });
+
+  assert.equal(metadata.robots?.index, false);
+  assert.equal(metadata.robots?.follow, true);
+  assert.equal(metadata.alternates?.canonical, 'https://kimmandoo.vercel.app/');
+});
+
 test('filtered coding-test page metadata is noindex and canonicalizes to the section root', async () => {
   const { createCodingTestPageMetadata } = await loadMetadataHelpers();
   const metadata = createCodingTestPageMetadata({ tag: 'ps' });
