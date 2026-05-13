@@ -9,6 +9,7 @@ import { TableOfContents } from '@/components/TableOfContents';
 import { ReadingProgressBar } from '@/components/ReadingProgressBar';
 import { ShareButtons } from '@/components/ShareButtons';
 import { PostNavigation } from '@/components/PostNavigation';
+import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd';
 import { themeConfig } from '@/config/theme.config';
 import { formatDisplayDate, toMetadataDate } from '@/lib/date';
 
@@ -57,6 +58,17 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title: post.title,
       description: post.excerpt || post.title,
       keywords: post.tags || [],
+      robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          'max-video-preview': -1,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+        },
+      },
       openGraph: {
         type: 'article',
         locale: seo.openGraph.locale,
@@ -110,8 +122,40 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
   // Generate full URL for sharing
   const postUrl = `${themeConfig.seo.siteUrl}/posts/${slugString}`;
 
+  // Build OG image URL for JSON-LD
+  let jsonLdImage: string | undefined;
+  if (post.firstImage) {
+    if (post.firstImage.startsWith('http://') || post.firstImage.startsWith('https://')) {
+      jsonLdImage = post.firstImage;
+    } else if (post.firstImage.startsWith('/')) {
+      jsonLdImage = `${themeConfig.seo.siteUrl}${post.firstImage}`;
+    } else {
+      jsonLdImage = `${themeConfig.seo.siteUrl}/${post.firstImage}`;
+    }
+  }
+
+  const baseUrl = themeConfig.seo.siteUrl.replace(/\/+$/, '');
+
   return (
     <div className={`min-h-screen bg-gradient-to-br ${themeConfig.colors.light.background.primary} ${themeConfig.colors.dark.background.primary}`}>
+      {/* JSON-LD Structured Data */}
+      <ArticleJsonLd
+        title={post.title}
+        description={post.excerpt || post.title}
+        url={postUrl}
+        datePublished={toMetadataDate(post.date) ?? undefined}
+        dateModified={toMetadataDate(post.date) ?? undefined}
+        tags={post.tags}
+        image={jsonLdImage}
+      />
+      <BreadcrumbJsonLd
+        items={[
+          { name: 'Home', url: baseUrl },
+          ...(post.category ? [{ name: post.category, url: `${baseUrl}/?category=${encodeURIComponent(post.category)}` }] : []),
+          { name: post.title, url: postUrl },
+        ]}
+      />
+
       {/* Reading Progress Bar */}
       <ReadingProgressBar readingTime={post.readingTime} />
       

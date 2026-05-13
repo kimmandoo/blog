@@ -9,7 +9,8 @@
     "lint": "eslint app components config lib scripts tests eslint.config.mjs next.config.ts postcss.config.mjs seo-artifacts.test.mjs test-kroki.js --ext .js,.mjs,.ts,.tsx",
     "test": "node --test tests/*.test.mjs seo-artifacts.test.mjs",
     "test:mermaid": "node --test tests/mermaid-*.test.mjs",
-    "validate:mermaid": "node scripts/validate-mermaid.mjs --root ."
+    "validate:mermaid": "node scripts/validate-mermaid.mjs --root .",
+    "ping:google": "node scripts/ping-google.mjs"
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.19",
