@@ -52,7 +52,7 @@ ctest --test-dir build -C Debug
 cmake --install build --config Debug --prefix install
 ```
 
-## CMakeLists.txt
+## CMakeLists.txt 작게 시작
 
 ```cmake
 cmake_minimum_required(VERSION 3.25)
