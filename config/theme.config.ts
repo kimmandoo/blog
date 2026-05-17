@@ -162,7 +162,7 @@ export const themeConfig = {
   // Code block configuration
   codeBlock: {
     // Enable/disable line numbers
-    showLineNumbers: false,
+    showLineNumbers: true,
     // Starting line number (usually 1)
     startLineNumber: 1,
     // Show copy button on hover

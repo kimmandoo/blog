@@ -52,7 +52,7 @@ flowchart LR
     Intent -- "2. Triggers Action" --> ViewModel
     ViewModel -- "3. Reduces State" --> Model
     Model -- "4. Renders" --> View
-    
+
     style ViewModel fill:#f9f,stroke:#333,stroke-width:2px
     style Model fill:#bbf,stroke:#333,stroke-width:2px
 ```

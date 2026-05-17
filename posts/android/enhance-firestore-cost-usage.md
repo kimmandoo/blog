@@ -15,27 +15,27 @@ firebase firestore를 사용하고 있고, 지금 설계된 collections을 보�
 graph TD
     A[root] --> B["${prefix}users"]
     A --> C["${prefix}leaderboard"]
-    
+
     B --> D["{userId}"]
-    
+
     D --> E["${prefix}workouts"]
     E --> F["{auto-generated-id}"]
-    
+
     D --> G["${prefix}dailyRecords"]
     G --> H["{YYYY-MM-DD}"]
-    
+
     C --> I["daily_{YYYY-MM-DD}"]
     C --> J["weekly_{YYYY}-W{WW}"]
     C --> K["monthly_{YYYY-MM}"]
-    
+
     I --> L["${prefix}entries"]
     J --> M["${prefix}entries"]
     K --> N["${prefix}entries"]
-    
+
     L --> O["{userId}"]
     M --> P["{userId}"]
     N --> Q["{userId}"]
-    
+
     style A fill:#e1f5ff
     style B fill:#fff4e6
     style C fill:#fff4e6

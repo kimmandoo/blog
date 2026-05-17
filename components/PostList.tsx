@@ -8,6 +8,7 @@ import { SearchBar } from '@/components/SearchBar';
 import { themeConfig } from '@/config/theme.config';
 import { formatDisplayDate, toMetadataDate } from '@/lib/date';
 import { PostData } from '@/lib/posts';
+import { DEFAULT_POSTS_PER_PAGE, paginateItems } from '@/lib/pagination';
 
 interface PostListProps {
   initialPosts: PostData[];
@@ -15,6 +16,8 @@ interface PostListProps {
   allTags: string[];
   selectedCategory?: string;
   selectedTag?: string;
+  currentPage?: number;
+  postsPerPage?: number;
   basePath?: string; // Optional base path, defaults to '/posts'
 }
 
@@ -24,6 +27,8 @@ export function PostList({
   allTags,
   selectedCategory,
   selectedTag,
+  currentPage = 1,
+  postsPerPage = DEFAULT_POSTS_PER_PAGE,
   basePath = '/posts'
 }: PostListProps) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -45,6 +50,28 @@ export function PostList({
       return titleMatch || excerptMatch || categoryMatch || tagsMatch;
     });
   }, [initialPosts, searchQuery]);
+
+  const pagination = useMemo(
+    () => paginateItems(filteredPosts, currentPage, postsPerPage),
+    [filteredPosts, currentPage, postsPerPage]
+  );
+
+  const createPageHref = (page: number) => {
+    const params = new URLSearchParams();
+
+    if (selectedCategory) {
+      params.set('category', selectedCategory);
+    }
+    if (selectedTag) {
+      params.set('tag', selectedTag);
+    }
+    if (page > 1) {
+      params.set('page', String(page));
+    }
+
+    const query = params.toString();
+    return query ? `${sectionPath}?${query}` : sectionPath;
+  };
 
   return (
     <>
@@ -162,7 +189,7 @@ export function PostList({
             </div>
           </div>
         ) : (
-          filteredPosts.map((post) => (
+          pagination.items.map((post) => (
             <article key={post.slug} className="group">
               <Link href={`${basePath}/${post.slug}`}>
                 <div className="py-4 px-4 -mx-4 rounded-xl transition-all duration-200 hover:bg-gray-50 dark:hover:bg-white/[0.03] border border-transparent hover:border-gray-200/60 dark:hover:border-gray-800/60">
@@ -218,6 +245,66 @@ export function PostList({
           ))
         )}
       </div>
+
+      {pagination.totalPages > 1 && (
+        <nav
+          className="mt-8 flex flex-col gap-3 border-t border-gray-200/70 pt-5 dark:border-gray-800/70 sm:flex-row sm:items-center sm:justify-between"
+          aria-label="Post pagination"
+        >
+          <p className={`text-sm ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
+            Page {pagination.currentPage} of {pagination.totalPages}
+          </p>
+          <div className="flex flex-wrap items-center gap-1.5">
+            {pagination.hasPrevious ? (
+              <Link
+                href={createPageHref(pagination.currentPage - 1)}
+                className="inline-flex h-9 items-center justify-center rounded-md border border-gray-200 px-3 text-sm font-medium text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-50 dark:border-gray-800 dark:text-gray-300 dark:hover:border-gray-700 dark:hover:bg-white/[0.03]"
+              >
+                Prev
+              </Link>
+            ) : (
+              <span className="inline-flex h-9 items-center justify-center rounded-md border border-gray-100 px-3 text-sm font-medium text-gray-300 dark:border-gray-900 dark:text-gray-700">
+                Prev
+              </span>
+            )}
+
+            {Array.from({ length: pagination.totalPages }, (_, index) => index + 1).map((page) => {
+              const isCurrent = page === pagination.currentPage;
+
+              return isCurrent ? (
+                <span
+                  key={page}
+                  className="inline-flex h-9 min-w-9 items-center justify-center rounded-md border border-gray-900 bg-gray-900 px-3 text-sm font-semibold text-white dark:border-gray-100 dark:bg-gray-100 dark:text-gray-900"
+                  aria-current="page"
+                >
+                  {page}
+                </span>
+              ) : (
+                <Link
+                  key={page}
+                  href={createPageHref(page)}
+                  className="inline-flex h-9 min-w-9 items-center justify-center rounded-md border border-gray-200 px-3 text-sm font-medium text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-50 dark:border-gray-800 dark:text-gray-300 dark:hover:border-gray-700 dark:hover:bg-white/[0.03]"
+                >
+                  {page}
+                </Link>
+              );
+            })}
+
+            {pagination.hasNext ? (
+              <Link
+                href={createPageHref(pagination.currentPage + 1)}
+                className="inline-flex h-9 items-center justify-center rounded-md border border-gray-200 px-3 text-sm font-medium text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-50 dark:border-gray-800 dark:text-gray-300 dark:hover:border-gray-700 dark:hover:bg-white/[0.03]"
+              >
+                Next
+              </Link>
+            ) : (
+              <span className="inline-flex h-9 items-center justify-center rounded-md border border-gray-100 px-3 text-sm font-medium text-gray-300 dark:border-gray-900 dark:text-gray-700">
+                Next
+              </span>
+            )}
+          </div>
+        </nav>
+      )}
     </>
   );
 }

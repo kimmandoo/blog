@@ -4,12 +4,14 @@ import { PostList } from '@/components/PostList';
 import { themeConfig } from '@/config/theme.config';
 import { Navigation } from '@/components/Navigation';
 import { SocialLinks } from '@/components/SocialLinks';
+import { WebSiteJsonLd } from '@/components/JsonLd';
 import { createHomePageMetadata, getSearchParamValue } from '@/lib/metadata';
+import { parsePageParam } from '@/lib/pagination';
 
 export async function generateMetadata({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string | string[]; tag?: string | string[] }>;
+  searchParams: Promise<{ category?: string | string[]; tag?: string | string[]; page?: string | string[] }>;
 }): Promise<Metadata> {
   return createHomePageMetadata(await searchParams);
 }
@@ -17,11 +19,12 @@ export async function generateMetadata({
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string | string[]; tag?: string | string[] }>;
+  searchParams: Promise<{ category?: string | string[]; tag?: string | string[]; page?: string | string[] }>;
 }) {
-  const { category, tag } = await searchParams;
+  const { category, tag, page } = await searchParams;
   const selectedCategory = getSearchParamValue(category);
   const selectedTag = getSearchParamValue(tag);
+  const selectedPage = parsePageParam(page);
   const allPosts = getSortedPostsData();
   const allCategories = getAllCategories();
   const allTags = getAllTags();
@@ -39,6 +42,7 @@ export default async function Home({
 
   return (
     <div className={`min-h-screen bg-gradient-to-br ${themeConfig.colors.light.background.primary} ${themeConfig.colors.dark.background.primary}`}>
+      <WebSiteJsonLd />
       <main className={`${themeConfig.spacing.container} mx-auto px-6 pt-12 pb-8`}>
         <header className="mb-4 text-center">
           <h1 className={`text-2xl font-bold tracking-tight ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary}`}>
@@ -59,6 +63,7 @@ export default async function Home({
           allTags={allTags}
           selectedCategory={selectedCategory}
           selectedTag={selectedTag}
+          currentPage={selectedPage}
         />
       </main>
     </div>

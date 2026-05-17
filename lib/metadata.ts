@@ -44,10 +44,10 @@ export function createPageMetadata({
     ...(noIndex
       ? {
           robots: {
-            index: true,
+            index: false,
             follow: true,
             googleBot: {
-              index: true,
+              index: false,
               follow: true,
               'max-video-preview': -1,
               'max-image-preview': 'large',
@@ -63,7 +63,7 @@ export function createHomePageMetadata(searchParams: SearchParams): Metadata {
   return createPageMetadata({
     canonicalPath: '/',
     description: themeConfig.site.description,
-    noIndex: hasActiveSearchFilter(searchParams, ['category', 'tag']),
+    noIndex: hasActiveSearchFilter(searchParams, ['category', 'tag', 'page']),
   });
 }
 
@@ -73,12 +73,5 @@ export function createCodingTestPageMetadata(searchParams: SearchParams): Metada
     description: 'PS',
     canonicalPath: '/coding-test',
     noIndex: Boolean(getSearchParamValue(searchParams.tag)),
-  });
-}
-
-export function createAndroidCsPageMetadata(): Metadata {
-  return createPageMetadata({
-    title: 'Android CS',
-    canonicalPath: '/androidcs',
   });
 }
