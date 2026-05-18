@@ -192,7 +192,7 @@ export function PostList({
           pagination.items.map((post) => (
             <article key={post.slug} className="group">
               <Link href={`${basePath}/${post.slug}`}>
-                <div className="py-4 px-4 -mx-4 rounded-xl transition-all duration-200 hover:bg-gray-50 dark:hover:bg-white/[0.03] border border-transparent hover:border-gray-200/60 dark:hover:border-gray-800/60">
+                <div className="mandoo-post-card py-4 px-4 -mx-4 rounded-xl transition-all duration-200 border border-transparent">
                   <div className="flex items-start gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2 mb-1.5">
@@ -208,12 +208,12 @@ export function PostList({
                           </span>
                         )}
                         {post.category && (
-                          <span className="text-xs px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-medium">
+                          <span className="text-xs px-2 py-0.5 rounded-full border border-rose-200/70 bg-orange-50/70 text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/20 dark:text-rose-200 font-medium">
                             {post.category}
                           </span>
                         )}
                       </div>
-                      <h2 className={`text-base sm:text-lg font-semibold mb-1 ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200`}>
+                      <h2 className={`text-base sm:text-lg font-semibold mb-1 ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} group-hover:text-rose-600 dark:group-hover:text-rose-300 transition-colors duration-200`}>
                         {post.title}
                       </h2>
                       {post.excerpt && (

@@ -45,8 +45,8 @@ export default async function Home({
       <WebSiteJsonLd />
       <main className={`${themeConfig.spacing.container} mx-auto px-6 pt-12 pb-8`}>
         <header className="mb-4 text-center">
-          <h1 className={`text-2xl font-bold tracking-tight ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary}`}>
-            {themeConfig.site.title}
+          <h1 className="site-brand mx-auto text-2xl font-bold text-black dark:text-white">
+            <span>{themeConfig.site.title}</span>
           </h1>
           <p className={`mt-1 text-sm ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
             {themeConfig.site.tagline}
