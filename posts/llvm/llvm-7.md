@@ -1,6 +1,6 @@
 ---
 title: llvm 입문하기(7)
-date: 2026-05-25
+date: 2026-05-26
 category: LLVM
 tags: [cpp, llvm]
 ---
