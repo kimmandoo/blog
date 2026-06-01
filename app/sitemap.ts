@@ -64,15 +64,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  if (themeConfig.rss.enabled) {
-    staticUrls.push({
-      url: toAbsoluteUrl('/feed.xml'),
-      lastModified: getLastModified(posts, siteLastModified),
-      changeFrequency: 'daily',
-      priority: 0.4,
-    });
-  }
-
   const deduped = new Map<string, MetadataRoute.Sitemap[number]>();
 
   for (const entry of [...staticUrls, ...postUrls, ...codingTestUrls]) {

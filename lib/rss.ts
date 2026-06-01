@@ -50,7 +50,7 @@ function getLatestPostDate(posts: PostData[]): Date {
  * const rss = generateRssFeed(posts);
  * ```
  */
-export function generateRssFeed(posts: PostData[]): string {
+export function generateRssFeed(posts: PostData[], feedPath = '/feed.xml'): string {
   const { site, seo } = themeConfig;
   const buildDate = getLatestPostDate(posts).toUTCString();
   
@@ -80,7 +80,8 @@ ${categories}
     .join('\n');
 
   const escapedSiteUrl = escapeXml(seo.siteUrl);
-  const escapedFeedUrl = escapeXml(`${seo.siteUrl}/feed.xml`);
+  const normalizedFeedPath = feedPath.startsWith('/') ? feedPath : `/${feedPath}`;
+  const escapedFeedUrl = escapeXml(`${seo.siteUrl}${normalizedFeedPath}`);
 
   // Generate complete RSS feed
   return `<?xml version="1.0" encoding="UTF-8"?>

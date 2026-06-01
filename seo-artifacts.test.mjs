@@ -74,6 +74,13 @@ test('sitemap serves moved Android posts under posts and omits androidcs routes'
   assert.doesNotMatch(xml, /\/androidcs/);
 });
 
+test('sitemap lists indexable pages only, not feed endpoints', async () => {
+  const xml = await getRouteBody(getBuildArtifactPath('server/app/sitemap.xml/route.js'));
+
+  assert.doesNotMatch(xml, /https:\/\/kimmandoo\.vercel\.app\/feed\.xml/);
+  assert.doesNotMatch(xml, /https:\/\/kimmandoo\.vercel\.app\/rss/);
+});
+
 test('rss feed uses a stable build date based on the newest item date', async () => {
   const xml = await getRouteBody(getBuildArtifactPath('server/app/feed.xml/route.js'));
   const lastBuildDate = extractTagValue(xml, 'lastBuildDate');
@@ -101,6 +108,16 @@ test('rss feed gives every item a non-empty description', async () => {
     const description = extractTagValue(block, 'description');
     assert.ok(description && description.trim().length > 0);
   });
+});
+
+test('rss alias serves a fetchable RSS feed for Search Console submissions', async () => {
+  const xml = await getRouteBody(getBuildArtifactPath('server/app/rss/route.js'));
+  const itemBlocks = extractBlocks(xml, 'item');
+
+  assert.match(xml, /^<\?xml version="1\.0" encoding="UTF-8"\?>/);
+  assert.match(xml, /<rss version="2\.0" xmlns:atom="http:\/\/www\.w3\.org\/2005\/Atom">/);
+  assert.match(xml, /<atom:link href="https:\/\/kimmandoo\.vercel\.app\/rss" rel="self" type="application\/rss\+xml"\/>/);
+  assert.ok(itemBlocks.length > 0);
 });
 
 test('sitemap is configured to revalidate instead of staying permanently static', () => {
