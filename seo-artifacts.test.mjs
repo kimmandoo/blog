@@ -38,6 +38,11 @@ async function loadMetadataHelpers() {
   return import(pathToFileURL(path.join(process.cwd(), 'lib', 'metadata.ts')).href);
 }
 
+async function loadNextConfig() {
+  const config = await import(pathToFileURL(path.join(process.cwd(), 'next.config.ts')).href);
+  return config.default;
+}
+
 test('robots.txt advertises the sitemap and blocks framework internals', async () => {
   const body = await getRouteBody(getBuildArtifactPath('server/app/robots.txt/route.js'));
 
@@ -79,6 +84,14 @@ test('sitemap lists indexable pages only, not feed endpoints', async () => {
 
   assert.doesNotMatch(xml, /https:\/\/kimmandoo\.vercel\.app\/feed\.xml/);
   assert.doesNotMatch(xml, /https:\/\/kimmandoo\.vercel\.app\/rss/);
+});
+
+test('sitemap headers keep the file fetchable without noindex directives', async () => {
+  const nextConfig = await loadNextConfig();
+  const headers = await nextConfig.headers();
+  const sitemapHeaders = headers.find((entry) => entry.source === '/sitemap.xml')?.headers ?? [];
+
+  assert.equal(sitemapHeaders.some((header) => header.key.toLowerCase() === 'x-robots-tag'), false);
 });
 
 test('rss feed uses a stable build date based on the newest item date', async () => {
