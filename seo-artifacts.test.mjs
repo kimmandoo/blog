@@ -141,6 +141,16 @@ test('sitemap is configured to revalidate instead of staying permanently static'
   assert.ok(sitemapRoute.initialRevalidateSeconds > 0);
 });
 
+test('rss feeds are configured to revalidate instead of staying uncached dynamic routes', () => {
+  for (const routePath of ['/feed.xml', '/rss']) {
+    const route = getPrerenderRoute(routePath);
+
+    assert.ok(route, `${routePath} should be present in the prerender manifest`);
+    assert.equal(typeof route.initialRevalidateSeconds, 'number');
+    assert.ok(route.initialRevalidateSeconds > 0);
+  }
+});
+
 test('filtered home page metadata is noindex and canonicalizes to the root page', async () => {
   const { createHomePageMetadata } = await loadMetadataHelpers();
   const metadata = createHomePageMetadata({ tag: 'retrospect' });
