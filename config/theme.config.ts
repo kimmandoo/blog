@@ -321,12 +321,12 @@ export const themeConfig = {
 
   // UI Text (easily change language here)
   text: {
-    categories: 'Categories',
-    tags: 'Tags',
-    filter: 'Filter:',
-    noPostsFound: 'No posts found for the selected filter.',
-    viewAllPosts: 'View all posts',
-    comments: 'Comments',
+    categories: '분류',
+    tags: '태그',
+    filter: '필터:',
+    noPostsFound: '선택한 필터에 해당하는 글이 없습니다.',
+    viewAllPosts: '전체 글 보기',
+    comments: '댓글',
     commentsSetupRequired: 'To enable comments, please',
     commentsSetupInConfig: 'complete the Giscus setup in',
     commentsSetupGuide: 'View Giscus setup guide',

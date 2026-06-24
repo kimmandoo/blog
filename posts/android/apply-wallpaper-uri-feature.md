@@ -1,7 +1,7 @@
 ---
 title: 외부 이미지를 앱 내부로 가져오기
 date: 2025-12-23
-category: Andriod
+category: Android
 tags: [trouble-shooting, android, bitmap, jetpack-compose]
 ---
 

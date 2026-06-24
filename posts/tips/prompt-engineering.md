@@ -1,7 +1,7 @@
 ---
 title: 프롬프트 엔지니어링 입문하기
 date: 2026-01-22
-category: Tip
+category: Tips
 tags: [llm, prompt-engineering, tips]
 ---
 

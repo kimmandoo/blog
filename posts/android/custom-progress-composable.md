@@ -1,7 +1,7 @@
 ---
 title: LongPress 애니메이션 구현하기
 date: 2026-01-31
-category: Andriod
+category: Android
 tags: [trouble-shooting, android, jetpack-compose]
 ---
 

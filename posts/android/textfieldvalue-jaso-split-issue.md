@@ -1,7 +1,7 @@
 ---
 title: Compose TextField에서 한글 자소분리 해결하기
 date: 2026-01-02
-category: Andriod
+category: Android
 tags: [trouble-shooting, android, jetpack-compose]
 ---
 

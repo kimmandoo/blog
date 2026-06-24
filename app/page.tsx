@@ -43,7 +43,7 @@ export default async function Home({
   return (
     <div className={`min-h-screen bg-gradient-to-br ${themeConfig.colors.light.background.primary} ${themeConfig.colors.dark.background.primary}`}>
       <WebSiteJsonLd />
-      <main className={`${themeConfig.spacing.container} mx-auto px-6 pt-12 pb-8`}>
+      <main className={`${themeConfig.spacing.container} mx-auto px-6 pt-8 sm:pt-12 pb-8`}>
         <header className="mb-4 text-center">
           <h1 className="site-brand mx-auto text-2xl font-bold text-black dark:text-white">
             <span>{themeConfig.site.title}</span>

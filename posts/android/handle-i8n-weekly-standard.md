@@ -1,7 +1,7 @@
 ---
 title: Locale.getDefault이 일으킨 버그 해결하기(1)
 date: 2026-02-01
-category: Andriod
+category: Android
 tags: [trouble-shooting, android, i8n]
 ---
 

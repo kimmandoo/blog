@@ -1,7 +1,7 @@
 ---
 title: inline, noinline, crossinline 이해하기
 date: 2025-12-15
-category: kotlin
+category: Kotlin
 tags: [kotlin]
 ---
 

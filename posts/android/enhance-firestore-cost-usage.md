@@ -1,7 +1,7 @@
 ---
 title: Firestore 비용 절감하기
 date: 2026-01-16
-category: Andriod
+category: Android
 tags: [trouble-shooting, android, firebase, firestore]
 ---
 

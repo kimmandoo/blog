@@ -22,14 +22,14 @@ export function ThemeToggle({ inline = false }: ThemeToggleProps) {
 
   const buttonClasses = inline
     ? "relative p-2 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300"
-    : "fixed top-6 right-6 z-50 p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 hover:scale-110 transition-all duration-300";
+    : "fixed right-4 top-4 z-50 p-2.5 rounded-full bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 hover:scale-105 sm:right-6 sm:top-6 sm:p-3 transition-all duration-300";
 
   return (
     <button
       onClick={cycleTheme}
       className={buttonClasses}
-      aria-label={`Current theme: ${theme}. Click to switch.`}
-      title={`Theme: ${theme} (${resolvedTheme})`}
+      aria-label={`현재 테마: ${theme}. 클릭하면 변경됩니다.`}
+      title={`테마: ${theme} (${resolvedTheme})`}
     >
       {/* Sun icon for light mode */}
       {resolvedTheme === 'light' && (
@@ -62,12 +62,6 @@ export function ThemeToggle({ inline = false }: ThemeToggleProps) {
             d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
           />
         </svg>
-      )}
-      {/* System indicator - shows a small badge */}
-      {theme === 'system' && (
-        <span className="absolute -bottom-1 -right-1 text-[10px] bg-gray-500 text-white px-1 rounded">
-          auto
-        </span>
       )}
     </button>
   );

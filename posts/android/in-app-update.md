@@ -1,7 +1,7 @@
 ---
 title: In-App Update 알아보기
 date: 2026-02-12
-category: Andriod
+category: Android
 tags: [trouble-shooting, android, in-app]
 ---
 

@@ -136,14 +136,19 @@ export function PostList({
           
           {/* Tags Section */}
           {allTags.length > 0 && (
-            <div className="flex flex-wrap items-center gap-1">
-              <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mr-1">
-                {themeConfig.text.tags}
-              </span>
-              {allTags.map((tag) => (
-                <TagBadge key={tag} tag={tag} size="sm" basePath={sectionPath} />
-              ))}
-            </div>
+            <details className="group/tags sm:contents">
+              <summary className="mb-1 flex cursor-pointer list-none items-center gap-1 text-xs font-semibold text-gray-400 dark:text-gray-500 sm:hidden [&::-webkit-details-marker]:hidden">
+                태그 보기 ({allTags.length})
+              </summary>
+              <div className="hidden flex-wrap items-center gap-1 group-open/tags:flex sm:flex">
+                <span className="mr-1 hidden text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 sm:inline">
+                  {themeConfig.text.tags}
+                </span>
+                {allTags.map((tag) => (
+                  <TagBadge key={tag} tag={tag} size="sm" basePath={sectionPath} />
+                ))}
+              </div>
+            </details>
           )}
         </div>
       )}
@@ -198,22 +203,25 @@ export function PostList({
                       <div className="flex flex-wrap items-center gap-2 mb-1.5">
                         <time
                           dateTime={toMetadataDate(post.date) ?? post.date}
-                          className={`text-xs font-medium ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}
+                          className={`text-xs font-normal ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}
                         >
                           {formatDisplayDate(post.date)}
                         </time>
                         {post.readingTime && (
-                          <span className={`text-xs ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
+                          <span className={`text-xs font-normal ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
                             · {post.readingTime}분
                           </span>
                         )}
                         {post.category && (
-                          <span className="text-xs px-2 py-0.5 rounded-full border border-rose-200/70 bg-orange-50/70 text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/20 dark:text-rose-200 font-medium">
+                          <span className="text-xs px-2 py-0.5 rounded-full border border-gray-200/80 bg-gray-50/80 text-gray-500 dark:border-gray-800 dark:bg-gray-900/50 dark:text-gray-400 font-medium transition-colors duration-200 group-hover:border-rose-200 group-hover:bg-rose-50/70 group-hover:text-rose-700 dark:group-hover:border-rose-900/60 dark:group-hover:bg-rose-950/25 dark:group-hover:text-rose-200">
                             {post.category}
                           </span>
                         )}
                       </div>
-                      <h2 className={`text-base sm:text-lg font-semibold mb-1 ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} group-hover:text-rose-600 dark:group-hover:text-rose-300 transition-colors duration-200`}>
+                      <h2
+                        className={`break-words text-lg sm:text-xl font-bold mb-1 ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} group-hover:text-rose-600 dark:group-hover:text-rose-300 transition-colors duration-200`}
+                        style={{ overflowWrap: 'anywhere' }}
+                      >
                         {post.title}
                       </h2>
                       {post.excerpt && (
@@ -248,23 +256,32 @@ export function PostList({
 
       {pagination.totalPages > 1 && (
         <nav
-          className="mt-8 flex flex-col gap-3 border-t border-gray-200/70 pt-5 dark:border-gray-800/70 sm:flex-row sm:items-center sm:justify-between"
-          aria-label="Post pagination"
+          className="mt-8 flex flex-col items-center gap-3 border-t border-gray-200/70 pt-5 dark:border-gray-800/70"
+          aria-label="글 목록 페이지"
         >
-          <p className={`text-sm ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
-            Page {pagination.currentPage} of {pagination.totalPages}
+          <p className={`text-xs ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
+            {pagination.currentPage} / {pagination.totalPages}
           </p>
-          <div className="flex flex-wrap items-center gap-1.5">
+          <div className="flex flex-wrap items-center justify-center gap-1.5">
             {pagination.hasPrevious ? (
               <Link
                 href={createPageHref(pagination.currentPage - 1)}
-                className="inline-flex h-9 items-center justify-center rounded-md border border-gray-200 px-3 text-sm font-medium text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-50 dark:border-gray-800 dark:text-gray-300 dark:hover:border-gray-700 dark:hover:bg-white/[0.03]"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-gray-200 text-gray-500 transition-colors hover:border-rose-200 hover:bg-rose-50/70 hover:text-rose-700 dark:border-gray-800 dark:text-gray-400 dark:hover:border-rose-900/60 dark:hover:bg-rose-950/25 dark:hover:text-rose-200"
+                aria-label="이전 페이지"
               >
-                Prev
+                <svg className="h-4 w-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M15 19l-7-7 7-7" />
+                </svg>
               </Link>
             ) : (
-              <span className="inline-flex h-9 items-center justify-center rounded-md border border-gray-100 px-3 text-sm font-medium text-gray-300 dark:border-gray-900 dark:text-gray-700">
-                Prev
+              <span
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-gray-100 text-gray-300 dark:border-gray-900 dark:text-gray-700"
+                aria-disabled="true"
+                aria-label="이전 페이지"
+              >
+                <svg className="h-4 w-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M15 19l-7-7 7-7" />
+                </svg>
               </span>
             )}
 
@@ -274,7 +291,7 @@ export function PostList({
               return isCurrent ? (
                 <span
                   key={page}
-                  className="inline-flex h-9 min-w-9 items-center justify-center rounded-md border border-gray-900 bg-gray-900 px-3 text-sm font-semibold text-white dark:border-gray-100 dark:bg-gray-100 dark:text-gray-900"
+                  className="inline-flex h-9 min-w-9 items-center justify-center rounded-md border border-rose-500 bg-rose-600 px-3 text-sm font-semibold text-white dark:border-rose-300 dark:bg-rose-300 dark:text-gray-950"
                   aria-current="page"
                 >
                   {page}
@@ -283,7 +300,7 @@ export function PostList({
                 <Link
                   key={page}
                   href={createPageHref(page)}
-                  className="inline-flex h-9 min-w-9 items-center justify-center rounded-md border border-gray-200 px-3 text-sm font-medium text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-50 dark:border-gray-800 dark:text-gray-300 dark:hover:border-gray-700 dark:hover:bg-white/[0.03]"
+                  className="inline-flex h-9 min-w-9 items-center justify-center rounded-md border border-gray-200 px-3 text-sm font-medium text-gray-600 transition-colors hover:border-rose-200 hover:bg-rose-50/70 hover:text-rose-700 dark:border-gray-800 dark:text-gray-300 dark:hover:border-rose-900/60 dark:hover:bg-rose-950/25 dark:hover:text-rose-200"
                 >
                   {page}
                 </Link>
@@ -293,13 +310,22 @@ export function PostList({
             {pagination.hasNext ? (
               <Link
                 href={createPageHref(pagination.currentPage + 1)}
-                className="inline-flex h-9 items-center justify-center rounded-md border border-gray-200 px-3 text-sm font-medium text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-50 dark:border-gray-800 dark:text-gray-300 dark:hover:border-gray-700 dark:hover:bg-white/[0.03]"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-gray-200 text-gray-500 transition-colors hover:border-rose-200 hover:bg-rose-50/70 hover:text-rose-700 dark:border-gray-800 dark:text-gray-400 dark:hover:border-rose-900/60 dark:hover:bg-rose-950/25 dark:hover:text-rose-200"
+                aria-label="다음 페이지"
               >
-                Next
+                <svg className="h-4 w-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M9 5l7 7-7 7" />
+                </svg>
               </Link>
             ) : (
-              <span className="inline-flex h-9 items-center justify-center rounded-md border border-gray-100 px-3 text-sm font-medium text-gray-300 dark:border-gray-900 dark:text-gray-700">
-                Next
+              <span
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-gray-100 text-gray-300 dark:border-gray-900 dark:text-gray-700"
+                aria-disabled="true"
+                aria-label="다음 페이지"
+              >
+                <svg className="h-4 w-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M9 5l7 7-7 7" />
+                </svg>
               </span>
             )}
           </div>

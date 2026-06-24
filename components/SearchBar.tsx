@@ -8,7 +8,7 @@ interface SearchBarProps {
   placeholder?: string;
 }
 
-export function SearchBar({ onSearch, placeholder = "Search posts..." }: SearchBarProps) {
+export function SearchBar({ onSearch, placeholder = "검색..." }: SearchBarProps) {
   const [query, setQuery] = useState('');
 
   useEffect(() => {

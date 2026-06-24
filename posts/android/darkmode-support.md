@@ -1,7 +1,7 @@
 ---
 title: Compose에서 Darkmode 제대로 지원하기
 date: 2025-12-30
-category: Andriod
+category: Android
 tags: [trouble-shooting, android, material-theme, jetpack-compose]
 ---
 

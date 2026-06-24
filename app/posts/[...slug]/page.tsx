@@ -174,7 +174,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
             >
               <path d="M19 12H5M5 12l7 7M5 12l7-7" />
             </svg>
-            <span className="font-medium">Back to all posts</span>
+            <span className="font-medium">전체 글로</span>
           </Link>
         </div>
 
@@ -192,7 +192,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
               </time>
               {post.readingTime && (
                 <span className={`text-sm ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
-                  · {post.readingTime} min read
+                  · {post.readingTime}분
                 </span>
               )}
               {post.category && (
@@ -201,7 +201,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
                 </span>
               )}
             </div>
-            <h1 className={`text-3xl md:text-4xl font-bold ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} mb-4 leading-tight`}>
+            <h1 className={`break-words text-3xl md:text-4xl font-bold ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} mb-4 leading-tight`}>
               {post.title}
             </h1>
             {post.excerpt && (
@@ -226,7 +226,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
             
             <div 
               className={`prose ${themeConfig.prose.size} dark:prose-invert max-w-none
-                prose-headings:font-semibold prose-headings:text-black dark:prose-headings:text-white prose-headings:scroll-mt-20
+                prose-headings:break-words prose-headings:font-semibold prose-headings:text-black dark:prose-headings:text-white prose-headings:scroll-mt-20
                 prose-h1:${themeConfig.prose.h1} prose-h1:mb-6 prose-h1:mt-12
                 prose-h2:${themeConfig.prose.h2} prose-h2:mb-4 prose-h2:mt-10 prose-h2:pb-2 prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-gray-800
                 prose-h3:${themeConfig.prose.h3} prose-h3:mb-3 prose-h3:mt-8
@@ -272,7 +272,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
     <div className={`${themeConfig.spacing.container} mx-auto px-6 mt-12 text-center`}>
       <Link 
         href="/"
-        className={`inline-flex items-center px-6 py-3 ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:${themeConfig.colors.light.text.primary} hover:${themeConfig.colors.dark.text.primary} ${themeConfig.animations.transition}`}
+        className={`inline-flex items-center px-6 py-3 ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:text-rose-600 dark:hover:text-rose-300 ${themeConfig.animations.transition}`}
       >
         <svg 
           className="w-5 h-5 mr-2" 
@@ -283,7 +283,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
         >
           <path d="M19 12H5M5 12l7 7M5 12l7-7" />
         </svg>
-        Back to Home
+        홈으로
       </Link>
     </div>
   </main>

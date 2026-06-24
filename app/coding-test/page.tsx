@@ -35,34 +35,34 @@ export default async function CodingTestPage({
   const threadPosts = await Promise.all(filteredPosts.map((post) => getPostData(post.slug)));
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-black dark:via-gray-900 dark:to-black text-gray-900 dark:text-gray-100">
       <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
-        <header className="border-b border-gray-200 dark:border-gray-800 pb-5">
+        <header className="border-b border-rose-100/70 dark:border-gray-800 pb-5">
           <Link
             href="/"
-            className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+            className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-rose-600 dark:hover:text-rose-300 transition-colors"
           >
             <svg className="w-3.5 h-3.5" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
               <path d="M15 19l-7-7 7-7" />
             </svg>
-            Home
+            <span>홈</span>
           </Link>
-          <h1 className="mt-2 text-2xl sm:text-3xl font-bold">PS Thread</h1>
+          <h1 className="mt-2 text-2xl sm:text-3xl font-bold">PS 노트</h1>
           <div className="mt-4 flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
-            <span>{threadPosts.length} posts</span>
-            {selectedTag && <span>filter: #{selectedTag}</span>}
+            <span>{threadPosts.length}개 글</span>
+            {selectedTag && <span>필터: #{selectedTag}</span>}
           </div>
         </header>
 
         {availableTags.length > 0 && (
-          <nav className="sticky top-0 z-10 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 border-b border-gray-200/80 dark:border-gray-800/80 bg-white/92 dark:bg-gray-950/92 backdrop-blur-sm">
+          <nav className="sticky top-0 z-10 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 border-b border-rose-100/70 dark:border-gray-800/80 bg-white/92 dark:bg-gray-950/92 backdrop-blur-sm">
             <div className="flex flex-wrap items-center gap-2 text-xs">
               <Link
                 href="/coding-test"
-                className={`px-2.5 py-1 rounded border ${
+                className={`px-2.5 py-1 rounded border transition-colors ${
                   selectedTag === ''
-                    ? 'border-gray-900 bg-gray-900 text-white dark:border-gray-100 dark:bg-gray-100 dark:text-gray-900'
-                    : 'border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-300'
+                    ? 'border-rose-500 bg-rose-600 text-white dark:border-rose-300 dark:bg-rose-300 dark:text-gray-950'
+                    : 'border-gray-200 bg-white/70 text-gray-600 hover:border-rose-200 hover:bg-rose-50/70 hover:text-rose-700 dark:border-gray-700 dark:bg-gray-900/40 dark:text-gray-300 dark:hover:border-rose-900/60 dark:hover:bg-rose-950/30 dark:hover:text-rose-200'
                 }`}
               >
                 전체
@@ -71,10 +71,10 @@ export default async function CodingTestPage({
                 <Link
                   key={currentTag}
                   href={`/coding-test?tag=${encodeURIComponent(currentTag)}`}
-                  className={`px-2.5 py-1 rounded border ${
+                  className={`px-2.5 py-1 rounded border transition-colors ${
                     selectedTag === currentTag
-                      ? 'border-gray-900 bg-gray-900 text-white dark:border-gray-100 dark:bg-gray-100 dark:text-gray-900'
-                      : 'border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-300'
+                      ? 'border-rose-500 bg-rose-600 text-white dark:border-rose-300 dark:bg-rose-300 dark:text-gray-950'
+                      : 'border-gray-200 bg-white/70 text-gray-600 hover:border-rose-200 hover:bg-rose-50/70 hover:text-rose-700 dark:border-gray-700 dark:bg-gray-900/40 dark:text-gray-300 dark:hover:border-rose-900/60 dark:hover:bg-rose-950/30 dark:hover:text-rose-200'
                   }`}
                 >
                   #{currentTag} {tagCounts[currentTag]}
@@ -102,13 +102,13 @@ export default async function CodingTestPage({
                   <h2 className="text-xl sm:text-2xl font-semibold leading-tight">{post.title}</h2>
                   <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                     <time dateTime={toMetadataDate(post.date) ?? post.date}>{formatDisplayDate(post.date)}</time>
-                    {post.readingTime && <span>{post.readingTime} min</span>}
+                    {post.readingTime && <span>{post.readingTime}분</span>}
                     {post.tags?.map((tagItem) => (
-                      <span key={tagItem} className="px-2 py-0.5 border border-gray-300 dark:border-gray-700 rounded-full">
+                      <span key={tagItem} className="px-2 py-0.5 border border-rose-200/70 bg-rose-50/50 dark:border-rose-900/50 dark:bg-rose-950/20 rounded-full">
                         #{tagItem}
                       </span>
                     ))}
-                    <Link href={`/coding-test/${post.slug}`} className="underline underline-offset-2">
+                    <Link href={`/coding-test/${post.slug}`} className="underline underline-offset-2 hover:text-rose-600 dark:hover:text-rose-300 hover:underline transition-colors">
                       단일 페이지
                     </Link>
                   </div>
@@ -116,7 +116,7 @@ export default async function CodingTestPage({
                 </header>
 
                 <div
-                  className="mt-5 prose prose-slate dark:prose-invert max-w-none prose-headings:scroll-mt-20"
+                  className="mt-6 prose prose-slate dark:prose-invert max-w-none prose-headings:scroll-mt-20 prose-a:text-rose-600 dark:prose-a:text-rose-300"
                   dangerouslySetInnerHTML={{ __html: post.content || '' }}
                 />
               </article>

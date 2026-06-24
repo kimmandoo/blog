@@ -1,7 +1,7 @@
 ---
 title: 앱스토어 심사 리젝받은 AppTrackingTransparency 대응하기
 date: 2026-06-07
-category: ios
+category: iOS
 tags: [trouble-shooting, ios, app-store]
 ---
 
