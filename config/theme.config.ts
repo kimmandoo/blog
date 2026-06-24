@@ -41,7 +41,7 @@ export const themeConfig = {
     // Dark mode colors
     dark: {
       background: {
-        primary: 'dark:from-black dark:via-gray-900 dark:to-black',
+        primary: 'dark:from-gray-950 dark:via-gray-900 dark:to-gray-950',
         card: 'dark:bg-gray-900',
         cardHover: 'dark:hover:border-gray-700',
       },

@@ -47,7 +47,7 @@ export function ReadingProgressBar({ readingTime }: ReadingProgressBarProps) {
       {config.showTopBar && (
         <div className="fixed top-0 left-0 right-0 h-0.5 z-50">
           <div 
-            className="h-full bg-gradient-to-r from-black via-gray-700 to-black dark:from-white dark:via-gray-300 dark:to-white transition-all duration-150 ease-out shadow-sm"
+            className="h-full bg-gradient-to-r from-rose-500 via-pink-500 to-rose-500 transition-all duration-150 ease-out shadow-sm"
             style={{ width: `${progress}%` }}
             role="progressbar"
             aria-valuenow={Math.round(progress)}
@@ -89,7 +89,7 @@ export function ReadingProgressBar({ readingTime }: ReadingProgressBarProps) {
                   fill="none"
                   strokeDasharray={`${2 * Math.PI * 28}`}
                   strokeDashoffset={`${2 * Math.PI * 28 * (1 - progress / 100)}`}
-                  className="text-black dark:text-white transition-all duration-150"
+                  className="text-rose-500 dark:text-rose-300 transition-all duration-150"
                   strokeLinecap="round"
                 />
               </svg>

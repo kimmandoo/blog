@@ -78,7 +78,7 @@ export function Comments() {
 
   if (!enabled) {
     return (
-      <div className="mt-12 p-8 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
+      <div className="mt-12 p-8 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800">
         <p className="text-center text-gray-600 dark:text-gray-400">
           {themeConfig.text.commentsSetupRequired} <code className="px-2 py-1 bg-gray-200 dark:bg-gray-800 rounded">config/theme.config.ts</code> {themeConfig.text.commentsSetupInConfig}
         </p>
@@ -98,7 +98,7 @@ export function Comments() {
 
   if (!giscus.repo || !giscus.repoId || !giscus.categoryId) {
     return (
-      <div className="mt-12 p-8 bg-yellow-50 dark:bg-yellow-900/20 rounded-2xl border border-yellow-200 dark:border-yellow-800">
+      <div className="mt-12 p-8 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
         <p className="text-center text-yellow-800 dark:text-yellow-200">
           {themeConfig.text.giscusNotConfigured}
         </p>
@@ -112,8 +112,8 @@ export function Comments() {
   return (
     <div className="mt-12">
       <div className="mb-6">
-        <h3 className="text-2xl font-semibold text-black dark:text-white">{themeConfig.text.comments}</h3>
-        <div className="h-0.5 w-16 bg-black dark:bg-white mt-2"></div>
+        <h3 className="text-2xl font-semibold text-gray-950 dark:text-white">{themeConfig.text.comments}</h3>
+        <div className="h-0.5 w-16 bg-rose-500 mt-2"></div>
       </div>
       <div ref={commentsRef} className="giscus"></div>
     </div>

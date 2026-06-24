@@ -9,6 +9,7 @@ interface ShareButtonsProps {
 
 export function ShareButtons({ title, url }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
+  const buttonClass = 'p-2 rounded-full border border-gray-200/80 bg-white/70 hover:border-rose-200 hover:bg-rose-50/70 dark:border-gray-800 dark:bg-gray-900/40 dark:hover:border-rose-900/60 dark:hover:bg-rose-950/30 transition-colors';
 
   const shareOnTwitter = () => {
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`;
@@ -34,12 +35,12 @@ export function ShareButtons({ title, url }: ShareButtonsProps) {
 
   return (
     <div className="flex items-center gap-3">
-      <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">Share:</span>
+      <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">공유</span>
       
       {/* Twitter/X */}
       <button
         onClick={shareOnTwitter}
-        className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+        className={buttonClass}
         aria-label="Share on Twitter"
       >
         <svg className="w-4 h-4 text-gray-600 dark:text-gray-400" fill="currentColor" viewBox="0 0 24 24">
@@ -50,7 +51,7 @@ export function ShareButtons({ title, url }: ShareButtonsProps) {
       {/* LinkedIn */}
       <button
         onClick={shareOnLinkedIn}
-        className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+        className={buttonClass}
         aria-label="Share on LinkedIn"
       >
         <svg className="w-4 h-4 text-gray-600 dark:text-gray-400" fill="currentColor" viewBox="0 0 24 24">
@@ -64,7 +65,7 @@ export function ShareButtons({ title, url }: ShareButtonsProps) {
         className={`p-2 rounded-full transition-colors ${
           copied 
             ? 'bg-green-100 dark:bg-green-900' 
-            : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700'
+            : 'border border-gray-200/80 bg-white/70 hover:border-rose-200 hover:bg-rose-50/70 dark:border-gray-800 dark:bg-gray-900/40 dark:hover:border-rose-900/60 dark:hover:bg-rose-950/30'
         }`}
         aria-label={copied ? 'Link copied!' : 'Copy link'}
       >

@@ -121,11 +121,11 @@ export function PostList({
 
       {/* Categories and Tags Filter */}
       {(allCategories.length > 0 || allTags.length > 0) && (
-        <div className="mb-6 space-y-2.5">
+        <div className="mb-6 space-y-3 border-b border-gray-200/70 pb-4 dark:border-gray-800/70">
           {/* Categories Section */}
           {allCategories.length > 0 && (
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mr-1">
+              <span className="mr-1 shrink-0 text-xs font-semibold text-gray-500 dark:text-gray-400">
                 {themeConfig.text.categories}
               </span>
               {allCategories.map((cat, index) => (
@@ -137,11 +137,11 @@ export function PostList({
           {/* Tags Section */}
           {allTags.length > 0 && (
             <details className="group/tags sm:contents">
-              <summary className="mb-1 flex cursor-pointer list-none items-center gap-1 text-xs font-semibold text-gray-400 dark:text-gray-500 sm:hidden [&::-webkit-details-marker]:hidden">
+              <summary className="mb-1 inline-flex cursor-pointer list-none items-center gap-1 rounded-md border border-gray-200/80 bg-white/70 px-2.5 py-1 text-xs font-semibold text-gray-500 transition-colors hover:border-rose-200 hover:bg-rose-50/70 hover:text-rose-700 dark:border-gray-800 dark:bg-gray-900/40 dark:text-gray-400 dark:hover:border-rose-900/60 dark:hover:bg-rose-950/30 dark:hover:text-rose-200 sm:hidden [&::-webkit-details-marker]:hidden">
                 태그 보기 ({allTags.length})
               </summary>
               <div className="hidden flex-wrap items-center gap-1 group-open/tags:flex sm:flex">
-                <span className="mr-1 hidden text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 sm:inline">
+                <span className="mr-1 hidden shrink-0 text-xs font-semibold text-gray-500 dark:text-gray-400 sm:inline">
                   {themeConfig.text.tags}
                 </span>
                 {allTags.map((tag) => (
@@ -203,12 +203,12 @@ export function PostList({
                       <div className="flex flex-wrap items-center gap-2 mb-1.5">
                         <time
                           dateTime={toMetadataDate(post.date) ?? post.date}
-                          className={`text-xs font-normal ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}
+                          className="text-xs font-normal text-gray-400 dark:text-gray-500"
                         >
                           {formatDisplayDate(post.date)}
                         </time>
                         {post.readingTime && (
-                          <span className={`text-xs font-normal ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
+                          <span className="text-xs font-normal text-gray-400 dark:text-gray-500">
                             · {post.readingTime}분
                           </span>
                         )}
@@ -219,7 +219,7 @@ export function PostList({
                         )}
                       </div>
                       <h2
-                        className={`break-words text-lg sm:text-xl font-bold mb-1 ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} group-hover:text-rose-600 dark:group-hover:text-rose-300 transition-colors duration-200`}
+                        className="break-words text-lg sm:text-xl font-bold mb-1 text-gray-950 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-300 transition-colors duration-200"
                         style={{ overflowWrap: 'anywhere' }}
                       >
                         {post.title}

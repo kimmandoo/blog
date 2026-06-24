@@ -15,6 +15,9 @@ const themeToggle = fs.readFileSync(path.join(process.cwd(), 'components', 'Them
 const searchBar = fs.readFileSync(path.join(process.cwd(), 'components', 'SearchBar.tsx'), 'utf8');
 const categoryBadge = fs.readFileSync(path.join(process.cwd(), 'components', 'CategoryBadge.tsx'), 'utf8');
 const tagBadge = fs.readFileSync(path.join(process.cwd(), 'components', 'TagBadge.tsx'), 'utf8');
+const shareButtons = fs.readFileSync(path.join(process.cwd(), 'components', 'ShareButtons.tsx'), 'utf8');
+const comments = fs.readFileSync(path.join(process.cwd(), 'components', 'Comments.tsx'), 'utf8');
+const readingProgress = fs.readFileSync(path.join(process.cwd(), 'components', 'ReadingProgressBar.tsx'), 'utf8');
 
 function getCssRule(source, selector) {
   const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -109,11 +112,18 @@ test('coding test page uses Korean shell labels', () => {
 });
 
 test('post list gives titles priority over muted metadata', () => {
-  assert.match(postList, /text-xs font-normal/);
+  assert.match(postList, /text-xs font-normal text-gray-400 dark:text-gray-500/);
   assert.match(postList, /border-gray-200\/80 bg-gray-50\/80/);
   assert.match(postList, /group-hover:border-rose-200/);
-  assert.match(postList, /break-words text-lg sm:text-xl font-bold/);
+  assert.match(postList, /break-words text-lg sm:text-xl font-bold mb-1 text-gray-950 dark:text-white/);
   assert.match(postList, /overflowWrap: 'anywhere'/);
+});
+
+test('taxonomy filters read like a compact tool surface', () => {
+  assert.match(postList, /border-b border-gray-200\/70 pb-4 dark:border-gray-800\/70/);
+  assert.match(postList, /text-xs font-semibold text-gray-500 dark:text-gray-400/);
+  assert.doesNotMatch(postList, /uppercase tracking-wider/);
+  assert.match(postList, /rounded-md border border-gray-200\/80 bg-white\/70 px-2\.5 py-1/);
 });
 
 test('coding test page shares the blog accent system', () => {
@@ -129,6 +139,10 @@ test('post detail uses Korean navigation labels and mobile-safe prose wrapping',
   assert.match(postPage, /· \{post\.readingTime\}분/);
   assert.match(postPage, /홈으로/);
   assert.doesNotMatch(postPage, /Back to Home/);
+  assert.match(postPage, /border-rose-200\/70 bg-rose-50\/50/);
+  assert.match(postPage, /text-4xl md:text-5xl/);
+  assert.match(postPage, /border-l-2 border-rose-200\/70/);
+  assert.match(postPage, /prose-a:text-rose-600/);
   assert.match(postPage, /prose-headings:break-words/);
   assert.match(globalCss, /\.prose :where\(h1,\s*h2,\s*h3,\s*h4,\s*h5,\s*h6,\s*p,\s*li\)/);
 });
@@ -156,6 +170,22 @@ test('coding test detail page shares Korean labels and rose accents', () => {
   assert.match(codingTestDetailPage, /border-rose-200\/70 bg-rose-50\/50/);
   assert.doesNotMatch(searchBar, /Search posts/);
   assert.match(searchBar, /placeholder = "검색\.\.\."/);
+});
+
+test('supporting post UI shares rose accents and softer dark surfaces', () => {
+  assert.match(themeConfig, /primary:\s*'dark:from-gray-950 dark:via-gray-900 dark:to-gray-950'/);
+  assert.match(codingTestPage, /dark:from-gray-950 dark:via-gray-900 dark:to-gray-950/);
+  assert.match(codingTestDetailPage, /dark:from-gray-950 dark:via-gray-900 dark:to-gray-950/);
+
+  assert.doesNotMatch(shareButtons, />Share:</);
+  assert.match(shareButtons, />공유</);
+  assert.match(shareButtons, /hover:bg-rose-50\/70/);
+  assert.match(shareButtons, /dark:hover:bg-rose-950\/30/);
+
+  assert.match(comments, /bg-rose-500/);
+  assert.doesNotMatch(comments, /bg-black dark:bg-white/);
+  assert.match(readingProgress, /from-rose-500 via-pink-500 to-rose-500/);
+  assert.match(readingProgress, /text-rose-500 dark:text-rose-300/);
 });
 
 test('visible post categories use canonical labels', () => {

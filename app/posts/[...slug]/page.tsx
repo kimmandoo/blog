@@ -163,7 +163,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
         <div className={`${themeConfig.spacing.container} mx-auto mb-12`}>
           <Link 
             href="/"
-            className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all group"
+            className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-rose-600 dark:hover:text-rose-300 transition-all group"
           >
             <svg 
               className={`w-5 h-5 mr-2 group-hover:-translate-x-1 ${themeConfig.animations.transition}`} 
@@ -196,16 +196,16 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
                 </span>
               )}
               {post.category && (
-                <span className={`text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary}`}>
+                <span className="text-xs px-2 py-0.5 rounded-full border border-rose-200/70 bg-rose-50/50 text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/20 dark:text-rose-200">
                   {post.category}
                 </span>
               )}
             </div>
-            <h1 className={`break-words text-3xl md:text-4xl font-bold ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} mb-4 leading-tight`}>
+            <h1 className="break-words text-4xl md:text-5xl font-bold text-gray-950 dark:text-white mb-4 leading-tight">
               {post.title}
             </h1>
             {post.excerpt && (
-              <p className={`text-lg ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} leading-relaxed`}>
+              <p className={`border-l-2 border-rose-200/70 pl-4 text-lg ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} leading-relaxed dark:border-rose-900/60`}>
                 {post.excerpt}
               </p>
             )}
@@ -232,7 +232,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
                 prose-h3:${themeConfig.prose.h3} prose-h3:mb-3 prose-h3:mt-8
                 prose-h4:${themeConfig.prose.h4} prose-h4:mb-2 prose-h4:mt-6
                 prose-p:${themeConfig.prose.paragraphColor.light} dark:prose-p:${themeConfig.prose.paragraphColor.dark} prose-p:leading-relaxed prose-p:mb-6
-                prose-a:text-black dark:prose-a:text-white prose-a:font-medium prose-a:no-underline prose-a:border-b prose-a:border-gray-400 dark:prose-a:border-gray-600 hover:prose-a:border-black dark:hover:prose-a:border-white prose-a:transition-colors
+                prose-a:text-rose-600 dark:prose-a:text-rose-300 prose-a:font-medium prose-a:no-underline prose-a:border-b prose-a:border-rose-200 dark:prose-a:border-rose-900/70 hover:prose-a:border-rose-500 dark:hover:prose-a:border-rose-300 prose-a:transition-colors
                 prose-strong:text-black dark:prose-strong:text-white prose-strong:font-bold
                 prose-blockquote:border-l-2 prose-blockquote:border-gray-300 dark:prose-blockquote:border-gray-700 prose-blockquote:text-gray-600 dark:prose-blockquote:text-gray-400 prose-blockquote:pl-4 prose-blockquote:italic
                 prose-hr:border-gray-200 dark:prose-hr:border-gray-800 prose-hr:my-8

@@ -35,7 +35,7 @@ export default async function CodingTestPage({
   const threadPosts = await Promise.all(filteredPosts.map((post) => getPostData(post.slug)));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-black dark:via-gray-900 dark:to-black text-gray-900 dark:text-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 text-gray-900 dark:text-gray-100">
       <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
         <header className="border-b border-rose-100/70 dark:border-gray-800 pb-5">
           <Link
