@@ -101,7 +101,7 @@ test('shared UI labels stay Korean where they are visible in the blog shell', ()
   assert.match(themeConfig, /comments:\s*'댓글'/);
 });
 
-test('theme toggle exposes light dark and system as explicit choices', () => {
+test('theme toggle exposes light dark and system as icon-only choices', () => {
   assert.doesNotMatch(themeToggle, />\s*auto\s*</);
   assert.match(themeToggle, /theme-toggle/);
   assert.match(themeToggle, /theme-toggle__option/);
@@ -110,7 +110,10 @@ test('theme toggle exposes light dark and system as explicit choices', () => {
   assert.match(themeToggle, /value:\s*'dark'/);
   assert.match(themeToggle, /value:\s*'system'/);
   assert.match(themeToggle, /aria-pressed=\{theme === option\.value\}/);
-  assert.match(themeToggle, />\{option\.label\}</);
+  assert.match(themeToggle, /aria-label=\{option\.label\}/);
+  assert.match(themeToggle, /title=\{option\.label\}/);
+  assert.match(themeToggle, /h-8 w-8/);
+  assert.doesNotMatch(themeToggle, />\{option\.label\}</);
   assert.match(themeToggle, /fixed right-4 top-4/);
   assert.match(themeToggle, /sm:right-6 sm:top-6/);
   assert.doesNotMatch(themeToggle, /hover:scale-110/);

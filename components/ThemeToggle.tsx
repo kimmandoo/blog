@@ -7,9 +7,37 @@ interface ThemeToggleProps {
 }
 
 const themeOptions = [
-  { value: 'light', label: 'Light' },
-  { value: 'dark', label: 'Dark' },
-  { value: 'system', label: 'System' },
+  {
+    value: 'light',
+    label: 'Light',
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="3.5" />
+        <path d="M12 2.75v2.5M12 18.75v2.5M4.45 4.45l1.8 1.8M17.75 17.75l1.8 1.8M2.75 12h2.5M18.75 12h2.5M4.45 19.55l1.8-1.8M17.75 6.25l1.8-1.8" />
+      </svg>
+    ),
+  },
+  {
+    value: 'dark',
+    label: 'Dark',
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20.2 14.4A7.7 7.7 0 0 1 9.6 3.8 8.2 8.2 0 1 0 20.2 14.4Z" />
+        <path d="M17.7 4.2l.35.8.8.35-.8.35-.35.8-.35-.8-.8-.35.8-.35.35-.8Z" fill="currentColor" stroke="none" />
+      </svg>
+    ),
+  },
+  {
+    value: 'system',
+    label: 'System',
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="5" y="6" width="14" height="10" rx="3" />
+        <path d="M9 19h6M12 16v3" />
+        <path d="M17.7 3.7l.35.8.8.35-.8.35-.35.8-.35-.8-.8-.35.8-.35.35-.8Z" fill="currentColor" stroke="none" />
+      </svg>
+    ),
+  },
 ] as const;
 
 export function ThemeToggle({ inline = false }: ThemeToggleProps) {
@@ -29,15 +57,18 @@ export function ThemeToggle({ inline = false }: ThemeToggleProps) {
             key={option.value}
             type="button"
             onClick={() => setTheme(option.value)}
+            aria-label={option.label}
             aria-pressed={theme === option.value}
-            className={`theme-toggle__option inline-flex h-8 items-center gap-1.5 rounded-full px-2.5 text-xs font-semibold transition-all duration-200 ${
+            title={option.label}
+            className={`theme-toggle__option inline-flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200 ${
               isActive
-                ? 'bg-rose-600 text-white shadow-sm dark:bg-rose-300 dark:text-gray-950'
-                : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100'
+                ? 'bg-rose-600 text-white shadow-sm ring-1 ring-rose-200 dark:bg-rose-300 dark:text-gray-950 dark:ring-rose-200/40'
+                : 'text-gray-500 hover:-translate-y-0.5 hover:bg-rose-50 hover:text-rose-600 dark:text-gray-400 dark:hover:bg-rose-950/30 dark:hover:text-rose-200'
             }`}
           >
-            <span className={`theme-toggle__icon h-1.5 w-1.5 rounded-full ${isActive ? 'bg-current' : 'bg-gray-300 dark:bg-gray-600'}`} aria-hidden="true" />
-            <span>{option.label}</span>
+            <span className="theme-toggle__icon inline-flex h-4 w-4 items-center justify-center" aria-hidden="true">
+              {option.icon}
+            </span>
           </button>
         );
       })}
