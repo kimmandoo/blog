@@ -21,8 +21,8 @@ export function ThemeToggle({ inline = false }: ThemeToggleProps) {
   };
 
   const buttonClasses = inline
-    ? "relative p-2 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300"
-    : "fixed right-4 top-4 z-50 p-2.5 rounded-full bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 hover:scale-105 sm:right-6 sm:top-6 sm:p-3 transition-all duration-300";
+    ? "theme-toggle relative p-2 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300"
+    : "theme-toggle fixed right-4 top-4 z-50 p-2.5 rounded-full bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 hover:scale-105 sm:right-6 sm:top-6 sm:p-3 transition-all duration-300";
 
   return (
     <button
@@ -34,7 +34,7 @@ export function ThemeToggle({ inline = false }: ThemeToggleProps) {
       {/* Sun icon for light mode */}
       {resolvedTheme === 'light' && (
         <svg
-          className="w-5 h-5 text-yellow-500"
+          className="theme-toggle__icon w-5 h-5 text-yellow-500"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -50,7 +50,7 @@ export function ThemeToggle({ inline = false }: ThemeToggleProps) {
       {/* Moon icon for dark mode */}
       {resolvedTheme === 'dark' && (
         <svg
-          className="w-5 h-5 text-blue-400"
+          className="theme-toggle__icon w-5 h-5 text-blue-400"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"

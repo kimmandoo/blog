@@ -4,10 +4,14 @@ interface PostNavigationProps {
   previousPost?: {
     slug: string;
     title: string;
+    category?: string;
+    readingTime?: number;
   } | null;
   nextPost?: {
     slug: string;
     title: string;
+    category?: string;
+    readingTime?: number;
   } | null;
   basePath?: string; // Optional base path, defaults to '/posts'
 }
@@ -33,6 +37,12 @@ export function PostNavigation({ previousPost, nextPost, basePath = '/posts' }: 
             <span className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-300 transition-colors line-clamp-2">
               {previousPost.title}
             </span>
+            {(previousPost.category || previousPost.readingTime) && (
+              <span className="mt-2 flex flex-wrap items-center gap-1.5 text-xs text-gray-400 dark:text-gray-500">
+                {previousPost.category && <span>{previousPost.category}</span>}
+                {previousPost.readingTime && <span>· {previousPost.readingTime}분</span>}
+              </span>
+            )}
           </Link>
         )}
       </div>
@@ -53,6 +63,12 @@ export function PostNavigation({ previousPost, nextPost, basePath = '/posts' }: 
             <span className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-300 transition-colors line-clamp-2 text-right">
               {nextPost.title}
             </span>
+            {(nextPost.category || nextPost.readingTime) && (
+              <span className="mt-2 flex flex-wrap items-center justify-end gap-1.5 text-xs text-gray-400 dark:text-gray-500">
+                {nextPost.category && <span>{nextPost.category}</span>}
+                {nextPost.readingTime && <span>· {nextPost.readingTime}분</span>}
+              </span>
+            )}
           </Link>
         )}
       </div>

@@ -182,7 +182,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
         <div className={`relative ${themeConfig.spacing.postWidth} mx-auto`}>
             {/* Main content area - always centered with same width */}
             <article>
-          <header className={`pb-8 mb-8 ${themeConfig.colors.light.border.secondary} ${themeConfig.colors.dark.border.secondary} border-b`}>
+          <header className={`mx-auto max-w-3xl pb-10 mb-10 ${themeConfig.colors.light.border.secondary} ${themeConfig.colors.dark.border.secondary} border-b`}>
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <time
                 dateTime={toMetadataDate(post.date) ?? post.date}
@@ -196,16 +196,16 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
                 </span>
               )}
               {post.category && (
-                <span className="text-xs px-2 py-0.5 rounded-full border border-rose-200/70 bg-rose-50/50 text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/20 dark:text-rose-200">
+                <span className="text-xs px-2 py-0.5 rounded-full border border-gray-200/80 bg-white/70 text-gray-600 dark:border-gray-800 dark:bg-gray-900/50 dark:text-gray-300">
                   {post.category}
                 </span>
               )}
             </div>
-            <h1 className="break-words text-4xl md:text-5xl font-bold text-gray-950 dark:text-white mb-4 leading-tight">
+            <h1 className="break-words text-3xl sm:text-4xl md:text-5xl font-bold text-gray-950 dark:text-white mb-4 leading-tight tracking-tight">
               {post.title}
             </h1>
             {post.excerpt && (
-              <p className={`border-l-2 border-rose-200/70 pl-4 text-lg ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} leading-relaxed dark:border-rose-900/60`}>
+              <p className={`mt-5 max-w-2xl border-l-2 border-rose-200/70 pl-4 text-lg ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} leading-relaxed dark:border-rose-900/60`}>
                 {post.excerpt}
               </p>
             )}
@@ -220,6 +220,15 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
             )}
           </header>
 
+          {post.toc && post.toc.length > 0 && (
+            <details className="mb-8 rounded-lg border border-gray-200/80 bg-white/70 p-4 dark:border-gray-800 dark:bg-gray-900/50 xl:hidden">
+              <summary className="cursor-pointer list-none text-sm font-semibold text-gray-700 dark:text-gray-200 [&::-webkit-details-marker]:hidden">
+                목차 보기
+              </summary>
+              <TableOfContents items={post.toc} compact />
+            </details>
+          )}
+
           <div>
             <CodeBlockEnhancer />
             <MermaidRenderer />
@@ -228,10 +237,10 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
               className={`prose ${themeConfig.prose.size} dark:prose-invert max-w-none
                 prose-headings:break-words prose-headings:font-semibold prose-headings:text-black dark:prose-headings:text-white prose-headings:scroll-mt-20
                 prose-h1:${themeConfig.prose.h1} prose-h1:mb-6 prose-h1:mt-12
-                prose-h2:${themeConfig.prose.h2} prose-h2:mb-4 prose-h2:mt-10 prose-h2:pb-2 prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-gray-800
-                prose-h3:${themeConfig.prose.h3} prose-h3:mb-3 prose-h3:mt-8
+                prose-h2:${themeConfig.prose.h2} prose-h2:mb-5 prose-h2:mt-12 prose-h2:pb-2 prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-gray-800
+                prose-h3:${themeConfig.prose.h3} prose-h3:mb-4 prose-h3:mt-10
                 prose-h4:${themeConfig.prose.h4} prose-h4:mb-2 prose-h4:mt-6
-                prose-p:${themeConfig.prose.paragraphColor.light} dark:prose-p:${themeConfig.prose.paragraphColor.dark} prose-p:leading-relaxed prose-p:mb-6
+                prose-p:${themeConfig.prose.paragraphColor.light} dark:prose-p:${themeConfig.prose.paragraphColor.dark} prose-p:leading-8 prose-p:mb-7
                 prose-a:text-rose-600 dark:prose-a:text-rose-300 prose-a:font-medium prose-a:no-underline prose-a:border-b prose-a:border-rose-200 dark:prose-a:border-rose-900/70 hover:prose-a:border-rose-500 dark:hover:prose-a:border-rose-300 prose-a:transition-colors
                 prose-strong:text-black dark:prose-strong:text-white prose-strong:font-bold
                 prose-blockquote:border-l-2 prose-blockquote:border-gray-300 dark:prose-blockquote:border-gray-700 prose-blockquote:text-gray-600 dark:prose-blockquote:text-gray-400 prose-blockquote:pl-4 prose-blockquote:italic
@@ -251,8 +260,8 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
 
           {/* Post Navigation */}
           <PostNavigation 
-            previousPost={previousPost ? { slug: previousPost.slug, title: previousPost.title } : null}
-            nextPost={nextPost ? { slug: nextPost.slug, title: nextPost.title } : null}
+            previousPost={previousPost ? { slug: previousPost.slug, title: previousPost.title, category: previousPost.category, readingTime: previousPost.readingTime } : null}
+            nextPost={nextPost ? { slug: nextPost.slug, title: nextPost.title, category: nextPost.category, readingTime: nextPost.readingTime } : null}
           />
 
           {/* Comments Section */}

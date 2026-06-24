@@ -166,9 +166,10 @@ function extractTOC(content: string): TOCItem[] {
   const slugger = new GithubSlugger();
   
   for (const line of lines) {
+    const normalizedLine = line.replace(/\r$/, '');
     // Check for code block fence (``` or ~~~) at start of line
-    const backtickMatch = line.match(/^(`{3,})/);
-    const tildeMatch = line.match(/^(~{3,})/);
+    const backtickMatch = normalizedLine.match(/^(`{3,})/);
+    const tildeMatch = normalizedLine.match(/^(~{3,})/);
     
     if (backtickMatch) {
       if (codeBlockFence === null) {
@@ -193,7 +194,7 @@ function extractTOC(content: string): TOCItem[] {
       continue;
     }
     
-    const match = line.match(/^(#{1,6})\s+(.+)$/);
+    const match = normalizedLine.match(/^(#{1,6})\s+(.+)$/);
     if (match) {
       const level = match[1].length;
       const text = match[2].trim();

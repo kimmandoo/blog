@@ -49,6 +49,11 @@ export function CodeBlockEnhancer() {
 
       wrapper.appendChild(pre);
 
+      const scrollHint = document.createElement('span');
+      scrollHint.className = 'code-block-scroll-hint';
+      scrollHint.setAttribute('aria-hidden', 'true');
+      wrapper.appendChild(scrollHint);
+
       // Add line numbers if enabled
       if (codeBlock.showLineNumbers) {
         addLineNumbers(codeElement, codeBlock.startLineNumber);

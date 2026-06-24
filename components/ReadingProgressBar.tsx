@@ -47,8 +47,8 @@ export function ReadingProgressBar({ readingTime }: ReadingProgressBarProps) {
       {config.showTopBar && (
         <div className="fixed top-0 left-0 right-0 h-0.5 z-50">
           <div 
-            className="h-full bg-gradient-to-r from-rose-500 via-pink-500 to-rose-500 transition-all duration-150 ease-out shadow-sm"
-            style={{ width: `${progress}%` }}
+            className="reading-progress-bar h-full origin-left bg-gradient-to-r from-rose-500 via-pink-500 to-rose-500 transition-transform duration-150 ease-out shadow-sm"
+            style={{ transform: `scaleX(${progress / 100})` }}
             role="progressbar"
             aria-valuenow={Math.round(progress)}
             aria-valuemin={0}

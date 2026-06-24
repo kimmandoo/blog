@@ -37,11 +37,12 @@ export function SearchBar({ onSearch, placeholder = "검색..." }: SearchBarProp
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={placeholder}
-        className={`w-full pl-10 pr-4 py-2.5 text-sm ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} border rounded-lg ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none ${themeConfig.animations.transition}`}
+        className={`w-full pl-10 pr-10 py-2.5 text-sm ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} border rounded-lg ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none ${themeConfig.animations.transition}`}
       />
       {query && (
         <button
           onClick={() => setQuery('')}
+          aria-label="검색어 지우기"
           className={`absolute inset-y-0 right-0 pr-3.5 flex items-center ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} hover:text-black dark:hover:text-white ${themeConfig.animations.transition}`}
         >
           <svg className="w-4 h-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
