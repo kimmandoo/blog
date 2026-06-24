@@ -101,14 +101,18 @@ test('shared UI labels stay Korean where they are visible in the blog shell', ()
   assert.match(themeConfig, /comments:\s*'댓글'/);
 });
 
-test('theme toggle does not show the cramped auto badge', () => {
+test('theme toggle exposes light dark and system as explicit choices', () => {
   assert.doesNotMatch(themeToggle, />\s*auto\s*</);
   assert.match(themeToggle, /theme-toggle/);
+  assert.match(themeToggle, /theme-toggle__option/);
   assert.match(themeToggle, /theme-toggle__icon/);
-  assert.match(themeToggle, /aria-label=\{`현재 테마:/);
+  assert.match(themeToggle, /value:\s*'light'/);
+  assert.match(themeToggle, /value:\s*'dark'/);
+  assert.match(themeToggle, /value:\s*'system'/);
+  assert.match(themeToggle, /aria-pressed=\{theme === option\.value\}/);
+  assert.match(themeToggle, />\{option\.label\}</);
   assert.match(themeToggle, /fixed right-4 top-4/);
-  assert.match(themeToggle, /p-2\.5/);
-  assert.match(themeToggle, /sm:right-6 sm:top-6 sm:p-3/);
+  assert.match(themeToggle, /sm:right-6 sm:top-6/);
   assert.doesNotMatch(themeToggle, /hover:scale-110/);
 });
 
@@ -124,7 +128,9 @@ test('coding test page uses Korean shell labels', () => {
 
 test('post list gives titles priority over muted metadata', () => {
   assert.match(postList, /text-xs font-normal text-gray-400 dark:text-gray-500/);
-  assert.match(postList, /border-gray-200\/80 bg-gray-50\/80/);
+  assert.match(postList, /mandoo-post-category/);
+  assert.match(postList, /\{post\.category\}/);
+  assert.match(postList, /border-rose-200\/80 bg-rose-50\/80/);
   assert.match(postList, /group-hover:border-rose-200/);
   assert.match(postList, /break-words text-base sm:text-xl font-bold mb-1 leading-snug text-gray-950 dark:text-white/);
   assert.match(postList, /overflowWrap: 'anywhere'/);
@@ -301,6 +307,8 @@ test('reading progress uses transform-based smoothing', () => {
   assert.match(readingProgress, /reading-progress-bar/);
   assert.match(readingProgress, /transform:\s*`scaleX\(\$\{progress \/ 100\}\)`/);
   assert.doesNotMatch(readingProgress, /width:\s*`\$\{progress\}%`/);
+  assert.doesNotMatch(readingProgress, /strokeDasharray/);
+  assert.doesNotMatch(readingProgress, /showFloatingIndicator/);
 });
 
 test('motion respects reduced-motion preferences', () => {
@@ -340,7 +348,7 @@ test('supporting post UI shares rose accents and softer dark surfaces', () => {
   assert.match(comments, /bg-rose-500/);
   assert.doesNotMatch(comments, /bg-black dark:bg-white/);
   assert.match(readingProgress, /from-rose-500 via-pink-500 to-rose-500/);
-  assert.match(readingProgress, /text-rose-500 dark:text-rose-300/);
+  assert.doesNotMatch(readingProgress, /strokeDasharray/);
 });
 
 test('visible post categories use canonical labels', () => {

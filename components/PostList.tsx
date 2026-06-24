@@ -246,12 +246,12 @@ export function PostList({
                                 · {post.readingTime}분
                               </span>
                             )}
-                            {post.category && (
-                              <span className="text-xs px-2 py-0.5 rounded-full border border-gray-200/80 bg-gray-50/80 text-gray-500 dark:border-gray-800 dark:bg-gray-900/50 dark:text-gray-400 font-medium transition-colors duration-200 group-hover:border-rose-200 group-hover:bg-rose-50/70 group-hover:text-rose-700 dark:group-hover:border-rose-900/60 dark:group-hover:bg-rose-950/25 dark:group-hover:text-rose-200">
-                                {post.category}
-                              </span>
-                            )}
                           </div>
+                          {post.category && (
+                            <span className="mandoo-post-category mb-1.5 inline-flex w-fit items-center rounded-full border border-rose-200/80 bg-rose-50/80 px-2 py-0.5 text-xs font-semibold text-rose-700 transition-colors duration-200 group-hover:border-rose-200 group-hover:bg-rose-100/80 dark:border-rose-900/60 dark:bg-rose-950/30 dark:text-rose-200 dark:group-hover:border-rose-800 dark:group-hover:bg-rose-950/45">
+                              {post.category}
+                            </span>
+                          )}
                           <h2
                             className="break-words text-base sm:text-xl font-bold mb-1 leading-snug text-gray-950 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-300 transition-colors duration-200"
                             style={{ overflowWrap: 'anywhere' }}

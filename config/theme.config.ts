@@ -305,18 +305,12 @@ export const themeConfig = {
     cacheMaxAge: 3600,
   },
 
-  // Reading Progress Indicator configuration
+  // Reading Progress Bar configuration
   readingProgress: {
     // Enable/disable the reading progress features
     enabled: true,
     // Show the top progress bar
     showTopBar: true,
-    // Show the floating circular indicator (bottom-right)
-    showFloatingIndicator: true,
-    // Scroll threshold (in pixels) before showing the floating indicator
-    floatingIndicatorThreshold: 100,
-    // Hide floating indicator when reading is complete (percentage)
-    hideWhenCompleteThreshold: 99,
   },
 
   // UI Text (easily change language here)

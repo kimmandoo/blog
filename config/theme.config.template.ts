@@ -320,14 +320,11 @@ export const themeConfig = {
   },
 
   // ============================================================================
-  // READING PROGRESS INDICATOR
+  // READING PROGRESS BAR
   // ============================================================================
   readingProgress: {
     enabled: true,                  // Enable reading progress features
     showTopBar: true,               // Show thin progress bar at top
-    showFloatingIndicator: true,    // Show circular indicator (bottom-right)
-    floatingIndicatorThreshold: 100, // Show after scrolling X pixels
-    hideWhenCompleteThreshold: 99,  // Hide when X% complete
   },
 
   // ============================================================================
