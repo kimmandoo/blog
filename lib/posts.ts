@@ -16,6 +16,7 @@ import { normalizeFrontmatterDate, parseDateValue } from './date';
 import GithubSlugger from 'github-slugger';
 
 const postsDirectory = path.join(process.cwd(), 'posts');
+const MAX_AUTO_EXCERPT_LENGTH = 110;
 
 export interface TOCItem {
   id: string;
@@ -57,6 +58,78 @@ function getAllMarkdownFiles(dir: string, baseDir: string = dir): string[] {
   return files;
 }
 
+function trimExcerpt(value: string): string {
+  const normalized = value.replace(/\s+/g, ' ').trim();
+
+  return normalized.length > MAX_AUTO_EXCERPT_LENGTH
+    ? `${normalized.slice(0, MAX_AUTO_EXCERPT_LENGTH - 1).trim()}…`
+    : normalized;
+}
+
+function createExcerptFromContent(content: string): string {
+  const paragraphs: string[] = [];
+  let currentParagraph: string[] = [];
+  let codeBlockFence: string | null = null;
+
+  const flushParagraph = () => {
+    if (currentParagraph.length > 0) {
+      paragraphs.push(currentParagraph.join(' '));
+      currentParagraph = [];
+    }
+  };
+
+  for (const line of content.split('\n')) {
+    const normalizedLine = line.replace(/\r$/, '');
+    const trimmedLine = normalizedLine.trim();
+    const backtickMatch = trimmedLine.match(/^(`{3,})/);
+    const tildeMatch = trimmedLine.match(/^(~{3,})/);
+
+    if (backtickMatch || tildeMatch) {
+      const fence = backtickMatch?.[1] ?? tildeMatch?.[1] ?? '';
+      if (codeBlockFence === null) {
+        flushParagraph();
+        codeBlockFence = fence;
+      } else if (fence.length >= codeBlockFence.length) {
+        codeBlockFence = null;
+      }
+      continue;
+    }
+
+    if (codeBlockFence !== null) {
+      continue;
+    }
+
+    if (!trimmedLine) {
+      flushParagraph();
+      continue;
+    }
+
+    if (
+      /^#{1,6}\s+/.test(trimmedLine) ||
+      /^!\[[^\]]*\]\([^)]+\)/.test(trimmedLine) ||
+      /^[-*_]{3,}$/.test(trimmedLine) ||
+      /^\|/.test(trimmedLine)
+    ) {
+      flushParagraph();
+      continue;
+    }
+
+    currentParagraph.push(
+      trimmedLine
+        .replace(/!\[[^\]]*\]\([^)]+\)/g, '')
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+        .replace(/`([^`]+)`/g, '$1')
+        .replace(/[*_~>#]/g, '')
+        .replace(/<[^>]+>/g, '')
+        .trim()
+    );
+  }
+
+  flushParagraph();
+
+  return trimExcerpt(paragraphs.find(Boolean) ?? '');
+}
+
 function getAllPostsData(): PostData[] {
   const fileNames = fs.existsSync(postsDirectory)
     ? getAllMarkdownFiles(postsDirectory)
@@ -74,7 +147,7 @@ function getAllPostsData(): PostData[] {
         slug,
         title: matterResult.data.title || slug,
         date: normalizeFrontmatterDate(matterResult.data.date),
-        excerpt: matterResult.data.excerpt || '',
+        excerpt: matterResult.data.excerpt || createExcerptFromContent(matterResult.content),
         category: matterResult.data.category || '',
         tags: matterResult.data.tags || [],
         draft: matterResult.data.draft || false,
@@ -147,7 +220,7 @@ export async function getPostData(slug: string): Promise<PostData> {
     content: contentHtml,
     title: matterResult.data.title || slug,
     date: normalizeFrontmatterDate(matterResult.data.date),
-    excerpt: matterResult.data.excerpt || '',
+    excerpt: matterResult.data.excerpt || createExcerptFromContent(matterResult.content),
     category: matterResult.data.category || '',
     tags: matterResult.data.tags || [],
     draft: matterResult.data.draft || false,

@@ -47,8 +47,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       // Auto-generate OG image with post metadata
       const ogParams = new URLSearchParams({
         title: post.title,
+        site: new URL(seo.siteUrl).host,
+        path: `/posts/${slugString}`,
+        ...(post.excerpt && { description: post.excerpt }),
         ...(post.category && { category: post.category }),
-        ...(post.date && { date: post.date }),
+        ...(post.date && { date: formatDisplayDate(post.date) }),
         ...(post.tags?.length && { tags: post.tags.join(',') }),
       });
       ogImageUrl = `${seo.siteUrl}/og?${ogParams.toString()}`;
