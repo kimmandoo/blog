@@ -80,17 +80,19 @@ test('category and tag badges pick up the playful rose accent on hover', () => {
 });
 
 test('dense tag filters are collapsed on mobile', () => {
-  assert.match(postList, /<details className="group\/tags sm:contents">/);
-  assert.match(postList, /<summary[\s\S]*sm:hidden/);
+  assert.match(postList, /<details className="mandoo-taxonomy-details sm:hidden">/);
+  assert.match(postList, /<summary/);
   assert.match(postList, /태그 보기/);
+  assert.match(postList, /<div className="mandoo-taxonomy-row hidden flex-wrap items-center gap-1 sm:flex">/);
   assert.doesNotMatch(postList, /\{themeConfig\.text\.tags\}\s*<span className="normal-case tracking-normal">태그 보기<\/span>/);
 });
 
 test('dense category filters are collapsed on mobile', () => {
-  assert.match(postList, /<details className="group\/categories sm:contents">/);
-  assert.match(postList, /<summary[\s\S]*sm:hidden/);
+  assert.match(postList, /<details className="mandoo-taxonomy-details sm:hidden">/);
+  assert.match(postList, /<summary/);
   assert.match(postList, /분류 보기/);
-  assert.match(postList, /group-open\/categories:flex sm:flex/);
+  assert.match(getCssRule(globalCss, '.mandoo-taxonomy-details[open] > .mandoo-details-panel'), /display:\s*flex/);
+  assert.match(postList, /<div className="mandoo-taxonomy-row hidden flex-wrap items-center gap-1\.5 sm:flex">/);
 });
 
 test('shared UI labels stay Korean where they are visible in the blog shell', () => {
@@ -258,9 +260,8 @@ test('post table of contents extraction handles CRLF markdown headings', () => {
 test('mobile code blocks show a horizontal scroll affordance', () => {
   assert.match(codeBlock, /code-block-scroll-hint/);
   assert.match(globalCss, /@media \(max-width:\s*640px\)/);
-  assert.match(globalCss, /\.code-block-wrapper::before\s*\{/);
   assert.match(globalCss, /\.code-block-wrapper::after\s*\{/);
-  assert.match(getCssRule(globalCss, '.code-block-wrapper::before'), /height:\s*2px/);
+  assert.doesNotMatch(globalCss, /\.code-block-wrapper::before\s*\{/);
   assert.match(getCssRule(globalCss, '.code-block-wrapper::after'), /pointer-events:\s*none/);
   assert.match(getCssRule(globalCss, '.code-block-wrapper::after'), /linear-gradient\(90deg,\s*transparent,\s*var\(--background\)\)/);
   assert.match(globalCss, /\.code-block-wrapper\.has-code-block-toolbar::after\s*\{/);

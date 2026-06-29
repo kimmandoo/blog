@@ -38,5 +38,11 @@ test('post metadata passes the post path into generated OG images', () => {
 
 test('posts without frontmatter excerpts derive a post-specific excerpt from content', () => {
   assert.match(postsSource, /function createExcerptFromContent/);
-  assert.match(postsSource, /excerpt:\s*matterResult\.data\.excerpt\s*\|\|\s*createExcerptFromContent\(matterResult\.content\)/);
+  assert.match(postsSource, /excerpt:\s*trimExcerpt\(matterResult\.data\.excerpt\s*\|\|\s*createExcerptFromContent\(matterResult\.content\)\)/);
+});
+
+test('post excerpts are capped before metadata and page rendering use them', () => {
+  assert.match(postsSource, /const MAX_EXCERPT_LENGTH = 110;/);
+  assert.doesNotMatch(postsSource, /const MAX_AUTO_EXCERPT_LENGTH/);
+  assert.match(postsSource, /excerpt:\s*trimExcerpt\(matterResult\.data\.excerpt\s*\|\|\s*createExcerptFromContent\(matterResult\.content\)\)/);
 });

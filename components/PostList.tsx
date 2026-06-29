@@ -136,11 +136,18 @@ export function PostList({
         {(allCategories.length > 0 || allTags.length > 0) && (
           <div className="space-y-3">
             {allCategories.length > 0 && (
-              <details className="group/categories sm:contents">
-                <summary className="mb-1 inline-flex cursor-pointer list-none items-center gap-1 rounded-md border border-gray-200/80 bg-white/70 px-2.5 py-1 text-xs font-semibold text-gray-500 transition-colors hover:border-rose-200 hover:bg-rose-50/70 hover:text-rose-700 dark:border-gray-800 dark:bg-gray-900/40 dark:text-gray-400 dark:hover:border-rose-900/60 dark:hover:bg-rose-950/30 dark:hover:text-rose-200 sm:hidden [&::-webkit-details-marker]:hidden">
-                  분류 보기 ({allCategories.length})
-                </summary>
-                <div className="mandoo-details-panel hidden flex-wrap items-center gap-1.5 group-open/categories:flex sm:flex">
+              <>
+                <details className="mandoo-taxonomy-details sm:hidden">
+                  <summary className="mb-1 inline-flex cursor-pointer list-none items-center gap-1 rounded-md border border-gray-200/80 bg-white/70 px-2.5 py-1 text-xs font-semibold text-gray-500 transition-colors hover:border-rose-200 hover:bg-rose-50/70 hover:text-rose-700 dark:border-gray-800 dark:bg-gray-900/40 dark:text-gray-400 dark:hover:border-rose-900/60 dark:hover:bg-rose-950/30 dark:hover:text-rose-200 [&::-webkit-details-marker]:hidden">
+                    분류 보기 ({allCategories.length})
+                  </summary>
+                  <div className="mandoo-details-panel hidden flex-wrap items-center gap-1.5">
+                    {allCategories.map((cat, index) => (
+                      <CategoryBadge key={cat} category={cat} index={index} size="sm" basePath={sectionPath} />
+                    ))}
+                  </div>
+                </details>
+                <div className="mandoo-taxonomy-row hidden flex-wrap items-center gap-1.5 sm:flex">
                   <span className="mr-1 hidden shrink-0 text-xs font-semibold text-gray-500 dark:text-gray-400 sm:inline">
                     {themeConfig.text.categories}
                   </span>
@@ -148,15 +155,22 @@ export function PostList({
                     <CategoryBadge key={cat} category={cat} index={index} size="sm" basePath={sectionPath} />
                   ))}
                 </div>
-              </details>
+              </>
             )}
 
             {allTags.length > 0 && (
-              <details className="group/tags sm:contents">
-                <summary className="mb-1 inline-flex cursor-pointer list-none items-center gap-1 rounded-md border border-gray-200/80 bg-white/70 px-2.5 py-1 text-xs font-semibold text-gray-500 transition-colors hover:border-rose-200 hover:bg-rose-50/70 hover:text-rose-700 dark:border-gray-800 dark:bg-gray-900/40 dark:text-gray-400 dark:hover:border-rose-900/60 dark:hover:bg-rose-950/30 dark:hover:text-rose-200 sm:hidden [&::-webkit-details-marker]:hidden">
-                  태그 보기 ({allTags.length})
-                </summary>
-                <div className="mandoo-details-panel hidden flex-wrap items-center gap-1 group-open/tags:flex sm:flex">
+              <>
+                <details className="mandoo-taxonomy-details sm:hidden">
+                  <summary className="mb-1 inline-flex cursor-pointer list-none items-center gap-1 rounded-md border border-gray-200/80 bg-white/70 px-2.5 py-1 text-xs font-semibold text-gray-500 transition-colors hover:border-rose-200 hover:bg-rose-50/70 hover:text-rose-700 dark:border-gray-800 dark:bg-gray-900/40 dark:text-gray-400 dark:hover:border-rose-900/60 dark:hover:bg-rose-950/30 dark:hover:text-rose-200 [&::-webkit-details-marker]:hidden">
+                    태그 보기 ({allTags.length})
+                  </summary>
+                  <div className="mandoo-details-panel hidden flex-wrap items-center gap-1">
+                    {allTags.map((tag) => (
+                      <TagBadge key={tag} tag={tag} size="sm" basePath={sectionPath} />
+                    ))}
+                  </div>
+                </details>
+                <div className="mandoo-taxonomy-row hidden flex-wrap items-center gap-1 sm:flex">
                   <span className="mr-1 hidden shrink-0 text-xs font-semibold text-gray-500 dark:text-gray-400 sm:inline">
                     {themeConfig.text.tags}
                   </span>
@@ -164,7 +178,7 @@ export function PostList({
                     <TagBadge key={tag} tag={tag} size="sm" basePath={sectionPath} />
                   ))}
                 </div>
-              </details>
+              </>
             )}
           </div>
         )}

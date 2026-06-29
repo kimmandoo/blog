@@ -231,6 +231,10 @@ details[open] > .mandoo-details-panel {
   animation: mandoo-details-open 140ms ease-out;
 }
 
+.mandoo-taxonomy-details[open] > .mandoo-details-panel {
+  display: flex;
+}
+
 .mandoo-post-card {
   transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
@@ -413,20 +417,6 @@ pre.has-line-numbers .hljs {
 }
 
 @media (max-width: 640px) {
-  .code-block-wrapper::before {
-    content: '';
-    pointer-events: none;
-    position: absolute;
-    left: 3.25rem;
-    right: 0.875rem;
-    bottom: 0.35rem;
-    height: 2px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, rgba(244, 63, 94, 0.08), rgba(244, 63, 94, 0.52), transparent);
-    opacity: 0.72;
-    z-index: 1;
-  }
-
   .code-block-wrapper::after {
     content: '';
     pointer-events: none;

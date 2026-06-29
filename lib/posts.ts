@@ -16,7 +16,7 @@ import { normalizeFrontmatterDate, parseDateValue } from './date';
 import GithubSlugger from 'github-slugger';
 
 const postsDirectory = path.join(process.cwd(), 'posts');
-const MAX_AUTO_EXCERPT_LENGTH = 110;
+const MAX_EXCERPT_LENGTH = 110;
 
 export interface TOCItem {
   id: string;
@@ -61,8 +61,8 @@ function getAllMarkdownFiles(dir: string, baseDir: string = dir): string[] {
 function trimExcerpt(value: string): string {
   const normalized = value.replace(/\s+/g, ' ').trim();
 
-  return normalized.length > MAX_AUTO_EXCERPT_LENGTH
-    ? `${normalized.slice(0, MAX_AUTO_EXCERPT_LENGTH - 1).trim()}…`
+  return normalized.length > MAX_EXCERPT_LENGTH
+    ? `${normalized.slice(0, MAX_EXCERPT_LENGTH - 1).trim()}…`
     : normalized;
 }
 
@@ -147,12 +147,12 @@ function getAllPostsData(): PostData[] {
         slug,
         title: matterResult.data.title || slug,
         date: normalizeFrontmatterDate(matterResult.data.date),
-        excerpt: matterResult.data.excerpt || createExcerptFromContent(matterResult.content),
         category: matterResult.data.category || '',
         tags: matterResult.data.tags || [],
         draft: matterResult.data.draft || false,
         readingTime,
         ...(matterResult.data as Omit<PostData, 'slug' | 'title' | 'date' | 'excerpt' | 'category' | 'tags' | 'draft' | 'readingTime'>),
+        excerpt: trimExcerpt(matterResult.data.excerpt || createExcerptFromContent(matterResult.content)),
       };
     })
     .filter(post => !post.draft);
@@ -220,7 +220,6 @@ export async function getPostData(slug: string): Promise<PostData> {
     content: contentHtml,
     title: matterResult.data.title || slug,
     date: normalizeFrontmatterDate(matterResult.data.date),
-    excerpt: matterResult.data.excerpt || createExcerptFromContent(matterResult.content),
     category: matterResult.data.category || '',
     tags: matterResult.data.tags || [],
     draft: matterResult.data.draft || false,
@@ -228,6 +227,7 @@ export async function getPostData(slug: string): Promise<PostData> {
     readingTime,
     firstImage,
     ...(matterResult.data as Omit<PostData, 'slug' | 'title' | 'date' | 'content' | 'excerpt' | 'category' | 'tags' | 'draft' | 'toc' | 'readingTime' | 'firstImage'>),
+    excerpt: trimExcerpt(matterResult.data.excerpt || createExcerptFromContent(matterResult.content)),
   };
 }
 
