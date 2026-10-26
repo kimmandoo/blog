@@ -56,8 +56,8 @@ export function TableOfContents({ items, compact = false }: TOCProps) {
               aria-current={activeId === item.id ? 'location' : undefined}
               className={`mandoo-toc-link block py-1 text-sm leading-relaxed ${themeConfig.animations.transition} ${
                 isActive
-                  ? `mandoo-toc-link--active ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} font-semibold border-l-2 border-rose-500 dark:border-rose-300 pl-3 -ml-3`
-                  : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:text-rose-600 dark:hover:text-rose-300 hover:translate-x-1`
+                  ? `${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} font-semibold border-l-2 border-[var(--foreground)] pl-3 -ml-3`
+                  : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:underline`
               }`}
               onClick={(e) => {
                 e.preventDefault();

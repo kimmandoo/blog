@@ -113,7 +113,6 @@ export function Comments() {
     <div className="mt-12">
       <div className="mb-6">
         <h3 className="text-2xl font-semibold text-gray-950 dark:text-white">{themeConfig.text.comments}</h3>
-        <div className="h-0.5 w-16 bg-rose-500 mt-2"></div>
       </div>
       <div ref={commentsRef} className="giscus"></div>
     </div>

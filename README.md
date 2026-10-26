@@ -22,18 +22,19 @@ A clean, minimal blog built with Next.js, Tailwind CSS, and deployed on Vercel. 
 
 ### Blog browsing
 
-- The home page uses a responsive journal header, separated post cards, and explicit keyboard focus indicators in light and dark themes.
+- The home page uses a narrow, monochrome editorial layout: text navigation, flat post rows, fine separators, and visible keyboard focus instead of gradients, floating controls, or boxed cards. Article and PS-note pages share the same reading width and neutral shell.
 - Search matches titles, excerpts, categories, and tags, ignoring surrounding whitespace and letter case. Clear the field with its clear button, Escape, or the empty-state reset action.
 - Changing the search starts at the first result page. Pagination links retain the query in `q` together with category/tag filters, so linked result pages survive a reload.
-- Categories collapse on mobile; tags collapse at every screen size. Expanded taxonomy panels scroll independently instead of pushing the entire post list down.
+- Categories and tags are collapsed at every screen size. Expanded taxonomy panels scroll independently; post rows show date, category, reading time, title, and a short excerpt without repeated tag badges.
 - Removing a selected category or tag preserves the other active filter. Pagination shows nearby pages and endpoints rather than an unbounded row of buttons.
+- Light, dark, and system theme controls live in the footer. The layout supports narrow mobile screens without horizontal page scrolling.
 
 
 ## 🍴 Fork This Blog
 
 **Want your own blog?** Fork this repository and make it yours in 5 minutes!
 
-👉 **See the complete setup guide:** [FORK_SETUP.md](FORK_SETUP.md)
+👉 **See the complete setup guide:** [FORK_SETUP.md](docs/FORK_SETUP.md)
 
 ### Quick Fork Steps:
 
@@ -47,12 +48,14 @@ A clean, minimal blog built with Next.js, Tailwind CSS, and deployed on Vercel. 
 
 ## 📚 Documentation
 
-- **[FORK_SETUP.md](FORK_SETUP.md)** - Complete guide to fork and customize this blog
-- **[POST_GUIDE.md](POST_GUIDE.md)** - How to write posts with all frontmatter options
-- **[THEME_CONFIG.md](THEME_CONFIG.md)** - Customize colors, fonts, and layout
-- **[IMAGE_GUIDE.md](IMAGE_GUIDE.md)** - Adding and optimizing images
-- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Deployment instructions (English)
-- **[DEPLOYMENT-KO.md](DEPLOYMENT-KO.md)** - 배포 가이드 (한국어)
+- **[FORK_SETUP.md](docs/FORK_SETUP.md)** - Complete guide to fork and customize this blog
+- **[POST_GUIDE.md](docs/POST_GUIDE.md)** - How to write posts with all frontmatter options
+- **[THEME_CONFIG.md](docs/THEME_CONFIG.md)** - Customize colors, fonts, and layout
+- **[IMAGE_GUIDE.md](docs/IMAGE_GUIDE.md)** - Adding and optimizing images
+- **[DEPLOYMENT.md](docs/DEPLOYMENT.md)** - Deployment instructions (English)
+- **[DEPLOYMENT-KO.md](docs/DEPLOYMENT-KO.md)** - 배포 가이드 (한국어)
+- **[AndroidCS guides](docs/ANDROIDCS_CONTENT_ORGANIZATION.md)** - Content organization, with [usage](docs/ANDROIDCS_GUIDE.md) and [examples](docs/ANDROIDCS_EXAMPLES.md)
+- **[Documentation archive](docs/archive/)** - Preserved historical UI and implementation reports; these describe past changes, not necessarily current behavior
 
 ## 🚀 Quick Start (Local Development)
 
@@ -102,7 +105,7 @@ Your content goes here. You can use **Markdown** formatting!
 More content...
 ```
 
-**See [POST_GUIDE.md](POST_GUIDE.md) for complete documentation on:**
+**See [POST_GUIDE.md](docs/POST_GUIDE.md) for complete documentation on:**
 - All available frontmatter fields
 - Markdown features (code blocks, tables, math, diagrams)
 - Images and media
@@ -128,7 +131,7 @@ Save images in `public/images/` and reference them:
 ![Image description](/images/your-image.jpg)
 ```
 
-**See [IMAGE_GUIDE.md](IMAGE_GUIDE.md) for complete image documentation.**
+**See [IMAGE_GUIDE.md](docs/IMAGE_GUIDE.md) for complete image documentation.**
 
 ## 📦 Deployment
 
@@ -141,7 +144,7 @@ Save images in `public/images/` and reference them:
 
 **Done!** Your blog auto-deploys on every push to GitHub.
 
-**See [DEPLOYMENT.md](DEPLOYMENT.md) for other deployment options.**
+**See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for other deployment options.**
 
 ## ⚙️ Configuration
 
@@ -193,7 +196,7 @@ comments: {
 }
 ```
 
-See [THEME_CONFIG.md](THEME_CONFIG.md) for complete configuration options.
+See [THEME_CONFIG.md](docs/THEME_CONFIG.md) for complete configuration options.
 
 ### Customization
 
@@ -208,7 +211,7 @@ Create new pages by adding files to the `app/` directory:
 
 ```
 
-**See [FORK_SETUP.md](FORK_SETUP.md) for complete configuration instructions** including:
+**See [FORK_SETUP.md](docs/FORK_SETUP.md) for complete configuration instructions** including:
 - Google Analytics setup
 - Google Search Console setup
 - Giscus comments integration
@@ -257,7 +260,7 @@ spacing: {
 }
 ```
 
-**See [THEME_CONFIG.md](THEME_CONFIG.md) for all customization options.**
+**See [THEME_CONFIG.md](docs/THEME_CONFIG.md) for all customization options.**
 
 ## 🌟 Advanced Features
 
@@ -284,7 +287,7 @@ Configure in `config/theme.config.ts`.
 
 ### Comments
 
-GitHub Discussions-based comments with Giscus. See [FORK_SETUP.md](FORK_SETUP.md) for setup.
+GitHub Discussions-based comments with Giscus. See [FORK_SETUP.md](docs/FORK_SETUP.md) for setup.
 
 ### Categories and Tags
 
@@ -335,13 +338,16 @@ blog/
 │   ├── images/             # Images for posts
 │   ├── favicon.ico         # Site favicon
 │   └── ...                 # Other static files
-├── FORK_SETUP.md           # Fork setup guide
-├── POST_GUIDE.md           # Post writing guide
-├── THEME_CONFIG.md         # Theme customization guide
-├── IMAGE_GUIDE.md          # Image usage guide
+├── docs/                    # Setup, authoring, deployment, and AndroidCS guides
+│   └── archive/             # Historical UI and implementation reports
+├── rust/                    # Preserved Rust learning drafts and source material
+├── scripts/                 # Repository maintenance and diagnostic scripts
+├── tests/                   # Automated regression tests
 ├── README.md               # This file
 └── package.json            # Dependencies
 ```
+
+Guides live in `docs/`; historical reports are retained in `docs/archive/` rather than deleted. Rust drafts remain in `rust/`, separate from published blog posts. Generated Next.js output and local tool logs are ignored, and unused starter SVG assets have been removed from `public/`.
 
 ## 🛠️ Tech Stack
 
@@ -359,12 +365,12 @@ blog/
 
 | Document | Description |
 |----------|-------------|
-| **[FORK_SETUP.md](FORK_SETUP.md)** | Complete guide to fork and customize this blog |
-| **[POST_GUIDE.md](POST_GUIDE.md)** | How to write posts with all features |
-| **[THEME_CONFIG.md](THEME_CONFIG.md)** | Customize colors, fonts, layout |
-| **[IMAGE_GUIDE.md](IMAGE_GUIDE.md)** | Adding and optimizing images |
-| **[DEPLOYMENT.md](DEPLOYMENT.md)** | Deployment instructions (English) |
-| **[DEPLOYMENT-KO.md](DEPLOYMENT-KO.md)** | 배포 가이드 (한국어) |
+| **[FORK_SETUP.md](docs/FORK_SETUP.md)** | Complete guide to fork and customize this blog |
+| **[POST_GUIDE.md](docs/POST_GUIDE.md)** | How to write posts with all features |
+| **[THEME_CONFIG.md](docs/THEME_CONFIG.md)** | Customize colors, fonts, layout |
+| **[IMAGE_GUIDE.md](docs/IMAGE_GUIDE.md)** | Adding and optimizing images |
+| **[DEPLOYMENT.md](docs/DEPLOYMENT.md)** | Deployment instructions (English) |
+| **[DEPLOYMENT-KO.md](docs/DEPLOYMENT-KO.md)** | 배포 가이드 (한국어) |
 | **[CONTRIBUTING.md](CONTRIBUTING.md)** | How to contribute to this project |
 
 ## 🎯 Quick Reference

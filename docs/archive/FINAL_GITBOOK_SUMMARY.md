@@ -111,7 +111,7 @@ User requested two main changes:
 
 ### 7. Documentation Added
 
-**GITBOOK_STYLE.md**:
+**[GITBOOK_STYLE.md](GITBOOK_STYLE.md)**:
 - Complete visual documentation
 - Layout diagrams
 - Feature descriptions

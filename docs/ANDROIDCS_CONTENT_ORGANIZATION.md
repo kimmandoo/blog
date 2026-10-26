@@ -262,6 +262,6 @@ android-cs/posts/android/components/activities/lifecycle/onCreate.md
 
 ## 📚 Additional Resources
 
-- See `ANDROIDCS_GUIDE.md` for basic usage
-- See `GITBOOK_STYLE.md` for styling details
+- See [ANDROIDCS_GUIDE.md](ANDROIDCS_GUIDE.md) for basic usage
+- See [GITBOOK_STYLE.md](archive/GITBOOK_STYLE.md) for historical styling details
 - See sample post in `android-cs/posts/sample.md`

@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef } from 'react';
-import { themeConfig } from '@/config/theme.config';
 
 interface SearchBarProps {
   query: string;
@@ -16,7 +15,7 @@ export function SearchBar({ query, onSearch, placeholder = "제목, 내용, 태�
     <div className="mandoo-search relative">
       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
         <svg 
-          className={`mandoo-search__icon w-4 h-4 ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}
+          className="mandoo-search__icon w-4 h-4"
           fill="none" 
           strokeWidth="2" 
           stroke="currentColor" 
@@ -35,7 +34,7 @@ export function SearchBar({ query, onSearch, placeholder = "제목, 내용, 태�
           if (e.key === 'Escape') onSearch('');
         }}
         placeholder={placeholder}
-        className={`w-full pl-10 pr-10 py-2.5 text-sm ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} border rounded-lg ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none ${themeConfig.animations.transition}`}
+        className="w-full pl-10 pr-12"
       />
       {query && (
         <button
@@ -45,7 +44,7 @@ export function SearchBar({ query, onSearch, placeholder = "제목, 내용, 태�
             inputRef.current?.focus();
           }}
           aria-label="검색어 지우기"
-          className={`absolute inset-y-0 right-0 pr-3.5 flex items-center ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} hover:text-black dark:hover:text-white ${themeConfig.animations.transition}`}
+          className="absolute inset-y-0 right-0 flex items-center"
         >
           <svg className="w-4 h-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
             <path d="M6 18L18 6M6 6l12 12" />

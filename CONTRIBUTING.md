@@ -187,7 +187,7 @@ export const MyComponent: FC<Props> = ({ title, description }) => {
 
 When modifying `config/theme.config.ts`:
 1. Update the template file (`theme.config.template.ts`)
-2. Update THEME_CONFIG.md documentation
+2. Update `docs/THEME_CONFIG.md` documentation
 3. Add examples if introducing new options
 4. Ensure backward compatibility
 
@@ -253,11 +253,11 @@ Before submitting a PR, test:
 When to update each file:
 
 - **README.md** - Overview, quick start, key features
-- **POST_GUIDE.md** - Anything about writing posts
-- **FORK_SETUP.md** - Setup and configuration
-- **THEME_CONFIG.md** - Theme customization
-- **IMAGE_GUIDE.md** - Image usage
-- **DEPLOYMENT.md** - Deployment instructions
+- **[docs/POST_GUIDE.md](docs/POST_GUIDE.md)** - Anything about writing posts
+- **[docs/FORK_SETUP.md](docs/FORK_SETUP.md)** - Setup and configuration
+- **[docs/THEME_CONFIG.md](docs/THEME_CONFIG.md)** - Theme customization
+- **[docs/IMAGE_GUIDE.md](docs/IMAGE_GUIDE.md)** - Image usage
+- **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** - Deployment instructions
 
 ## 🌟 Recognition
 

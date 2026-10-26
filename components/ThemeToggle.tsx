@@ -2,10 +2,6 @@
 
 import { useTheme } from './ThemeProvider';
 
-interface ThemeToggleProps {
-  inline?: boolean;
-}
-
 const themeOptions = [
   {
     value: 'light',
@@ -40,18 +36,12 @@ const themeOptions = [
   },
 ] as const;
 
-export function ThemeToggle({ inline = false }: ThemeToggleProps) {
+export function ThemeToggle() {
   const { theme, setTheme, resolvedTheme } = useTheme();
 
-  const containerClasses = inline
-    ? 'theme-toggle inline-flex rounded-lg border border-gray-200 bg-white/80 p-1 shadow-sm dark:border-gray-700 dark:bg-gray-900/80'
-    : 'theme-toggle fixed right-4 top-4 z-50 inline-flex rounded-full border border-gray-200 bg-white/90 p-1 shadow-lg backdrop-blur dark:border-gray-700 dark:bg-gray-900/90 sm:right-6 sm:top-6';
-
   return (
-    <div className={containerClasses} role="group" aria-label={`Theme: ${theme}, resolved ${resolvedTheme}`}>
+    <div className="theme-toggle" role="group" aria-label={`Theme: ${theme}, resolved ${resolvedTheme}`}>
       {themeOptions.map((option) => {
-        const isActive = theme === option.value;
-
         return (
           <button
             key={option.value}
@@ -60,11 +50,7 @@ export function ThemeToggle({ inline = false }: ThemeToggleProps) {
             aria-label={option.label}
             aria-pressed={theme === option.value}
             title={option.label}
-            className={`theme-toggle__option inline-flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200 ${
-              isActive
-                ? 'bg-rose-600 text-white shadow-sm ring-1 ring-rose-200 dark:bg-rose-300 dark:text-gray-950 dark:ring-rose-200/40'
-                : 'text-gray-500 hover:-translate-y-0.5 hover:bg-rose-50 hover:text-rose-600 dark:text-gray-400 dark:hover:bg-rose-950/30 dark:hover:text-rose-200'
-            }`}
+            className="theme-toggle__button"
           >
             <span className="theme-toggle__icon inline-flex h-4 w-4 items-center justify-center" aria-hidden="true">
               {option.icon}

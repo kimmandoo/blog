@@ -140,7 +140,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
   const baseUrl = themeConfig.seo.siteUrl.replace(/\/+$/, '');
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${themeConfig.colors.light.background.primary} ${themeConfig.colors.dark.background.primary}`}>
+    <div>
       {/* JSON-LD Structured Data */}
       <ArticleJsonLd
         title={post.title}
@@ -162,14 +162,14 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
       {/* Reading Progress Bar */}
       <ReadingProgressBar readingTime={post.readingTime} />
       
-      <main className="mx-auto px-6 py-16">
-        <div className={`${themeConfig.spacing.container} mx-auto mb-12`}>
+      <main className="reading-shell">
+        <div className="mb-12">
           <Link 
             href="/"
-            className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-rose-600 dark:hover:text-rose-300 transition-all group"
+            className="inline-flex min-h-11 items-center text-[var(--muted)] hover:text-[var(--foreground)]"
           >
             <svg 
-              className={`w-5 h-5 mr-2 group-hover:-translate-x-1 ${themeConfig.animations.transition}`} 
+              className="w-4 h-4 mr-2"
               fill="none" 
               strokeWidth="2" 
               stroke="currentColor" 
@@ -182,10 +182,10 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
         </div>
 
         {/* Content layout with ToC positioned absolutely to not affect content width */}
-        <div className={`relative ${themeConfig.spacing.postWidth} mx-auto`}>
+        <div className="relative">
             {/* Main content area - always centered with same width */}
             <article>
-          <header className={`mx-auto max-w-3xl pb-10 mb-10 ${themeConfig.colors.light.border.secondary} ${themeConfig.colors.dark.border.secondary} border-b`}>
+          <header className="reading-header">
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <time
                 dateTime={toMetadataDate(post.date) ?? post.date}
@@ -199,16 +199,16 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
                 </span>
               )}
               {post.category && (
-                <span className="text-xs px-2 py-0.5 rounded-full border border-gray-200/80 bg-white/70 text-gray-600 dark:border-gray-800 dark:bg-gray-900/50 dark:text-gray-300">
+                <span className="text-sm text-[var(--muted)]">
                   {post.category}
                 </span>
               )}
             </div>
-            <h1 className="break-words text-3xl sm:text-4xl md:text-5xl font-bold text-gray-950 dark:text-white mb-4 leading-tight tracking-tight">
+            <h1 className="break-words text-3xl sm:text-4xl font-semibold mb-4 leading-snug tracking-tight">
               {post.title}
             </h1>
             {post.excerpt && (
-              <p className={`mt-5 max-w-2xl border-l-2 border-rose-200/70 pl-4 text-lg ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} leading-relaxed dark:border-rose-900/60`}>
+              <p className="mt-5 text-base text-[var(--muted)] leading-relaxed">
                 {post.excerpt}
               </p>
             )}
@@ -224,7 +224,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
           </header>
 
           {post.toc && post.toc.length > 0 && (
-            <details className="mb-8 rounded-lg border border-gray-200/80 bg-white/70 p-4 dark:border-gray-800 dark:bg-gray-900/50 xl:hidden">
+            <details className="mb-8 border-y border-[var(--border)] py-4 xl:hidden">
               <summary className="cursor-pointer list-none text-sm font-semibold text-gray-700 dark:text-gray-200 [&::-webkit-details-marker]:hidden">
                 목차 보기
               </summary>
@@ -244,7 +244,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
                 prose-h3:${themeConfig.prose.h3} prose-h3:mb-4 prose-h3:mt-10
                 prose-h4:${themeConfig.prose.h4} prose-h4:mb-2 prose-h4:mt-6
                 prose-p:${themeConfig.prose.paragraphColor.light} dark:prose-p:${themeConfig.prose.paragraphColor.dark} prose-p:leading-8 prose-p:mb-7
-                prose-a:text-rose-600 dark:prose-a:text-rose-300 prose-a:font-medium prose-a:no-underline prose-a:border-b prose-a:border-rose-200 dark:prose-a:border-rose-900/70 hover:prose-a:border-rose-500 dark:hover:prose-a:border-rose-300 prose-a:transition-colors
+                prose-a:text-inherit prose-a:font-medium prose-a:underline prose-a:underline-offset-4
                 prose-strong:text-black dark:prose-strong:text-white prose-strong:font-bold
                 prose-blockquote:border-l-2 prose-blockquote:border-gray-300 dark:prose-blockquote:border-gray-700 prose-blockquote:text-gray-600 dark:prose-blockquote:text-gray-400 prose-blockquote:pl-4 prose-blockquote:italic
                 prose-hr:border-gray-200 dark:prose-hr:border-gray-800 prose-hr:my-8
@@ -284,7 +284,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
     <div className={`${themeConfig.spacing.container} mx-auto px-6 mt-12 text-center`}>
       <Link 
         href="/"
-        className={`inline-flex items-center px-6 py-3 ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:text-rose-600 dark:hover:text-rose-300 ${themeConfig.animations.transition}`}
+        className="inline-flex min-h-11 items-center text-[var(--muted)] hover:text-[var(--foreground)]"
       >
         <svg 
           className="w-5 h-5 mr-2" 

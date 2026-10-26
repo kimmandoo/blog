@@ -14,9 +14,9 @@
 /coverage
 
 # next.js
-/.next/
-/.next-build/
-/.next-dev/
+.next/
+.next-build/
+.next-dev/
 /out/
 
 # production
@@ -42,3 +42,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .omx
+/.superpowers/

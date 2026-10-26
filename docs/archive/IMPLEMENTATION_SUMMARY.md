@@ -50,7 +50,7 @@ Successfully implemented a new AndroidCS section to the blog where Android Compu
 - No other changes to blog functionality
 
 ### 6. Documentation
-**File:** `ANDROIDCS_GUIDE.md`
+**File:** [docs/ANDROIDCS_GUIDE.md](../ANDROIDCS_GUIDE.md)
 - Complete usage guide for the new feature
 - Examples of how to create documents
 - Explanation of folder structure
@@ -70,7 +70,7 @@ Successfully implemented a new AndroidCS section to the blog where Android Compu
 ## File Statistics
 ```
 7 files changed, 682 insertions(+)
-- ANDROIDCS_GUIDE.md: 88 lines
+- docs/ANDROIDCS_GUIDE.md: 88 lines
 - android-cs/sample.md: 21 lines
 - app/androidcs/[...slug]/page.tsx: 200 lines
 - app/androidcs/page.tsx: 90 lines

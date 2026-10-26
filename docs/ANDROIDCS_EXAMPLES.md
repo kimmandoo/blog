@@ -300,6 +300,6 @@ mv android-cs/*.jpg android-cs/images/
 
 ## 📚 References
 
-- Full Guide: `ANDROIDCS_CONTENT_ORGANIZATION.md`
-- GitBook Style: `GITBOOK_STYLE.md`
-- Basic Usage: `ANDROIDCS_GUIDE.md`
+- Full Guide: [ANDROIDCS_CONTENT_ORGANIZATION.md](ANDROIDCS_CONTENT_ORGANIZATION.md)
+- GitBook Style: [GITBOOK_STYLE.md](archive/GITBOOK_STYLE.md)
+- Basic Usage: [ANDROIDCS_GUIDE.md](ANDROIDCS_GUIDE.md)

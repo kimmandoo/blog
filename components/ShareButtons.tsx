@@ -9,7 +9,7 @@ interface ShareButtonsProps {
 
 export function ShareButtons({ title, url }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
-  const buttonClass = 'p-2 rounded-full border border-gray-200/80 bg-white/70 hover:border-rose-200 hover:bg-rose-50/70 dark:border-gray-800 dark:bg-gray-900/40 dark:hover:border-rose-900/60 dark:hover:bg-rose-950/30 transition-colors';
+  const buttonClass = 'inline-flex min-h-11 min-w-11 items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)]';
 
   const shareOnTwitter = () => {
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`;
@@ -65,7 +65,7 @@ export function ShareButtons({ title, url }: ShareButtonsProps) {
         className={`p-2 rounded-full transition-colors ${
           copied 
             ? 'bg-green-100 dark:bg-green-900' 
-            : 'border border-gray-200/80 bg-white/70 hover:border-rose-200 hover:bg-rose-50/70 dark:border-gray-800 dark:bg-gray-900/40 dark:hover:border-rose-900/60 dark:hover:bg-rose-950/30'
+            : 'text-[var(--muted)] hover:text-[var(--foreground)]'
         }`}
         aria-label={copied ? 'Link copied!' : 'Copy link'}
       >

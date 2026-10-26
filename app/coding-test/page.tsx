@@ -35,12 +35,12 @@ export default async function CodingTestPage({
   const threadPosts = await Promise.all(filteredPosts.map((post) => getPostData(post.slug)));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 text-gray-900 dark:text-gray-100">
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
-        <header className="border-b border-rose-100/70 dark:border-gray-800 pb-5">
+    <div>
+      <main className="reading-shell">
+        <header className="reading-header">
           <Link
             href="/"
-            className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-rose-600 dark:hover:text-rose-300 transition-colors"
+            className="inline-flex min-h-11 items-center gap-1 text-sm text-[var(--muted)] hover:text-[var(--foreground)]"
           >
             <svg className="w-3.5 h-3.5" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
               <path d="M15 19l-7-7 7-7" />
@@ -55,15 +55,12 @@ export default async function CodingTestPage({
         </header>
 
         {availableTags.length > 0 && (
-          <nav className="sticky top-0 z-10 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 border-b border-rose-100/70 dark:border-gray-800/80 bg-white/92 dark:bg-gray-950/92 backdrop-blur-sm">
+          <nav aria-label="노트 태그" className="border-b border-[var(--border)] py-3">
             <div className="flex flex-wrap items-center gap-2 text-xs">
               <Link
                 href="/coding-test"
-                className={`px-2.5 py-1 rounded border transition-colors ${
-                  selectedTag === ''
-                    ? 'border-rose-500 bg-rose-600 text-white dark:border-rose-300 dark:bg-rose-300 dark:text-gray-950'
-                    : 'border-gray-200 bg-white/70 text-gray-600 hover:border-rose-200 hover:bg-rose-50/70 hover:text-rose-700 dark:border-gray-700 dark:bg-gray-900/40 dark:text-gray-300 dark:hover:border-rose-900/60 dark:hover:bg-rose-950/30 dark:hover:text-rose-200'
-                }`}
+                aria-current={selectedTag === '' ? 'page' : undefined}
+                className="inline-flex min-h-11 items-center px-2 text-[var(--muted)] hover:text-[var(--foreground)] aria-[current=page]:text-[var(--foreground)] aria-[current=page]:underline underline-offset-4"
               >
                 전체
               </Link>
@@ -71,11 +68,8 @@ export default async function CodingTestPage({
                 <Link
                   key={currentTag}
                   href={`/coding-test?tag=${encodeURIComponent(currentTag)}`}
-                  className={`px-2.5 py-1 rounded border transition-colors ${
-                    selectedTag === currentTag
-                      ? 'border-rose-500 bg-rose-600 text-white dark:border-rose-300 dark:bg-rose-300 dark:text-gray-950'
-                      : 'border-gray-200 bg-white/70 text-gray-600 hover:border-rose-200 hover:bg-rose-50/70 hover:text-rose-700 dark:border-gray-700 dark:bg-gray-900/40 dark:text-gray-300 dark:hover:border-rose-900/60 dark:hover:bg-rose-950/30 dark:hover:text-rose-200'
-                  }`}
+                  aria-current={selectedTag === currentTag ? 'page' : undefined}
+                  className="inline-flex min-h-11 items-center px-2 text-[var(--muted)] hover:text-[var(--foreground)] aria-[current=page]:text-[var(--foreground)] aria-[current=page]:underline underline-offset-4"
                 >
                   #{currentTag} {tagCounts[currentTag]}
                 </Link>
@@ -104,11 +98,11 @@ export default async function CodingTestPage({
                     <time dateTime={toMetadataDate(post.date) ?? post.date}>{formatDisplayDate(post.date)}</time>
                     {post.readingTime && <span>{post.readingTime}분</span>}
                     {post.tags?.map((tagItem) => (
-                      <span key={tagItem} className="px-2 py-0.5 border border-rose-200/70 bg-rose-50/50 dark:border-rose-900/50 dark:bg-rose-950/20 rounded-full">
+                      <span key={tagItem}>
                         #{tagItem}
                       </span>
                     ))}
-                    <Link href={`/coding-test/${post.slug}`} className="underline underline-offset-2 hover:text-rose-600 dark:hover:text-rose-300 hover:underline transition-colors">
+                    <Link href={`/coding-test/${post.slug}`} className="inline-flex min-h-11 items-center underline underline-offset-4 hover:text-[var(--foreground)]">
                       단일 페이지
                     </Link>
                   </div>
@@ -116,7 +110,7 @@ export default async function CodingTestPage({
                 </header>
 
                 <div
-                  className="mt-6 prose prose-slate dark:prose-invert max-w-none prose-headings:scroll-mt-20 prose-a:text-rose-600 dark:prose-a:text-rose-300"
+                  className="mt-6 prose dark:prose-invert max-w-none prose-headings:scroll-mt-20 prose-a:text-inherit"
                   dangerouslySetInnerHTML={{ __html: post.content || '' }}
                 />
               </article>

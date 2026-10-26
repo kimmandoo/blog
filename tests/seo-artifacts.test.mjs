@@ -3,9 +3,10 @@ import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import fs from 'node:fs';
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const require = createRequire(import.meta.url);
+const projectRoot = fileURLToPath(new URL('..', import.meta.url));
 const buildDir = process.env.NEXT_DIST_DIR ?? '.next';
 
 function extractTagValue(block, tagName) {
@@ -20,11 +21,11 @@ async function getRouteBody(routeModulePath) {
 }
 
 function getBuildArtifactPath(relativePath) {
-  return `./${path.posix.join(buildDir.replace(/\\/g, '/'), relativePath.replace(/\\/g, '/'))}`;
+  return path.resolve(projectRoot, buildDir, relativePath);
 }
 
 function getPrerenderRoute(routePath) {
-  const manifestPath = path.join(process.cwd(), buildDir, 'prerender-manifest.json');
+  const manifestPath = getBuildArtifactPath('prerender-manifest.json');
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
   return manifest.routes[routePath];
 }
@@ -35,11 +36,11 @@ function extractBlocks(xml, tagName) {
 }
 
 async function loadMetadataHelpers() {
-  return import(pathToFileURL(path.join(process.cwd(), 'lib', 'metadata.ts')).href);
+  return import(pathToFileURL(path.join(projectRoot, 'lib', 'metadata.ts')).href);
 }
 
 async function loadNextConfig() {
-  const config = await import(pathToFileURL(path.join(process.cwd(), 'next.config.ts')).href);
+  const config = await import(pathToFileURL(path.join(projectRoot, 'next.config.ts')).href);
   return config.default;
 }
 

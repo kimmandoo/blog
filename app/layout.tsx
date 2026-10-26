@@ -5,7 +5,6 @@ import { themeConfig } from "@/config/theme.config";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { GoogleAdsense } from "@/components/GoogleAdsense";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { ThemeToggle } from "@/components/ThemeToggle";
 
 import { Footer } from "@/components/Footer";
 import { toAbsolutePageUrl } from "@/lib/metadata";
@@ -83,7 +82,6 @@ export default function RootLayout({
         <ThemeProvider>
           <GoogleAnalytics />
           <GoogleAdsense />
-          <ThemeToggle />
           {children}
           <Footer />
         </ThemeProvider>

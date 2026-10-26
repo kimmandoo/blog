@@ -26,7 +26,7 @@ export function PostNavigation({ previousPost, nextPost, basePath = '/posts' }: 
         {previousPost && (
           <Link 
             href={`${basePath}/${previousPost.slug}`}
-            className="group flex flex-col p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-rose-200 dark:hover:border-rose-900/60 hover:bg-rose-50/50 dark:hover:bg-rose-950/20 transition-all"
+            className="group flex flex-col py-4 border-t border-[var(--border)]"
           >
             <span className="text-xs text-gray-500 dark:text-gray-400 mb-1 flex items-center gap-1">
               <svg className="w-3 h-3" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,7 +34,7 @@ export function PostNavigation({ previousPost, nextPost, basePath = '/posts' }: 
               </svg>
               이전 글
             </span>
-            <span className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-300 transition-colors line-clamp-2">
+            <span className="text-sm font-medium group-hover:underline underline-offset-4 line-clamp-2">
               {previousPost.title}
             </span>
             {(previousPost.category || previousPost.readingTime) && (
@@ -52,7 +52,7 @@ export function PostNavigation({ previousPost, nextPost, basePath = '/posts' }: 
         {nextPost && (
           <Link 
             href={`${basePath}/${nextPost.slug}`}
-            className="group flex flex-col p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-rose-200 dark:hover:border-rose-900/60 hover:bg-rose-50/50 dark:hover:bg-rose-950/20 transition-all items-end"
+            className="group flex flex-col py-4 border-t border-[var(--border)] items-end"
           >
             <span className="text-xs text-gray-500 dark:text-gray-400 mb-1 flex items-center gap-1">
               다음 글
@@ -60,7 +60,7 @@ export function PostNavigation({ previousPost, nextPost, basePath = '/posts' }: 
                 <path d="M9 5l7 7-7 7" />
               </svg>
             </span>
-            <span className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-300 transition-colors line-clamp-2 text-right">
+            <span className="text-sm font-medium group-hover:underline underline-offset-4 line-clamp-2 text-right">
               {nextPost.title}
             </span>
             {(nextPost.category || nextPost.readingTime) && (
