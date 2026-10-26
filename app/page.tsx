@@ -19,9 +19,10 @@ export async function generateMetadata({
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string | string[]; tag?: string | string[]; page?: string | string[] }>;
+  searchParams: Promise<{ category?: string | string[]; tag?: string | string[]; page?: string | string[]; q?: string | string[] }>;
 }) {
-  const { category, tag, page } = await searchParams;
+  const { category, tag, page, q } = await searchParams;
+  const searchQuery = getSearchParamValue(q) ?? '';
   const selectedCategory = getSearchParamValue(category);
   const selectedTag = getSearchParamValue(tag);
   const selectedPage = parsePageParam(page);
@@ -43,21 +44,24 @@ export default async function Home({
   return (
     <div className={`min-h-screen bg-gradient-to-br ${themeConfig.colors.light.background.primary} ${themeConfig.colors.dark.background.primary}`}>
       <WebSiteJsonLd />
-      <main className={`${themeConfig.spacing.container} mx-auto px-6 pt-8 sm:pt-12 pb-8`}>
-        <header className="mb-4 text-center">
-          <h1 className="site-brand mx-auto text-2xl font-bold text-black dark:text-white">
+      <main className="home-shell mx-auto max-w-4xl px-5 pb-16 pt-20 sm:px-8 sm:pt-16">
+        <header className="home-header">
+          <p className="mb-3 text-xs font-semibold tracking-widest text-rose-600 dark:text-rose-300">DEVELOPMENT JOURNAL</p>
+          <h1 className="site-brand text-4xl font-bold text-gray-950 dark:text-white sm:text-5xl">
             <span>{themeConfig.site.title}</span>
           </h1>
-          <p className={`mt-1 text-sm ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary}`}>
+          <p className={`mt-3 text-base ${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary}`}>
             {themeConfig.site.tagline}
           </p>
+          <div className="home-links mt-5 flex flex-wrap items-center justify-between gap-3">
+            <SocialLinks />
+            <Navigation />
+          </div>
         </header>
 
-        <SocialLinks />
-
-        <Navigation />
-
         <PostList 
+          key={`${selectedCategory ?? ''}:${selectedTag ?? ''}:${selectedPage}:${searchQuery}`}
+          initialSearchQuery={searchQuery}
           initialPosts={posts}
           allCategories={allCategories}
           allTags={allTags}

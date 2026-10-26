@@ -20,6 +20,15 @@ A clean, minimal blog built with Next.js, Tailwind CSS, and deployed on Vercel. 
 - 📖 **Reading Progress**: Progress bar and time estimate
 - 🔍 **Search & Filter**: Easy content discovery
 
+### Blog browsing
+
+- The home page uses a responsive journal header, separated post cards, and explicit keyboard focus indicators in light and dark themes.
+- Search matches titles, excerpts, categories, and tags, ignoring surrounding whitespace and letter case. Clear the field with its clear button, Escape, or the empty-state reset action.
+- Changing the search starts at the first result page. Pagination links retain the query in `q` together with category/tag filters, so linked result pages survive a reload.
+- Categories collapse on mobile; tags collapse at every screen size. Expanded taxonomy panels scroll independently instead of pushing the entire post list down.
+- Removing a selected category or tag preserves the other active filter. Pagination shows nearby pages and endpoints rather than an unbounded row of buttons.
+
+
 ## 🍴 Fork This Blog
 
 **Want your own blog?** Fork this repository and make it yours in 5 minutes!

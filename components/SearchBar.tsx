@@ -1,23 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useRef } from 'react';
 import { themeConfig } from '@/config/theme.config';
 
 interface SearchBarProps {
+  query: string;
   onSearch: (query: string) => void;
   placeholder?: string;
 }
 
-export function SearchBar({ onSearch, placeholder = "검색..." }: SearchBarProps) {
-  const [query, setQuery] = useState('');
-
-  useEffect(() => {
-    const debounceTimer = setTimeout(() => {
-      onSearch(query);
-    }, 300);
-
-    return () => clearTimeout(debounceTimer);
-  }, [query, onSearch]);
+export function SearchBar({ query, onSearch, placeholder = "제목, 내용, 태그로 검색" }: SearchBarProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
 
   return (
     <div className="mandoo-search relative">
@@ -33,15 +26,24 @@ export function SearchBar({ onSearch, placeholder = "검색..." }: SearchBarProp
         </svg>
       </div>
       <input
-        type="text"
+        ref={inputRef}
+        type="search"
+        aria-label="글 검색"
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(e) => onSearch(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') onSearch('');
+        }}
         placeholder={placeholder}
         className={`w-full pl-10 pr-10 py-2.5 text-sm ${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} border rounded-lg ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none ${themeConfig.animations.transition}`}
       />
       {query && (
         <button
-          onClick={() => setQuery('')}
+          type="button"
+          onClick={() => {
+            onSearch('');
+            inputRef.current?.focus();
+          }}
           aria-label="검색어 지우기"
           className={`absolute inset-y-0 right-0 pr-3.5 flex items-center ${themeConfig.colors.light.text.tertiary} ${themeConfig.colors.dark.text.tertiary} hover:text-black dark:hover:text-white ${themeConfig.animations.transition}`}
         >

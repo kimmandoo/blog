@@ -17,6 +17,7 @@ interface PostListProps {
   selectedCategory?: string;
   selectedTag?: string;
   currentPage?: number;
+  initialSearchQuery?: string;
   postsPerPage?: number;
   basePath?: string; // Optional base path, defaults to '/posts'
 }
@@ -36,10 +37,11 @@ export function PostList({
   selectedCategory,
   selectedTag,
   currentPage = 1,
+  initialSearchQuery = '',
   postsPerPage = DEFAULT_POSTS_PER_PAGE,
   basePath = '/posts'
 }: PostListProps) {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
   const sectionPath = basePath === '/posts' ? '/' : basePath;
 
   // Filter posts based on search query
@@ -48,7 +50,7 @@ export function PostList({
       return initialPosts;
     }
 
-    const query = searchQuery.toLowerCase();
+    const query = searchQuery.trim().toLowerCase();
     return initialPosts.filter(post => {
       const titleMatch = post.title.toLowerCase().includes(query);
       const excerptMatch = post.excerpt?.toLowerCase().includes(query);
@@ -59,28 +61,33 @@ export function PostList({
     });
   }, [initialPosts, searchQuery]);
 
-  const pagination = useMemo(
-    () => paginateItems(filteredPosts, currentPage, postsPerPage),
-    [filteredPosts, currentPage, postsPerPage]
-  );
   const hasSearchQuery = searchQuery.trim().length > 0;
+  const searchPage = searchQuery === initialSearchQuery ? currentPage : 1;
+  const pagination = useMemo(
+    () => paginateItems(filteredPosts, searchPage, postsPerPage),
+    [filteredPosts, searchPage, postsPerPage]
+  );
+  const visiblePages = Array.from(
+    new Set([1, pagination.currentPage - 1, pagination.currentPage, pagination.currentPage + 1, pagination.totalPages])
+  ).filter(page => page >= 1 && page <= pagination.totalPages).sort((a, b) => a - b);
   const hasActiveFilter = Boolean(selectedCategory || selectedTag);
   const searchStatus = hasSearchQuery
     ? `검색 결과 ${filteredPosts.length} / ${initialPosts.length}개`
     : `전체 ${filteredPosts.length}개 글`;
 
-  const createPageHref = (page: number) => {
+  const createPageHref = (page: number, omit?: 'category' | 'tag') => {
     const params = new URLSearchParams();
 
-    if (selectedCategory) {
+    if (selectedCategory && omit !== 'category') {
       params.set('category', selectedCategory);
     }
-    if (selectedTag) {
+    if (selectedTag && omit !== 'tag') {
       params.set('tag', selectedTag);
     }
     if (page > 1) {
       params.set('page', String(page));
     }
+    if (hasSearchQuery) params.set('q', searchQuery.trim());
 
     const query = params.toString();
     return query ? `${sectionPath}?${query}` : sectionPath;
@@ -89,10 +96,14 @@ export function PostList({
   return (
     <>
       <section
-        className="mb-7 space-y-4 border-b border-gray-200/70 pb-4 dark:border-gray-800/70"
+        className="mandoo-toolbar mb-8 space-y-4"
         aria-label="글 찾기"
       >
-        <SearchBar onSearch={setSearchQuery} placeholder="검색..." />
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="text-lg font-bold tracking-tight">글 모아보기</h2>
+          <span className="text-xs text-gray-500 dark:text-gray-400">최신순</span>
+        </div>
+        <SearchBar query={searchQuery} onSearch={setSearchQuery} />
         <p className="mandoo-search-status text-xs text-gray-500 dark:text-gray-400" aria-live="polite">
           {searchStatus}
         </p>
@@ -106,7 +117,7 @@ export function PostList({
               <div className="mandoo-active-filter inline-flex items-center gap-1.5 rounded-full border border-rose-200/80 bg-rose-50/70 px-2.5 py-1 dark:border-rose-900/60 dark:bg-rose-950/25">
                 <CategoryBadge category={selectedCategory} index={allCategories.indexOf(selectedCategory)} clickable={false} />
                 <Link
-                  href={sectionPath}
+                  href={createPageHref(1, 'category')}
                   aria-label={`분류 ${selectedCategory} 필터 해제`}
                   className={`text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 ${themeConfig.animations.transition}`}
                 >
@@ -120,7 +131,7 @@ export function PostList({
               <div className="mandoo-active-filter inline-flex items-center gap-1.5 rounded-full border border-rose-200/80 bg-rose-50/70 px-2.5 py-1 dark:border-rose-900/60 dark:bg-rose-950/25">
                 <TagBadge tag={selectedTag} clickable={false} />
                 <Link
-                  href={sectionPath}
+                  href={createPageHref(1, 'tag')}
                   aria-label={`태그 ${selectedTag} 필터 해제`}
                   className={`text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 ${themeConfig.animations.transition}`}
                 >
@@ -159,26 +170,16 @@ export function PostList({
             )}
 
             {allTags.length > 0 && (
-              <>
-                <details className="mandoo-taxonomy-details sm:hidden">
-                  <summary className="mb-1 inline-flex cursor-pointer list-none items-center gap-1 rounded-md border border-gray-200/80 bg-white/70 px-2.5 py-1 text-xs font-semibold text-gray-500 transition-colors hover:border-rose-200 hover:bg-rose-50/70 hover:text-rose-700 dark:border-gray-800 dark:bg-gray-900/40 dark:text-gray-400 dark:hover:border-rose-900/60 dark:hover:bg-rose-950/30 dark:hover:text-rose-200 [&::-webkit-details-marker]:hidden">
-                    태그 보기 ({allTags.length})
-                  </summary>
-                  <div className="mandoo-details-panel hidden flex-wrap items-center gap-1">
-                    {allTags.map((tag) => (
-                      <TagBadge key={tag} tag={tag} size="sm" basePath={sectionPath} />
-                    ))}
-                  </div>
-                </details>
-                <div className="mandoo-taxonomy-row hidden flex-wrap items-center gap-1 sm:flex">
-                  <span className="mr-1 hidden shrink-0 text-xs font-semibold text-gray-500 dark:text-gray-400 sm:inline">
-                    {themeConfig.text.tags}
-                  </span>
+              <details className="mandoo-taxonomy-details">
+                <summary>
+                  태그로 찾아보기 <span className="text-gray-500 dark:text-gray-400">{allTags.length}</span>
+                </summary>
+                <div className="mandoo-details-panel hidden flex-wrap items-center gap-2">
                   {allTags.map((tag) => (
                     <TagBadge key={tag} tag={tag} size="sm" basePath={sectionPath} />
                   ))}
                 </div>
-              </>
+              </details>
             )}
           </div>
         )}
@@ -335,10 +336,15 @@ export function PostList({
               </span>
             )}
 
-            {Array.from({ length: pagination.totalPages }, (_, index) => index + 1).map((page) => {
+            {visiblePages.map((page, index) => {
               const isCurrent = page === pagination.currentPage;
 
-              return isCurrent ? (
+              return (
+                <Fragment key={page}>
+                  {index > 0 && page - visiblePages[index - 1] > 1 && (
+                    <span className="px-1 text-gray-400" aria-hidden="true">…</span>
+                  )}
+                  {isCurrent ? (
                 <span
                   key={page}
                   className="mandoo-page-control inline-flex h-9 min-w-9 items-center justify-center rounded-md border border-rose-500 bg-rose-600 px-3 text-sm font-semibold text-white dark:border-rose-300 dark:bg-rose-300 dark:text-gray-950"
@@ -350,10 +356,13 @@ export function PostList({
                 <Link
                   key={page}
                   href={createPageHref(page)}
+                  aria-label={`${page}페이지`}
                   className="mandoo-page-control inline-flex h-9 min-w-9 items-center justify-center rounded-md border border-gray-200 px-3 text-sm font-medium text-gray-600 transition-colors hover:border-rose-200 hover:bg-rose-50/70 hover:text-rose-700 dark:border-gray-800 dark:text-gray-300 dark:hover:border-rose-900/60 dark:hover:bg-rose-950/25 dark:hover:text-rose-200"
                 >
                   {page}
                 </Link>
+                  )}
+                </Fragment>
               );
             })}
 
