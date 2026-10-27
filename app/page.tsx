@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
+import { connection } from 'next/server';
 import { getSortedPostsData, getAllTags } from '@/lib/posts';
 import { PostList } from '@/components/PostList';
 import { ProfileSidebar } from '@/components/ProfileSidebar';
 import { WebSiteJsonLd } from '@/components/JsonLd';
-import { createHomePageMetadata, getSearchParamValue } from '@/lib/metadata';
-import { parsePageParam } from '@/lib/pagination';
+import { createHomePageMetadata } from '@/lib/metadata';
 import { PostGraph } from '@/components/PostGraph';
 import { getPostGraph } from '@/lib/postGraph';
 import { layoutPostGraph } from '@/lib/postGraphLayout';
@@ -17,16 +17,9 @@ export async function generateMetadata({
   return createHomePageMetadata(await searchParams);
 }
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: Promise<{ category?: string | string[]; tag?: string | string[]; page?: string | string[]; q?: string | string[] }>;
-}) {
-  const { category, tag, page, q } = await searchParams;
-  const searchQuery = getSearchParamValue(q) ?? '';
-  const selectedCategory = getSearchParamValue(category);
-  const selectedTag = getSearchParamValue(tag);
-  const selectedPage = parsePageParam(page);
+export default async function Home() {
+  // Direct filter URLs still render their selected results and metadata on the server.
+  await connection();
   const allPosts = getSortedPostsData();
   const categoryCounts = new Map<string, number>();
   for (const post of allPosts) {
@@ -36,35 +29,19 @@ export default async function Home({
   }
   const categories = Array.from(categoryCounts, ([name, count]) => ({ name, count }))
     .sort((a, b) => a.name.localeCompare(b.name));
-  const allTags = getAllTags();
-  
-  // Filter posts based on category or tag
-  const posts = allPosts.filter(post => {
-    if (selectedCategory && post.category !== selectedCategory) {
-      return false;
-    }
-    if (selectedTag && (!post.tags || !post.tags.includes(selectedTag))) {
-      return false;
-    }
-    return true;
-  });
+  const allTags = getAllTags(allPosts);
   const graph = getPostGraph();
 
   return (
     <div>
       <WebSiteJsonLd />
         <PostList 
-          key={`${selectedCategory ?? ''}:${selectedTag ?? ''}:${selectedPage}:${searchQuery}`}
-          initialSearchQuery={searchQuery}
-          initialPosts={posts}
+          initialPosts={allPosts}
           categories={categories}
           totalPosts={allPosts.length}
           profile={<ProfileSidebar />}
           graph={<PostGraph graph={graph} positions={layoutPostGraph(graph)} />}
           allTags={allTags}
-          selectedCategory={selectedCategory}
-          selectedTag={selectedTag}
-          currentPage={selectedPage}
         />
     </div>
   );

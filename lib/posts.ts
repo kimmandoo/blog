@@ -356,8 +356,7 @@ export function getAllCategories(): string[] {
   return Array.from(categories).sort();
 }
 
-export function getAllTags(): string[] {
-  const posts = getSortedPostsData();
+export function getAllTags(posts: readonly PostData[]): string[] {
   const tags = new Set<string>();
   
   posts.forEach(post => {

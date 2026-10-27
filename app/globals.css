@@ -350,38 +350,72 @@ code, pre {
   width: 100%;
   max-height: 320px;
   margin-block: 12px;
+  overflow: visible;
 }
 
-.post-graph-svg line {
-  stroke: var(--muted);
-  stroke-width: 1.5;
+.post-graph-group circle {
+  fill: var(--surface);
+  transition: fill 150ms;
 }
 
-.post-graph-svg line.post-graph-edge-category {
-  stroke-dasharray: 3 4;
+.post-graph-group line {
+  stroke: var(--border);
   stroke-width: 1;
-  opacity: 0.35;
+}
+
+.post-graph-group text {
+  fill: var(--muted);
+  font-size: 7px;
+  font-weight: 600;
+}
+
+.post-graph-group.is-active circle {
+  fill: var(--border);
+}
+
+.post-graph-group.is-active line {
+  stroke: var(--muted);
+}
+
+.post-graph-group.is-active text {
+  fill: var(--foreground);
+}
+
+.post-graph-link {
+  fill: none;
+  stroke: var(--foreground);
+  stroke-width: 1.25;
+  opacity: 0.7;
+}
+
+.post-graph-link.is-active {
+  stroke-width: 2;
+  opacity: 1;
 }
 
 .post-graph-dot {
-  fill: var(--muted);
+  fill: var(--background);
+  stroke: var(--muted);
+  stroke-width: 1.25;
+  transition: r 150ms;
 }
 
-.post-graph-svg .is-active line,
-.post-graph-svg line.is-active {
-  stroke: var(--foreground);
-  stroke-width: 2;
-}
-
-.post-graph-svg line.post-graph-edge-category.is-active {
-  opacity: 1;
+.post-graph-dot.is-linked {
+  fill: var(--foreground);
+  stroke: var(--background);
 }
 
 .post-graph-svg a.is-active .post-graph-dot {
   fill: var(--foreground);
   stroke: var(--background);
-  stroke-width: 2;
-  r: 6px;
+  stroke-width: 1.5;
+  r: 5.5px;
+}
+
+.post-graph-selection-category {
+  margin-right: 6px;
+  color: var(--foreground);
+  font-weight: 600;
 }
 
 .post-graph-dialog {

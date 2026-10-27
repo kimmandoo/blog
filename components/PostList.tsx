@@ -1,12 +1,13 @@
 'use client';
 
-import { Fragment, useState, useMemo, type ReactNode } from 'react';
+import { Fragment, useState, useMemo, type ReactNode, type ComponentProps } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { TagBadge } from '@/components/TagBadge';
 import { SearchBar } from '@/components/SearchBar';
 import { formatDisplayDate, toMetadataDate } from '@/lib/date';
-import { PostData } from '@/lib/posts';
-import { DEFAULT_POSTS_PER_PAGE, paginateItems } from '@/lib/pagination';
+import type { PostData } from '@/lib/posts';
+import { DEFAULT_POSTS_PER_PAGE, paginateItems, parsePageParam } from '@/lib/pagination';
 
 interface PostListProps {
   initialPosts: PostData[];
@@ -15,16 +16,44 @@ interface PostListProps {
   profile: ReactNode;
   graph: ReactNode;
   allTags: string[];
-  selectedCategory?: string;
-  selectedTag?: string;
-  currentPage?: number;
-  initialSearchQuery?: string;
   postsPerPage?: number;
   basePath?: string; // Optional base path, defaults to '/posts'
 }
 
+type ArchiveSelection = {
+  selectedCategory?: string;
+  selectedTag?: string;
+  currentPage: number;
+  initialSearchQuery: string;
+};
 
-export function PostList({ 
+// These links change only the already-loaded archive, not its server components.
+function ArchiveLink({ href, ...props }: Omit<ComponentProps<'a'>, 'onClick'> & { href: string }) {
+  return <a {...props} href={href} onClick={event => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey
+      || (event.currentTarget.target && event.currentTarget.target !== '_self') || event.currentTarget.hasAttribute('download')) return;
+    event.preventDefault();
+    if (`${window.location.pathname}${window.location.search}` !== href) {
+      window.history.pushState(null, '', href);
+    }
+    document.querySelector('.archive-shell')?.scrollIntoView({ block: 'start' });
+  }} />;
+}
+
+export function PostList(props: PostListProps) {
+  const params = useSearchParams();
+  return <PostListView
+    {...props}
+    key={params.toString()}
+    selectedCategory={params.get('category')?.trim() || undefined}
+    selectedTag={params.get('tag')?.trim() || undefined}
+    currentPage={parsePageParam(params.get('page'))}
+    initialSearchQuery={params.get('q')?.trim() || ''}
+  />;
+}
+
+
+function PostListView({
   initialPosts, 
   categories,
   totalPosts,
@@ -37,26 +66,25 @@ export function PostList({
   initialSearchQuery = '',
   postsPerPage = DEFAULT_POSTS_PER_PAGE,
   basePath = '/posts'
-}: PostListProps) {
+}: PostListProps & ArchiveSelection) {
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
   const sectionPath = basePath === '/posts' ? '/' : basePath;
 
-  // Filter posts based on search query
-  const filteredPosts = useMemo(() => {
-    if (!searchQuery.trim()) {
-      return initialPosts;
-    }
+  const categoryPosts = useMemo(() => initialPosts.filter(post =>
+    (!selectedCategory || post.category === selectedCategory)
+    && (!selectedTag || post.tags?.includes(selectedTag))
+  ), [initialPosts, selectedCategory, selectedTag]);
 
+  const filteredPosts = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
-    return initialPosts.filter(post => {
-      const titleMatch = post.title.toLowerCase().includes(query);
-      const excerptMatch = post.excerpt?.toLowerCase().includes(query);
-      const categoryMatch = post.category?.toLowerCase().includes(query);
-      const tagsMatch = post.tags?.some(tag => tag.toLowerCase().includes(query));
-      
-      return titleMatch || excerptMatch || categoryMatch || tagsMatch;
-    });
-  }, [initialPosts, searchQuery]);
+    if (!query) return categoryPosts;
+    return categoryPosts.filter(post =>
+      post.title.toLowerCase().includes(query)
+      || post.excerpt?.toLowerCase().includes(query)
+      || post.category?.toLowerCase().includes(query)
+      || post.tags?.some(tag => tag.toLowerCase().includes(query))
+    );
+  }, [categoryPosts, searchQuery]);
 
   const hasSearchQuery = searchQuery.trim().length > 0;
   const searchPage = searchQuery === initialSearchQuery ? currentPage : 1;
@@ -69,17 +97,17 @@ export function PostList({
   ).filter(page => page >= 1 && page <= pagination.totalPages).sort((a, b) => a - b);
   const hasActiveFilter = Boolean(selectedCategory || selectedTag);
   const searchStatus = hasSearchQuery
-    ? `검색 결과 ${filteredPosts.length} / ${initialPosts.length}개`
+    ? `검색 결과 ${filteredPosts.length} / ${categoryPosts.length}개`
     : `전체 ${filteredPosts.length}개 글`;
 
-  const createPageHref = (page: number, omit?: 'category' | 'tag', category = selectedCategory) => {
+  const createPageHref = (page: number, omit?: 'category' | 'tag', category = selectedCategory, tag = selectedTag) => {
     const params = new URLSearchParams();
 
     if (category && omit !== 'category') {
       params.set('category', category);
     }
-    if (selectedTag && omit !== 'tag') {
-      params.set('tag', selectedTag);
+    if (tag && omit !== 'tag') {
+      params.set('tag', tag);
     }
     if (page > 1) {
       params.set('page', String(page));
@@ -106,7 +134,11 @@ export function PostList({
             <details className="taxonomy">
               <summary>태그 <span>{allTags.length}</span></summary>
               <div className="taxonomy-options">
-                {allTags.map(tag => <TagBadge key={tag} tag={tag} basePath={sectionPath} />)}
+                {allTags.map(tag => (
+                  <ArchiveLink key={tag} href={createPageHref(1, undefined, selectedCategory, tag)} className="group">
+                    <TagBadge tag={tag} clickable={false} />
+                  </ArchiveLink>
+                ))}
               </div>
             </details>
           )}
@@ -114,14 +146,14 @@ export function PostList({
         {hasActiveFilter && (
           <div className="active-filters">
             {selectedCategory && (
-              <Link href={createPageHref(1, 'category')} aria-label={`분류 ${selectedCategory} 필터 해제`}>
+              <ArchiveLink href={createPageHref(1, 'category')} aria-label={`분류 ${selectedCategory} 필터 해제`}>
                 {selectedCategory} <span aria-hidden="true">×</span>
-              </Link>
+              </ArchiveLink>
             )}
             {selectedTag && (
-              <Link href={createPageHref(1, 'tag')} aria-label={`태그 ${selectedTag} 필터 해제`}>
+              <ArchiveLink href={createPageHref(1, 'tag')} aria-label={`태그 ${selectedTag} 필터 해제`}>
                 #{selectedTag} <span aria-hidden="true">×</span>
-              </Link>
+              </ArchiveLink>
             )}
           </div>
         )}
@@ -133,7 +165,7 @@ export function PostList({
           {hasSearchQuery ? (
             <button type="button" onClick={() => setSearchQuery('')}>검색 초기화</button>
           ) : hasActiveFilter ? (
-            <Link href={sectionPath}>전체 글 보기</Link>
+            <ArchiveLink href={sectionPath}>전체 글 보기</ArchiveLink>
           ) : null}
         </div>
       ) : (
@@ -157,7 +189,7 @@ export function PostList({
       {pagination.totalPages > 1 && (
         <nav className="pagination" aria-label="글 목록 페이지">
           {pagination.hasPrevious ? (
-            <Link href={createPageHref(pagination.currentPage - 1)} aria-label="이전 페이지">←</Link>
+            <ArchiveLink href={createPageHref(pagination.currentPage - 1)} aria-label="이전 페이지">←</ArchiveLink>
           ) : <span aria-disabled="true" aria-label="이전 페이지">←</span>}
           {visiblePages.map((page, index) => (
             <Fragment key={page}>
@@ -165,12 +197,12 @@ export function PostList({
               {page === pagination.currentPage ? (
                 <span aria-current="page">{page}</span>
               ) : (
-                <Link href={createPageHref(page)} aria-label={`${page}페이지`}>{page}</Link>
+                <ArchiveLink href={createPageHref(page)} aria-label={`${page}페이지`}>{page}</ArchiveLink>
               )}
             </Fragment>
           ))}
           {pagination.hasNext ? (
-            <Link href={createPageHref(pagination.currentPage + 1)} aria-label="다음 페이지">→</Link>
+            <ArchiveLink href={createPageHref(pagination.currentPage + 1)} aria-label="다음 페이지">→</ArchiveLink>
           ) : <span aria-disabled="true" aria-label="다음 페이지">→</span>}
         </nav>
       )}
@@ -184,15 +216,15 @@ export function PostList({
           </div>
           <ul className="category-list">
             <li>
-              <Link href={createPageHref(1, 'category')} aria-current={!selectedCategory ? 'page' : undefined}>
+              <ArchiveLink href={createPageHref(1, 'category')} aria-current={!selectedCategory ? 'page' : undefined}>
                 <span>전체 글</span><span className="category-count">{totalPosts}</span>
-              </Link>
+              </ArchiveLink>
             </li>
             {categories.map(({ name, count }) => (
               <li key={name}>
-                <Link href={createPageHref(1, undefined, name)} aria-current={selectedCategory === name ? 'page' : undefined}>
+                <ArchiveLink href={createPageHref(1, undefined, name)} aria-current={selectedCategory === name ? 'page' : undefined}>
                   <span>{name}</span><span className="category-count">{count}</span>
-                </Link>
+                </ArchiveLink>
               </li>
             ))}
           </ul>
