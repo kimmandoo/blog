@@ -7,6 +7,20 @@ This guide will help you deploy your blog to Vercel in just a few minutes.
 - A GitHub account with this repository
 - A Vercel account (free tier is sufficient)
 
+### Dependency compatibility and pre-deploy checks
+
+This repository deploys a private Next.js application to Vercel; it is not published to the npm registry.
+Before pushing dependency changes, run `npm ci --include=optional`, `npm run build`, and
+`node --test tests/math-rendering.test.mjs`.
+Keep `package.json` and `package-lock.json` in the same commit.
+
+The Markdown pipeline uses `remark` 15 with `remark-math` 6 and `rehype-katex` 7.
+Downgrading to `rehype-katex` 1 causes a missing-type-declaration build error, while
+`remark-math` 3 leaves equations unparsed with the current pipeline. Restore compatible
+versions rather than suppressing TypeScript errors or adding an untyped module declaration.
+For remote failures, inspect the Vercel commit-status link or run
+`npx vercel inspect <deployment-id> --logs` with an authenticated Vercel account.
+
 ## Deployment Steps
 
 ### Method 1: Vercel Dashboard (Recommended for First-Time Users)
