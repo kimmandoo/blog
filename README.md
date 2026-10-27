@@ -7,7 +7,7 @@ A clean, minimal blog built with Next.js, Tailwind CSS, and deployed on Vercel. 
 ## ✨ Features
 
 - 📝 **Markdown Support**: Write posts in simple Markdown files with GFM, math equations (KaTeX), and Mermaid diagrams
-- 🎨 **Minimal Design**: Clean white-black aesthetic with customizable themes
+- 🎨 **Editorial Design**: Warm paper tones, olive accents, and Korean sans/serif typography
 - ⚡ **Auto-Deploy**: Push to GitHub and Vercel automatically deploys
 - 📱 **Responsive**: Looks great on all devices
 - 🌙 **Dark Mode**: Automatic dark mode support
@@ -22,7 +22,8 @@ A clean, minimal blog built with Next.js, Tailwind CSS, and deployed on Vercel. 
 
 ### Blog browsing
 
-- The home page uses a narrow, monochrome editorial layout: text navigation, flat post rows, fine separators, and visible keyboard focus instead of gradients, floating controls, or boxed cards. Article and PS-note pages share the same reading width and neutral shell.
+- The home page uses an editorial layout with a serif masthead, fine rules, and a separate date column on desktop; mobile post rows stack naturally. Warm paper and olive colors have a coordinated dark palette. Article and PS-note pages share the reading shell.
+- Body text uses IBM Plex Sans KR (400/500/600); titles and article section headings use Noto Serif KR (400/600) for a newspaper-like contrast. Both are self-hosted through `next/font/google`, use `display: swap`, and disable eager preloading of Korean font subsets. The initial build requires access to Google Fonts; readers load the generated font assets from the blog itself.
 - Search matches titles, excerpts, categories, and tags, ignoring surrounding whitespace and letter case. Clear the field with its clear button, Escape, or the empty-state reset action.
 - Changing the search starts at the first result page. Pagination links retain the query in `q` together with category/tag filters, so linked result pages survive a reload.
 - Categories and tags are collapsed at every screen size. Expanded taxonomy panels scroll independently; post rows show date, category, reading time, title, and a short excerpt without repeated tag badges.

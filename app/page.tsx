@@ -46,8 +46,14 @@ export default async function Home({
       <WebSiteJsonLd />
       <main className="home-shell">
         <header className="home-header">
-          <h1 className="home-heading">{themeConfig.site.title}</h1>
-          <p className="home-description">{themeConfig.site.tagline}</p>
+          <div className="home-masthead">
+            <span>개발자의 기록장</span>
+            <span>CODE, NOTES & IDEAS</span>
+          </div>
+          <div className="home-intro">
+            <h1 className="home-heading">{themeConfig.site.title}</h1>
+            <p className="home-description">{themeConfig.site.tagline}</p>
+          </div>
           <div className="home-links">
             <Navigation />
             <SocialLinks />

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { IBM_Plex_Sans_KR, Noto_Serif_KR } from "next/font/google";
 import "./globals.css";
 import "katex/dist/katex.min.css";
 import { themeConfig } from "@/config/theme.config";
@@ -8,6 +9,21 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 
 import { Footer } from "@/components/Footer";
 import { toAbsolutePageUrl } from "@/lib/metadata";
+
+const bodyFont = IBM_Plex_Sans_KR({
+  weight: ["400", "500", "600"],
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
+  preload: false,
+});
+const editorialFont = Noto_Serif_KR({
+  weight: ["400", "600"],
+  subsets: ["latin"],
+  variable: "--font-editorial",
+  display: "swap",
+  preload: false,
+});
 
 const { seo, site } = themeConfig;
 const ogImageUrl = seo.openGraph.defaultImage.startsWith("http://") || seo.openGraph.defaultImage.startsWith("https://")
@@ -78,7 +94,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" suppressHydrationWarning>
-      <body className="antialiased">
+      <body className={`${bodyFont.variable} ${editorialFont.variable} antialiased`}>
         <ThemeProvider>
           <GoogleAnalytics />
           <GoogleAdsense />
