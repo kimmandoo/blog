@@ -53,7 +53,7 @@ function getDisplayDescription(description: string) {
   const normalizedDescription = description.replace(/\s+/g, ' ').trim();
 
   if (!normalizedDescription) {
-    return '작게 기록해두는 개발 노트';
+    return '삽질 노트';
   }
 
   return normalizedDescription.length > DESCRIPTION_LENGTH_THRESHOLD

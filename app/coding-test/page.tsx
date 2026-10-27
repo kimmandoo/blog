@@ -47,7 +47,7 @@ export default async function CodingTestPage({
             </svg>
             <span>홈</span>
           </Link>
-          <h1 className="mt-2 text-2xl sm:text-3xl font-bold">PS 노트</h1>
+          <h1 className="mt-2 text-2xl sm:text-3xl font-bold">PS</h1>
           <div className="mt-4 flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
             <span>{threadPosts.length}개 글</span>
             {selectedTag && <span>필터: #{selectedTag}</span>}

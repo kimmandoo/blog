@@ -213,14 +213,15 @@ code, pre {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   margin-bottom: 22px;
   border-radius: 14px;
   background: var(--foreground);
   color: var(--background);
   font-family: var(--font-editorial), Georgia, serif;
-  font-size: 26px;
+  font-weight: 700;
+  font-size: 24px;
   line-height: 1;
 }
 
@@ -264,7 +265,7 @@ code, pre {
 
 .home-heading {
   font-family: var(--font-editorial), Georgia, serif;
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 400;
   letter-spacing: -0.045em;
   line-height: 1.2;

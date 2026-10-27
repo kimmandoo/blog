@@ -52,18 +52,13 @@ export default async function Home({
             <p className="home-description">{themeConfig.site.tagline}</p>
           </div>
           <div className="home-links">
-            <a className="home-current" href="/" aria-current={!selectedCategory && !selectedTag ? "page" : undefined}>글 모아보기 <span aria-hidden="true">↗</span></a>
+            <a className="home-current" href="/" aria-current={!selectedCategory && !selectedTag ? "page" : undefined}>글<span aria-hidden="true">↗</span></a>
             <Navigation />
             <SocialLinks />
           </div>
         </header>
 
         <div className="home-content">
-          <div className="archive-heading">
-            <p className="archive-eyebrow">THE NOTEBOOK</p>
-            <h2>배우고, 만들고,<br />기록합니다<span>.</span></h2>
-            <p>코드와 함께 쌓아가는 생각과 경험.</p>
-          </div>
         <PostList 
           key={`${selectedCategory ?? ''}:${selectedTag ?? ''}:${selectedPage}:${searchQuery}`}
           initialSearchQuery={searchQuery}
