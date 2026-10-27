@@ -1,7 +1,7 @@
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import Link from 'next/link';
 import { Metadata } from 'next';
-import { getPostData, getAllPostSlugs, getAdjacentPosts } from '@/lib/posts';
+import { getPostData, getAllPostSlugs, getAdjacentPosts, getSortedPostsDataByCategory } from '@/lib/posts';
 import { Comments } from '@/components/Comments';
 import { CodeBlockEnhancer } from '@/components/CodeBlock';
 import { MermaidRenderer } from '@/components/MermaidRenderer';
@@ -12,9 +12,11 @@ import { PostNavigation } from '@/components/PostNavigation';
 import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd';
 import { themeConfig } from '@/config/theme.config';
 import { formatDisplayDate, toMetadataDate } from '@/lib/date';
+import { createArticleMetadata, getArticleImageUrl, toAbsolutePageUrl } from '@/lib/metadata';
 
 export async function generateStaticParams() {
-  const posts = getAllPostSlugs();
+  // Pre-render legacy PS redirects as well as articles so they are served directly.
+  const posts = [...getAllPostSlugs(), ...getSortedPostsDataByCategory('PS')];
   return posts.map((post) => ({
     slug: post.slug.split('/'),
   }));
@@ -23,84 +25,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string[] }> }): Promise<Metadata> {
   const { slug } = await params;
   const slugString = slug.join('/');
-  const { seo, site } = themeConfig;
-  
   try {
     const post = await getPostData(slugString);
-    const postUrl = `${seo.siteUrl}/posts/${slugString}`;
-    const publishedTime = toMetadataDate(post.date);
-    
-    // Use the first image from the post content if available, otherwise auto-generate
-    let ogImageUrl: string;
-    if (post.firstImage) {
-      // If the image is a relative path (starts with /), prepend the site URL
-      // If it's already an absolute URL (http/https), use it as-is
-      if (post.firstImage.startsWith('http://') || post.firstImage.startsWith('https://')) {
-        ogImageUrl = post.firstImage;
-      } else if (post.firstImage.startsWith('/')) {
-        ogImageUrl = `${seo.siteUrl}${post.firstImage}`;
-      } else {
-        // Relative path without leading slash, prepend site URL with /
-        ogImageUrl = `${seo.siteUrl}/${post.firstImage}`;
-      }
-    } else {
-      // Auto-generate OG image with post metadata
-      const ogParams = new URLSearchParams({
-        title: post.title,
-        site: new URL(seo.siteUrl).host,
-        path: `/posts/${slugString}`,
-        ...(post.excerpt && { description: post.excerpt }),
-        ...(post.category && { category: post.category }),
-        ...(post.date && { date: formatDisplayDate(post.date) }),
-        ...(post.tags?.length && { tags: post.tags.join(',') }),
-      });
-      ogImageUrl = `${seo.siteUrl}/og?${ogParams.toString()}`;
-    }
-    
-    return {
-      title: post.title,
-      description: post.excerpt || post.title,
-      keywords: post.tags || [],
-      robots: {
-        index: true,
-        follow: true,
-        googleBot: {
-          index: true,
-          follow: true,
-          'max-video-preview': -1,
-          'max-image-preview': 'large',
-          'max-snippet': -1,
-        },
-      },
-      openGraph: {
-        type: 'article',
-        locale: seo.openGraph.locale,
-        url: postUrl,
-        siteName: seo.openGraph.siteName,
-        title: post.title,
-        description: post.excerpt || post.title,
-        ...(publishedTime && { publishedTime }),
-        authors: [site.title],
-        tags: post.tags,
-        images: [
-          {
-            url: ogImageUrl,
-            width: 1200,
-            height: 630,
-            alt: post.title,
-          },
-        ],
-      },
-      twitter: {
-        card: seo.twitter.card as 'summary_large_image',
-        title: post.title,
-        description: post.excerpt || post.title,
-        images: [ogImageUrl],
-      },
-      alternates: {
-        canonical: postUrl,
-      },
-    };
+    const section = post.category === 'PS' ? '/coding-test' : '/posts';
+    return createArticleMetadata(post, `${section}/${slug.map(encodeURIComponent).join('/')}`);
   } catch {
     return {
       title: 'Post Not Found',
@@ -119,25 +47,17 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
     notFound();
   }
 
+  if (post.category === 'PS') {
+    permanentRedirect(`/coding-test/${slug.map(encodeURIComponent).join('/')}`);
+  }
+
   // Get adjacent posts for navigation
   const { previous: previousPost, next: nextPost } = getAdjacentPosts(slugString);
   
-  // Generate full URL for sharing
-  const postUrl = `${themeConfig.seo.siteUrl}/posts/${slugString}`;
-
-  // Build OG image URL for JSON-LD
-  let jsonLdImage: string | undefined;
-  if (post.firstImage) {
-    if (post.firstImage.startsWith('http://') || post.firstImage.startsWith('https://')) {
-      jsonLdImage = post.firstImage;
-    } else if (post.firstImage.startsWith('/')) {
-      jsonLdImage = `${themeConfig.seo.siteUrl}${post.firstImage}`;
-    } else {
-      jsonLdImage = `${themeConfig.seo.siteUrl}/${post.firstImage}`;
-    }
-  }
-
-  const baseUrl = themeConfig.seo.siteUrl.replace(/\/+$/, '');
+  const postPath = `/posts/${slug.map(encodeURIComponent).join('/')}`;
+  const postUrl = toAbsolutePageUrl(postPath);
+  const jsonLdImage = getArticleImageUrl(post, postPath);
+  const baseUrl = toAbsolutePageUrl('/');
 
   return (
     <div>
@@ -147,14 +67,13 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
         description={post.excerpt || post.title}
         url={postUrl}
         datePublished={toMetadataDate(post.date) ?? undefined}
-        dateModified={toMetadataDate(post.date) ?? undefined}
         tags={post.tags}
         image={jsonLdImage}
       />
       <BreadcrumbJsonLd
         items={[
           { name: 'Home', url: baseUrl },
-          ...(post.category ? [{ name: post.category, url: `${baseUrl}/?category=${encodeURIComponent(post.category)}` }] : []),
+          ...(post.category ? [{ name: post.category, url: `${baseUrl}?category=${encodeURIComponent(post.category)}` }] : []),
           { name: post.title, url: postUrl },
         ]}
       />

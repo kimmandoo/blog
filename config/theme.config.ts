@@ -7,7 +7,7 @@ export const themeConfig = {
   // Site information
   site: {
     title: 'mandoo.log',
-    description: 'struggle',
+    description: 'SWE로 살아남기',
     tagline: '발버둥치는 중',
   },
 
@@ -275,8 +275,8 @@ export const themeConfig = {
       type: 'website',
       locale: 'ko_KR',
       siteName: 'mandoo.log',
-      // Default image for posts without an image (relative to public folder)
-      defaultImage: 'https://avatars.githubusercontent.com/u/46841652?v=4',
+      // Default site/archive image: themed generator, or a custom image URL.
+      defaultImage: '/og',
     },
     
     // Twitter Card settings

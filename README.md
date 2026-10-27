@@ -22,16 +22,26 @@ A clean, minimal blog built with Next.js, Tailwind CSS, and deployed on Vercel. 
 
 ### Blog browsing
 
-- Home, PS, and article pages share a slim top header with the site name, 글/PS navigation, and theme controls. Archives use horizontally scrollable underline tabs, fine separators, and title-first rows with excerpts and metadata beneath. Home and PS have a separate right-hand profile sidebar on desktop; below 1024px it moves underneath the archive, never covering the posts. Article pages retain their focused reading layout.
+- Home, PS, and article pages share a slim top header with the site name, 글/PS navigation, and theme controls. Archives use fine separators and title-first rows with excerpts and metadata beneath. Home and PS have a separate right-hand profile sidebar on desktop; below 1024px it moves underneath the archive, never covering the posts. Article pages retain their focused reading layout.
 - Body text, branding, and list titles use IBM Plex Sans KR (400/500/600); article titles and section headings use Noto Serif KR (400/600). Both are self-hosted through `next/font/google`, use `display: swap`, and disable eager preloading of Korean font subsets. The initial build requires access to Google Fonts; readers load the generated font assets from the blog itself.
 - Search matches titles, excerpts, categories, and tags, ignoring surrounding whitespace and letter case. Clear the field with its clear button, Escape, or the empty-state reset action.
 - Changing the search starts at the first result page. Pagination links retain the query in `q` together with category/tag filters, so linked result pages survive a reload.
-- Categories are directly accessible as tabs; tags remain collapsible. Expanded tag panels scroll independently. Category changes retain the current search and tag filter while resetting pagination.
+- Home categories sit in a separate card below the profile sidebar, with published-post counts and a highlighted current selection. They form a vertical list on desktop, three columns on tablet, and two columns on mobile; no horizontal scrolling is required. A mobile “카테고리 선택” link jumps directly to the card. Category changes retain the current search and tag filter while resetting pagination. Tags remain collapsible.
 - Removing a selected category or tag preserves the other active filter. Pagination shows nearby pages and endpoints rather than an unbounded row of buttons.
-- Light, dark, and system theme controls live in the shared header. Social links and a back-to-top link live in the footer. Narrow screens scroll the category tabs independently, without horizontal page overflow.
-- `components/ProfileSidebar.tsx` holds the profile and action sections, using the site title/tagline and social links from `config/theme.config.ts`. It includes GitHub, LinkedIn, Medium, and an RSS subscription link; add further profile actions in this component.
+- Light, dark, and system theme controls live in the shared header. Social links and a back-to-top link live in the footer. PS language tabs wrap onto additional lines instead of scrolling horizontally.
+- `components/ProfileSidebar.tsx` holds the profile and action sections, with social destinations from `config/theme.config.ts`. It includes GitHub, LinkedIn, Medium, and an RSS subscription link; add further profile actions in this component.
 - Social links, RSS, and back-to-top actions use inline SVG icons with accessible names, native title tooltips, visible keyboard focus, and 44px square hit targets. Text labels remain for the 글/PS navigation.
 - PS notes use explicit `language` frontmatter. Existing notes are classified as C++; adding a published note with `language: python` creates its language tab automatically. Language and tag filters compose and survive reloads. See [PS authoring](docs/POST_GUIDE.md#ps-language-archive).
+
+### Search metadata
+
+- Search (`q`), category, tag, and pagination variants remain crawlable but use `noindex, follow` and canonicalize to the unfiltered archive. Blank searches remain indexable. PS language/tag filters follow the same policy.
+- Home, PS, and article pages emit their own canonical and Open Graph/Twitter metadata. All article sharing images use the themed 1200×630 `/og` card rather than inline screenshots. Home and PS archives pass their own titles and descriptions to the same renderer; `seo.openGraph.defaultImage` can still override the archive image.
+- Sharing cards match the light blog palette: off-white background, charcoal typography, fine dividers, category, date, and up to three tags. Long Korean/Latin titles and descriptions are width-bounded with ellipses. OG images use a bundled [IBM Plex Sans KR Medium](https://github.com/google/fonts/tree/main/ofl/ibmplexsanskr) font, loaded once on the server without a Korean-font CDN dependency; its OFL license is included in `public/fonts/OFL.txt`.
+- Website search structured data targets `?q=`. Both normal articles and PS details render Article and Breadcrumb JSON-LD on the server, escaping `<` so post text cannot terminate the script. Modification dates are not fabricated from publication dates.
+- Duplicate PS URLs under `/posts/` permanently redirect to their canonical `/coding-test/` URLs; those redirects are pre-rendered. The sitemap includes canonical pages only. `robots.txt`, the sitemap, and RSS remain publicly fetchable.
+- Changes take effect after deployment and search-engine recrawling. Search Console submission, index inclusion, and ranking are external to the application and are not guaranteed by metadata changes.
+
 
 
 ## 🍴 Fork This Blog

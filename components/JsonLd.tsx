@@ -1,6 +1,4 @@
-'use client';
-
-import { themeConfig } from '@/config/theme.config';
+import { themeConfig } from '../config/theme.config.ts';
 
 const { seo, site } = themeConfig;
 const baseUrl = seo.siteUrl.replace(/\/+$/, '');
@@ -33,7 +31,7 @@ export function ArticleJsonLd({
     description,
     url,
     ...(datePublished && { datePublished }),
-    ...(dateModified && { dateModified: dateModified || datePublished }),
+    ...(dateModified && { dateModified }),
     ...(image && {
       image: {
         '@type': 'ImageObject',
@@ -60,7 +58,7 @@ export function ArticleJsonLd({
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
     />
   );
 }
@@ -81,7 +79,7 @@ export function WebSiteJsonLd() {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `${baseUrl}/?category={search_term_string}`,
+        urlTemplate: `${baseUrl}/?q={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
     },
@@ -90,7 +88,7 @@ export function WebSiteJsonLd() {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
     />
   );
 }
@@ -115,7 +113,7 @@ export function BreadcrumbJsonLd({ items }: { items: BreadcrumbItem[] }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
     />
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useState, useMemo } from 'react';
+import { Fragment, useState, useMemo, type ReactNode } from 'react';
 import Link from 'next/link';
 import { TagBadge } from '@/components/TagBadge';
 import { SearchBar } from '@/components/SearchBar';
@@ -10,7 +10,9 @@ import { DEFAULT_POSTS_PER_PAGE, paginateItems } from '@/lib/pagination';
 
 interface PostListProps {
   initialPosts: PostData[];
-  allCategories: string[];
+  categories: { name: string; count: number }[];
+  totalPosts: number;
+  profile: ReactNode;
   allTags: string[];
   selectedCategory?: string;
   selectedTag?: string;
@@ -23,7 +25,9 @@ interface PostListProps {
 
 export function PostList({ 
   initialPosts, 
-  allCategories, 
+  categories,
+  totalPosts,
+  profile,
   allTags,
   selectedCategory,
   selectedTag,
@@ -85,19 +89,14 @@ export function PostList({
   };
 
   return (
-    <>
-      <nav className="archive-tabs" aria-label="글 분류">
-        <Link href={createPageHref(1, 'category')} aria-current={!selectedCategory ? 'page' : undefined}>전체</Link>
-        {allCategories.map(category => (
-          <Link key={category} href={createPageHref(1, undefined, category)} aria-current={selectedCategory === category ? 'page' : undefined}>
-            {category}
-          </Link>
-        ))}
-      </nav>
+    <div className="archive-layout">
+      <main className="archive-shell">
+      <h1 className="archive-title">{selectedCategory || '전체 글'}</h1>
       <section className="post-tools" aria-label="글 찾기">
         <div className="post-tools-heading">
           <h2 className="sr-only">글 목록</h2>
           <p aria-live="polite">{searchStatus}</p>
+          <a className="mobile-category-link" href="#categories">카테고리 선택 <span aria-hidden="true">↓</span></a>
         </div>
         <SearchBar query={searchQuery} onSearch={setSearchQuery} />
         <div className="post-filters">
@@ -173,6 +172,30 @@ export function PostList({
           ) : <span aria-disabled="true" aria-label="다음 페이지">→</span>}
         </nav>
       )}
-    </>
+      </main>
+      <div className="archive-rail">
+        {profile}
+        <nav id="categories" className="category-panel" aria-labelledby="category-heading">
+          <div className="category-panel-heading">
+            <h2 id="category-heading">카테고리</h2>
+            <span>{categories.length}</span>
+          </div>
+          <ul className="category-list">
+            <li>
+              <Link href={createPageHref(1, 'category')} aria-current={!selectedCategory ? 'page' : undefined}>
+                <span>전체 글</span><span className="category-count">{totalPosts}</span>
+              </Link>
+            </li>
+            {categories.map(({ name, count }) => (
+              <li key={name}>
+                <Link href={createPageHref(1, undefined, name)} aria-current={selectedCategory === name ? 'page' : undefined}>
+                  <span>{name}</span><span className="category-count">{count}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    </div>
   );
 }

@@ -5,7 +5,8 @@ import { getPostData, getSortedPostsDataByCategory } from '@/lib/posts';
 import { CodeBlockEnhancer } from '@/components/CodeBlock';
 import { MermaidRenderer } from '@/components/MermaidRenderer';
 import { formatDisplayDate, toMetadataDate } from '@/lib/date';
-import { createPageMetadata } from '@/lib/metadata';
+import { createArticleMetadata, getArticleImageUrl, toAbsolutePageUrl } from '@/lib/metadata';
+import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd';
 import { getPsArchiveHref, getPsLanguageLabel, normalizePsLanguage } from '@/lib/ps';
 
 export async function generateStaticParams() {
@@ -23,13 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       return { title: 'Post Not Found' };
     }
 
-    return {
-      ...createPageMetadata({
-        title: post.title,
-        description: post.excerpt || post.title,
-        canonicalPath: `/coding-test/${slugString}`,
-      }),
-    };
+    return createArticleMetadata(post, `/coding-test/${slug.map(encodeURIComponent).join('/')}`);
   } catch {
     return { title: 'Post Not Found' };
   }
@@ -50,8 +45,26 @@ export default async function CodingTestPostPage({ params }: { params: Promise<{
     notFound();
   }
 
+  const postPath = `/coding-test/${slug.map(encodeURIComponent).join('/')}`;
+  const postUrl = toAbsolutePageUrl(postPath);
+
   return (
     <div>
+      <ArticleJsonLd
+        title={post.title}
+        description={post.excerpt || post.title}
+        url={postUrl}
+        datePublished={toMetadataDate(post.date)}
+        tags={post.tags}
+        image={getArticleImageUrl(post, postPath)}
+      />
+      <BreadcrumbJsonLd
+        items={[
+          { name: 'Home', url: toAbsolutePageUrl('/') },
+          { name: 'PS', url: toAbsolutePageUrl('/coding-test') },
+          { name: post.title, url: postUrl },
+        ]}
+      />
       <main className="reading-shell">
         <div className="mb-6">
           <Link

@@ -211,6 +211,99 @@ code, pre {
   padding-inline: 0;
 }
 
+.archive-title {
+  margin-bottom: 12px;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+.archive-rail {
+  min-width: 0;
+  align-self: start;
+  margin-block: 48px;
+}
+
+.archive-rail .profile-sidebar {
+  position: static;
+  margin: 0 0 20px;
+}
+
+.category-panel {
+  padding: 18px 12px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  scroll-margin-top: 24px;
+}
+
+.category-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 10px 14px;
+}
+
+.category-panel-heading h2 {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.category-panel-heading > span {
+  color: var(--muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.category-list {
+  display: grid;
+  gap: 3px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.category-list a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.category-list a > span:first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.category-list a:hover,
+.category-list a[aria-current] {
+  color: var(--foreground);
+  background: var(--surface);
+}
+
+.category-list a[aria-current] {
+  font-weight: 600;
+  box-shadow: inset 2px 0 var(--foreground);
+}
+
+.category-count {
+  flex-shrink: 0;
+  min-width: 22px;
+  text-align: right;
+  color: var(--muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.mobile-category-link {
+  display: none;
+}
+
 .profile-sidebar {
   position: sticky;
   top: 32px;
@@ -302,6 +395,24 @@ code, pre {
     max-width: 960px;
   }
 
+  .archive-rail {
+    margin: 0 0 40px;
+  }
+
+  .category-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .mobile-category-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    color: var(--foreground);
+    font-size: 12px;
+  }
+
   .profile-sidebar {
     position: static;
     margin: 0 0 40px;
@@ -320,6 +431,10 @@ code, pre {
 @media (max-width: 639px) {
   .archive-layout {
     padding-inline: 20px;
+  }
+
+  .category-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .profile-sidebar {
@@ -397,9 +512,8 @@ code, pre {
 
 .archive-tabs {
   display: flex;
-  gap: 26px;
-  overflow-x: auto;
-  scrollbar-width: thin;
+  flex-wrap: wrap;
+  gap: 8px 26px;
   border-bottom: 1px solid var(--border);
 }
 
