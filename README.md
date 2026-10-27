@@ -7,7 +7,7 @@ A clean, minimal blog built with Next.js, Tailwind CSS, and deployed on Vercel. 
 ## ✨ Features
 
 - 📝 **Markdown Support**: Write posts in simple Markdown files with GFM, math equations (KaTeX), and Mermaid diagrams
-- 🎨 **Editorial Design**: Warm paper tones, olive accents, and Korean sans/serif typography
+- 🎨 **Notebook Design**: Sidebar navigation, neutral surfaces, terracotta accents, and Korean sans/serif typography
 - ⚡ **Auto-Deploy**: Push to GitHub and Vercel automatically deploys
 - 📱 **Responsive**: Looks great on all devices
 - 🌙 **Dark Mode**: Automatic dark mode support
@@ -22,8 +22,8 @@ A clean, minimal blog built with Next.js, Tailwind CSS, and deployed on Vercel. 
 
 ### Blog browsing
 
-- The home page uses an editorial layout with a serif masthead, fine rules, and a separate date column on desktop; mobile post rows stack naturally. Warm paper and olive colors have a coordinated dark palette. Article and PS-note pages share the reading shell.
-- Body text uses IBM Plex Sans KR (400/500/600); titles and article section headings use Noto Serif KR (400/600) for a newspaper-like contrast. Both are self-hosted through `next/font/google`, use `display: swap`, and disable eager preloading of Korean font subsets. The initial build requires access to Google Fonts; readers load the generated font assets from the blog itself.
+- The home page uses a two-column notebook layout: a sticky identity/navigation sidebar with a 26px serif wordmark, and a separate introduction and post archive. Below 640px, the identity and navigation become a compact header. Search sits beside the archive count on desktop and stacks on mobile; dates and categories sit above each title. Off-white/charcoal surfaces and terracotta accents share coordinated light and dark palettes. Article and PS-note pages retain a focused reading shell.
+- Body text and list titles use IBM Plex Sans KR (400/500/600); the wordmark, article titles, and article section headings use Noto Serif KR (400/600). Both are self-hosted through `next/font/google`, use `display: swap`, and disable eager preloading of Korean font subsets. The initial build requires access to Google Fonts; readers load the generated font assets from the blog itself.
 - Search matches titles, excerpts, categories, and tags, ignoring surrounding whitespace and letter case. Clear the field with its clear button, Escape, or the empty-state reset action.
 - Changing the search starts at the first result page. Pagination links retain the query in `q` together with category/tag filters, so linked result pages survive a reload.
 - Categories and tags are collapsed at every screen size. Expanded taxonomy panels scroll independently; post rows show date, category, reading time, title, and a short excerpt without repeated tag badges.

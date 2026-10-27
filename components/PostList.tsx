@@ -89,7 +89,7 @@ export function PostList({
     <>
       <section className="post-tools" aria-label="글 찾기">
         <div className="post-tools-heading">
-          <h2>글</h2>
+          <h2>글 목록</h2>
           <p aria-live="polite">{searchStatus}</p>
         </div>
         <SearchBar query={searchQuery} onSearch={setSearchQuery} />

@@ -46,20 +46,24 @@ export default async function Home({
       <WebSiteJsonLd />
       <main className="home-shell">
         <header className="home-header">
-          <div className="home-masthead">
-            <span>개발자의 기록장</span>
-            <span>CODE, NOTES & IDEAS</span>
-          </div>
+          <div className="home-mark" aria-hidden="true">m<span>·</span></div>
           <div className="home-intro">
             <h1 className="home-heading">{themeConfig.site.title}</h1>
             <p className="home-description">{themeConfig.site.tagline}</p>
           </div>
           <div className="home-links">
+            <a className="home-current" href="/" aria-current={!selectedCategory && !selectedTag ? "page" : undefined}>글 모아보기 <span aria-hidden="true">↗</span></a>
             <Navigation />
             <SocialLinks />
           </div>
         </header>
 
+        <div className="home-content">
+          <div className="archive-heading">
+            <p className="archive-eyebrow">THE NOTEBOOK</p>
+            <h2>배우고, 만들고,<br />기록합니다<span>.</span></h2>
+            <p>코드와 함께 쌓아가는 생각과 경험.</p>
+          </div>
         <PostList 
           key={`${selectedCategory ?? ''}:${selectedTag ?? ''}:${selectedPage}:${searchQuery}`}
           initialSearchQuery={searchQuery}
@@ -70,6 +74,7 @@ export default async function Home({
           selectedTag={selectedTag}
           currentPage={selectedPage}
         />
+        </div>
       </main>
     </div>
   );
