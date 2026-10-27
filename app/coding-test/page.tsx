@@ -5,6 +5,9 @@ import { formatDisplayDate, toMetadataDate } from '@/lib/date';
 import { createCodingTestPageMetadata, getSearchParamValue } from '@/lib/metadata';
 import { getPsArchive, getPsArchiveHref, getPsLanguageLabel } from '@/lib/ps';
 import { ProfileSidebar } from '@/components/ProfileSidebar';
+import { PostGraph } from '@/components/PostGraph';
+import { getPostGraph } from '@/lib/postGraph';
+import { layoutPostGraph } from '@/lib/postGraphLayout';
 
 type CodingTestPageProps = {
   searchParams: Promise<{
@@ -27,6 +30,7 @@ export default async function CodingTestPage({ searchParams }: CodingTestPagePro
     },
   );
   const hasFilter = Boolean(selectedLanguage || selectedTag);
+  const graph = getPostGraph();
 
   return (
     <div className="archive-layout">
@@ -126,7 +130,10 @@ export default async function CodingTestPage({ searchParams }: CodingTestPagePro
         </div>
       )}
     </main>
-      <ProfileSidebar />
+      <div className="archive-rail">
+        <ProfileSidebar />
+        <PostGraph graph={graph} positions={layoutPostGraph(graph)} />
+      </div>
     </div>
   );
 }

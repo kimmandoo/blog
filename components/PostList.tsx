@@ -13,6 +13,7 @@ interface PostListProps {
   categories: { name: string; count: number }[];
   totalPosts: number;
   profile: ReactNode;
+  graph: ReactNode;
   allTags: string[];
   selectedCategory?: string;
   selectedTag?: string;
@@ -28,6 +29,7 @@ export function PostList({
   categories,
   totalPosts,
   profile,
+  graph,
   allTags,
   selectedCategory,
   selectedTag,
@@ -195,6 +197,7 @@ export function PostList({
             ))}
           </ul>
         </nav>
+        {graph}
       </div>
     </div>
   );

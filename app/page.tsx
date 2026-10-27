@@ -5,6 +5,9 @@ import { ProfileSidebar } from '@/components/ProfileSidebar';
 import { WebSiteJsonLd } from '@/components/JsonLd';
 import { createHomePageMetadata, getSearchParamValue } from '@/lib/metadata';
 import { parsePageParam } from '@/lib/pagination';
+import { PostGraph } from '@/components/PostGraph';
+import { getPostGraph } from '@/lib/postGraph';
+import { layoutPostGraph } from '@/lib/postGraphLayout';
 
 export async function generateMetadata({
   searchParams,
@@ -45,6 +48,7 @@ export default async function Home({
     }
     return true;
   });
+  const graph = getPostGraph();
 
   return (
     <div>
@@ -56,6 +60,7 @@ export default async function Home({
           categories={categories}
           totalPosts={allPosts.length}
           profile={<ProfileSidebar />}
+          graph={<PostGraph graph={graph} positions={layoutPostGraph(graph)} />}
           allTags={allTags}
           selectedCategory={selectedCategory}
           selectedTag={selectedTag}
