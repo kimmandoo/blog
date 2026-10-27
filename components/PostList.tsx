@@ -2,7 +2,6 @@
 
 import { Fragment, useState, useMemo } from 'react';
 import Link from 'next/link';
-import { CategoryBadge } from '@/components/CategoryBadge';
 import { TagBadge } from '@/components/TagBadge';
 import { SearchBar } from '@/components/SearchBar';
 import { formatDisplayDate, toMetadataDate } from '@/lib/date';
@@ -67,11 +66,11 @@ export function PostList({
     ? `검색 결과 ${filteredPosts.length} / ${initialPosts.length}개`
     : `전체 ${filteredPosts.length}개 글`;
 
-  const createPageHref = (page: number, omit?: 'category' | 'tag') => {
+  const createPageHref = (page: number, omit?: 'category' | 'tag', category = selectedCategory) => {
     const params = new URLSearchParams();
 
-    if (selectedCategory && omit !== 'category') {
-      params.set('category', selectedCategory);
+    if (category && omit !== 'category') {
+      params.set('category', category);
     }
     if (selectedTag && omit !== 'tag') {
       params.set('tag', selectedTag);
@@ -87,23 +86,21 @@ export function PostList({
 
   return (
     <>
+      <nav className="archive-tabs" aria-label="글 분류">
+        <Link href={createPageHref(1, 'category')} aria-current={!selectedCategory ? 'page' : undefined}>전체</Link>
+        {allCategories.map(category => (
+          <Link key={category} href={createPageHref(1, undefined, category)} aria-current={selectedCategory === category ? 'page' : undefined}>
+            {category}
+          </Link>
+        ))}
+      </nav>
       <section className="post-tools" aria-label="글 찾기">
         <div className="post-tools-heading">
-          <h2>글 목록</h2>
+          <h2 className="sr-only">글 목록</h2>
           <p aria-live="polite">{searchStatus}</p>
         </div>
         <SearchBar query={searchQuery} onSearch={setSearchQuery} />
         <div className="post-filters">
-          {allCategories.length > 0 && (
-            <details className="taxonomy">
-              <summary>분류 <span>{allCategories.length}</span></summary>
-              <div className="taxonomy-options">
-                {allCategories.map(category => (
-                  <CategoryBadge key={category} category={category} basePath={sectionPath} />
-                ))}
-              </div>
-            </details>
-          )}
           {allTags.length > 0 && (
             <details className="taxonomy">
               <summary>태그 <span>{allTags.length}</span></summary>
@@ -143,13 +140,13 @@ export function PostList({
           {pagination.items.map(post => (
             <article key={post.slug} className="post-row">
               <Link href={`${basePath}/${post.slug}`}>
+                <h2>{post.title}</h2>
+                {post.excerpt && <p className="post-excerpt">{post.excerpt}</p>}
                 <div className="post-meta">
                   <time dateTime={toMetadataDate(post.date) ?? post.date}>{formatDisplayDate(post.date)}</time>
                   {post.category && <span>{post.category}</span>}
                   {post.readingTime && <span>{post.readingTime}분</span>}
                 </div>
-                <h2>{post.title}</h2>
-                {post.excerpt && <p className="post-excerpt">{post.excerpt}</p>}
               </Link>
             </article>
           ))}

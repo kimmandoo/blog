@@ -1,123 +1,132 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { getPostData, getSortedPostsDataByCategory } from '@/lib/posts';
-import { CodeBlockEnhancer } from '@/components/CodeBlock';
-import { MermaidRenderer } from '@/components/MermaidRenderer';
+import { getSortedPostsDataByCategory } from '@/lib/posts';
 import { formatDisplayDate, toMetadataDate } from '@/lib/date';
 import { createCodingTestPageMetadata, getSearchParamValue } from '@/lib/metadata';
+import { getPsArchive, getPsArchiveHref, getPsLanguageLabel } from '@/lib/ps';
+import { ProfileSidebar } from '@/components/ProfileSidebar';
 
-export async function generateMetadata({
-  searchParams,
-}: {
-  searchParams: Promise<{ tag?: string | string[] }>;
-}): Promise<Metadata> {
+type CodingTestPageProps = {
+  searchParams: Promise<{
+    language?: string | string[];
+    tag?: string | string[];
+  }>;
+};
+
+export async function generateMetadata({ searchParams }: CodingTestPageProps): Promise<Metadata> {
   return createCodingTestPageMetadata(await searchParams);
 }
 
-export default async function CodingTestPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ tag?: string | string[] }>;
-}) {
-  const { tag } = await searchParams;
-  const codingTestPosts = getSortedPostsDataByCategory('PS');
-  const tagCounts = codingTestPosts.reduce<Record<string, number>>((acc, post) => {
-    (post.tags ?? []).forEach((tagItem) => {
-      acc[tagItem] = (acc[tagItem] || 0) + 1;
-    });
-    return acc;
-  }, {});
-  const availableTags = Object.keys(tagCounts).sort((a, b) => a.localeCompare(b));
-  const selectedTag = getSearchParamValue(tag) || '';
-  const filteredPosts = selectedTag
-    ? codingTestPosts.filter((post) => (post.tags ?? []).includes(selectedTag))
-    : codingTestPosts;
-  const threadPosts = await Promise.all(filteredPosts.map((post) => getPostData(post.slug)));
+export default async function CodingTestPage({ searchParams }: CodingTestPageProps) {
+  const params = await searchParams;
+  const { posts, languages, tags, selectedLanguage, selectedTag, total } = getPsArchive(
+    getSortedPostsDataByCategory('PS'),
+    {
+      language: getSearchParamValue(params.language),
+      tag: getSearchParamValue(params.tag),
+    },
+  );
+  const hasFilter = Boolean(selectedLanguage || selectedTag);
 
   return (
-    <div>
-      <main className="reading-shell">
-        <header className="reading-header">
-          <Link
-            href="/"
-            className="inline-flex min-h-11 items-center gap-1 text-sm text-[var(--muted)] hover:text-[var(--foreground)]"
-          >
-            <svg className="w-3.5 h-3.5" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
-              <path d="M15 19l-7-7 7-7" />
-            </svg>
-            <span>홈</span>
-          </Link>
-          <h1 className="mt-2 text-2xl sm:text-3xl font-bold">PS</h1>
-          <div className="mt-4 flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
-            <span>{threadPosts.length}개 글</span>
-            {selectedTag && <span>필터: #{selectedTag}</span>}
-          </div>
-        </header>
+    <div className="archive-layout">
+    <main className="archive-shell ps-shell">
+      <header className="archive-intro">
+        <h1>PS</h1>
+        <p>코테 노트</p>
+      </header>
 
-        {availableTags.length > 0 && (
-          <nav aria-label="노트 태그" className="border-b border-[var(--border)] py-3">
-            <div className="flex flex-wrap items-center gap-2 text-xs">
+      <nav className="archive-tabs" aria-label="프로그래밍 언어">
+        <Link
+          href={getPsArchiveHref({ tag: selectedTag })}
+          aria-current={!selectedLanguage ? 'page' : undefined}
+        >
+          전체 <span>{total}</span>
+        </Link>
+        {languages.map(({ language, count }) => (
+          <Link
+            key={language}
+            href={getPsArchiveHref({ language, tag: selectedTag })}
+            aria-current={selectedLanguage === language ? 'page' : undefined}
+          >
+            {getPsLanguageLabel(language)} <span>{count}</span>
+          </Link>
+        ))}
+      </nav>
+
+      <section className="ps-toolbar" aria-label="노트 필터">
+        <div className="post-tools-heading">
+          <h2>{selectedLanguage ? getPsLanguageLabel(selectedLanguage) : '전체 노트'}</h2>
+          <p>{posts.length}개 글</p>
+        </div>
+        {tags.length > 0 && (
+          <details className="taxonomy">
+            <summary>태그 <span>{tags.length}</span></summary>
+            <nav className="taxonomy-options" aria-label="노트 태그">
               <Link
-                href="/coding-test"
-                aria-current={selectedTag === '' ? 'page' : undefined}
-                className="inline-flex min-h-11 items-center px-2 text-[var(--muted)] hover:text-[var(--foreground)] aria-[current=page]:text-[var(--foreground)] aria-[current=page]:underline underline-offset-4"
+                href={getPsArchiveHref({ language: selectedLanguage })}
+                aria-current={!selectedTag ? 'page' : undefined}
               >
-                전체
+                전체 태그
               </Link>
-              {availableTags.map((currentTag) => (
+              {tags.map(({ tag, count }) => (
                 <Link
-                  key={currentTag}
-                  href={`/coding-test?tag=${encodeURIComponent(currentTag)}`}
-                  aria-current={selectedTag === currentTag ? 'page' : undefined}
-                  className="inline-flex min-h-11 items-center px-2 text-[var(--muted)] hover:text-[var(--foreground)] aria-[current=page]:text-[var(--foreground)] aria-[current=page]:underline underline-offset-4"
+                  key={tag}
+                  href={getPsArchiveHref({ language: selectedLanguage, tag })}
+                  aria-current={selectedTag === tag ? 'page' : undefined}
                 >
-                  #{currentTag} {tagCounts[currentTag]}
+                  #{tag} <span>{count}</span>
                 </Link>
               ))}
-            </div>
-          </nav>
+            </nav>
+          </details>
         )}
-
-        {threadPosts.length === 0 ? (
-          <p className="py-10 text-sm text-gray-500 dark:text-gray-400">
-            {selectedTag ? `#${selectedTag} 태그의 노트가 없습니다.` : '아직 작성된 코테 노트가 없습니다.'}
-          </p>
-        ) : (
-          <section className="mt-6 space-y-10">
-            <CodeBlockEnhancer />
-            <MermaidRenderer />
-            {threadPosts.map((post) => (
-              <article
-                key={post.slug}
-                id={post.slug.replace(/\//g, '-')}
-                className="pb-10 border-b border-gray-200 dark:border-gray-800"
+        {hasFilter && (
+          <div className="active-filters">
+            {selectedLanguage && (
+              <Link
+                href={getPsArchiveHref({ tag: selectedTag })}
+                aria-label={`언어 ${getPsLanguageLabel(selectedLanguage)} 필터 해제`}
               >
-                <header>
-                  <h2 className="text-xl sm:text-2xl font-semibold leading-tight">{post.title}</h2>
-                  <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                    <time dateTime={toMetadataDate(post.date) ?? post.date}>{formatDisplayDate(post.date)}</time>
-                    {post.readingTime && <span>{post.readingTime}분</span>}
-                    {post.tags?.map((tagItem) => (
-                      <span key={tagItem}>
-                        #{tagItem}
-                      </span>
-                    ))}
-                    <Link href={`/coding-test/${post.slug}`} className="inline-flex min-h-11 items-center underline underline-offset-4 hover:text-[var(--foreground)]">
-                      단일 페이지
-                    </Link>
-                  </div>
-                  {post.excerpt && <p className="mt-3 text-sm text-gray-600 dark:text-gray-300">{post.excerpt}</p>}
-                </header>
-
-                <div
-                  className="mt-6 prose dark:prose-invert max-w-none prose-headings:scroll-mt-20 prose-a:text-inherit"
-                  dangerouslySetInnerHTML={{ __html: post.content || '' }}
-                />
-              </article>
-            ))}
-          </section>
+                {getPsLanguageLabel(selectedLanguage)} <span aria-hidden="true">×</span>
+              </Link>
+            )}
+            {selectedTag && (
+              <Link
+                href={getPsArchiveHref({ language: selectedLanguage })}
+                aria-label={`태그 ${selectedTag} 필터 해제`}
+              >
+                #{selectedTag} <span aria-hidden="true">×</span>
+              </Link>
+            )}
+            <Link href="/coding-test">필터 초기화</Link>
+          </div>
         )}
-      </main>
+      </section>
+
+      {posts.length === 0 ? (
+        <div className="empty-state">
+          <p>{hasFilter ? '선택한 조건에 해당하는 노트가 없습니다.' : '아직 작성된 PS 노트가 없습니다.'}</p>
+          {hasFilter && <Link href="/coding-test">전체 노트 보기</Link>}
+        </div>
+      ) : (
+        <div className="post-list">
+          {posts.map((post) => (
+            <article key={post.slug} className="post-row">
+              <Link href={`/coding-test/${post.slug}`}>
+                <h2>{post.title}</h2>
+                {post.excerpt && <p className="post-excerpt">{post.excerpt}</p>}
+                <div className="post-meta">
+                  <time dateTime={toMetadataDate(post.date) ?? post.date}>{formatDisplayDate(post.date)}</time>
+                  <span>{getPsLanguageLabel(post.language)}</span>
+                </div>
+              </Link>
+            </article>
+          ))}
+        </div>
+      )}
+    </main>
+      <ProfileSidebar />
     </div>
   );
 }

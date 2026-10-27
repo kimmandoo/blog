@@ -1,9 +1,7 @@
 import type { Metadata } from 'next';
 import { getSortedPostsData, getAllCategories, getAllTags } from '@/lib/posts';
 import { PostList } from '@/components/PostList';
-import { themeConfig } from '@/config/theme.config';
-import { Navigation } from '@/components/Navigation';
-import { SocialLinks } from '@/components/SocialLinks';
+import { ProfileSidebar } from '@/components/ProfileSidebar';
 import { WebSiteJsonLd } from '@/components/JsonLd';
 import { createHomePageMetadata, getSearchParamValue } from '@/lib/metadata';
 import { parsePageParam } from '@/lib/pagination';
@@ -42,23 +40,10 @@ export default async function Home({
   });
 
   return (
-    <div>
+    <div className="archive-layout">
       <WebSiteJsonLd />
-      <main className="home-shell">
-        <header className="home-header">
-          <div className="home-mark" aria-hidden="true">m<span>·</span></div>
-          <div className="home-intro">
-            <h1 className="home-heading">{themeConfig.site.title}</h1>
-            <p className="home-description">{themeConfig.site.tagline}</p>
-          </div>
-          <div className="home-links">
-            <a className="home-current" href="/" aria-current={!selectedCategory && !selectedTag ? "page" : undefined}>글<span aria-hidden="true">↗</span></a>
-            <Navigation />
-            <SocialLinks />
-          </div>
-        </header>
-
-        <div className="home-content">
+      <main className="archive-shell">
+        <h1 className="sr-only">글 목록</h1>
         <PostList 
           key={`${selectedCategory ?? ''}:${selectedTag ?? ''}:${selectedPage}:${searchQuery}`}
           initialSearchQuery={searchQuery}
@@ -69,8 +54,8 @@ export default async function Home({
           selectedTag={selectedTag}
           currentPage={selectedPage}
         />
-        </div>
       </main>
+      <ProfileSidebar />
     </div>
   );
 }

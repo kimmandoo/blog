@@ -8,6 +8,7 @@ import { GoogleAdsense } from "@/components/GoogleAdsense";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
 import { Footer } from "@/components/Footer";
+import { Navigation } from "@/components/Navigation";
 import { toAbsolutePageUrl } from "@/lib/metadata";
 
 const bodyFont = IBM_Plex_Sans_KR({
@@ -98,6 +99,7 @@ export default function RootLayout({
         <ThemeProvider>
           <GoogleAnalytics />
           <GoogleAdsense />
+          <Navigation />
           {children}
           <Footer />
         </ThemeProvider>

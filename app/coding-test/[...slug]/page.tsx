@@ -6,6 +6,7 @@ import { CodeBlockEnhancer } from '@/components/CodeBlock';
 import { MermaidRenderer } from '@/components/MermaidRenderer';
 import { formatDisplayDate, toMetadataDate } from '@/lib/date';
 import { createPageMetadata } from '@/lib/metadata';
+import { getPsArchiveHref, getPsLanguageLabel, normalizePsLanguage } from '@/lib/ps';
 
 export async function generateStaticParams() {
   const posts = getSortedPostsDataByCategory('PS');
@@ -54,13 +55,13 @@ export default async function CodingTestPostPage({ params }: { params: Promise<{
       <main className="reading-shell">
         <div className="mb-6">
           <Link
-            href="/coding-test"
+            href={getPsArchiveHref({ language: normalizePsLanguage(post.language) })}
             className="inline-flex min-h-11 items-center gap-1 text-sm text-[var(--muted)] hover:text-[var(--foreground)]"
           >
             <svg className="w-4 h-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
               <path d="M15 19l-7-7 7-7" />
             </svg>
-            스레드로 돌아가기
+            {getPsLanguageLabel(post.language)} 노트 목록
           </Link>
         </div>
 
@@ -69,6 +70,9 @@ export default async function CodingTestPostPage({ params }: { params: Promise<{
             <h1 className="text-2xl sm:text-3xl font-semibold leading-tight">{post.title}</h1>
             <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
               <time dateTime={toMetadataDate(post.date) ?? post.date}>{formatDisplayDate(post.date)}</time>
+              <Link href={getPsArchiveHref({ language: normalizePsLanguage(post.language) })}>
+                {getPsLanguageLabel(post.language)}
+              </Link>
               {post.readingTime && <span>{post.readingTime}분</span>}
               {post.tags?.map((tagItem) => (
                 <span key={tagItem}>

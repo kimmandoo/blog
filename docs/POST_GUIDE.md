@@ -46,21 +46,48 @@ draft: false
 
 - **`category`** (string, optional): Single category for the post
   - Used for organizing and filtering posts
-  - Displayed as a colored badge on post cards
+  - Displayed in post metadata and available as a homepage category tab
   - Categories are automatically collected and shown on homepage
   - Example: `"Tutorial"`, `"Web Development"`, `"DevOps"`
 
 - **`tags`** (array of strings, optional): Multiple tags for the post
   - Used for detailed categorization
-  - Displayed as hashtag badges on post cards
+  - Available through the collapsible tag filter and displayed on article pages
   - Tags are automatically collected and shown on homepage
   - Example: `["nextjs", "react", "typescript"]`
+
+- **`language`** (string, optional): Primary programming language of a PS note
+  - Set explicitly, for example `language: cpp`; code fences and tags do not determine the language
+  - Used for language tabs and metadata in the PS archive, independently of `category` and `tags`
 
 - **`draft`** (boolean, optional): Whether the post is a draft
   - Default: `false`
   - If `true`, the post will NOT be visible on the site
   - Useful for work-in-progress posts
   - Example: `draft: true`
+
+## PS Language Archive
+
+Keep problem-solving notes under `posts/ps/` with `category: "PS"`:
+
+```yaml
+---
+title: "C++ priority_queue notes"
+date: "2026-04-19"
+category: "PS"
+language: cpp
+tags: ["ps", "leetcode", "cpp"]
+---
+```
+
+- `/coding-test` lists compact title, excerpt, date, and language rows, newest first. Open a row to read the full note; existing detail URLs such as `/coding-test/ps/1` remain unchanged.
+- Language tabs and their counts are generated from published PS notes only. A new `language: python` note automatically adds a Python tab; no page configuration is required. Drafts never add tabs or counts.
+- Language values are trimmed and matched case-insensitively. `cpp` and `C++` both use the `cpp` tab (displayed as **C++**); `csharp` and `C#` both use `csharp`. Use consistent lowercase identifiers for other languages. Unknown identifiers still get their own tab.
+- Missing or blank `language` values appear under **미분류** (`?language=unclassified`), as well as **전체**. `unclassified` is reserved for that group. Do not infer the primary language from comparison snippets: Java code inside a C++ note does not make it a Java note.
+- `/coding-test?language=cpp` is reloadable and shareable. Existing `?tag=leetcode` links still work; combine them as `?language=cpp&tag=leetcode` to match both filters. Switching language tabs preserves the tag, and switching tags preserves the language.
+- Tab and tag counts describe the complete published PS archive; the toolbar count describes the current filtered result. All matching notes are shown without a page-size cutoff.
+- Unknown filters and empty intersections show an empty result with a reset link, not unrelated notes. Clear either filter independently or return to `/coding-test` to see everything.
+- Nonblank language or tag filters use `noindex, follow` metadata and canonicalize to `/coding-test`. The unfiltered archive remains indexable. Detail pages link back to their language archive.
 
 ## 📄 Complete Example
 

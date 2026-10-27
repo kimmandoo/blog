@@ -7,7 +7,7 @@ A clean, minimal blog built with Next.js, Tailwind CSS, and deployed on Vercel. 
 ## ✨ Features
 
 - 📝 **Markdown Support**: Write posts in simple Markdown files with GFM, math equations (KaTeX), and Mermaid diagrams
-- 🎨 **Notebook Design**: Sidebar navigation, neutral surfaces, terracotta accents, and Korean sans/serif typography
+- 🎨 **Minimal Archive Design**: Shared top navigation, underline category tabs, and restrained monochrome typography
 - ⚡ **Auto-Deploy**: Push to GitHub and Vercel automatically deploys
 - 📱 **Responsive**: Looks great on all devices
 - 🌙 **Dark Mode**: Automatic dark mode support
@@ -22,13 +22,16 @@ A clean, minimal blog built with Next.js, Tailwind CSS, and deployed on Vercel. 
 
 ### Blog browsing
 
-- The home page uses a two-column notebook layout: a sticky identity/navigation sidebar with a 26px serif wordmark, and a separate introduction and post archive. Below 640px, the identity and navigation become a compact header. Search sits beside the archive count on desktop and stacks on mobile; dates and categories sit above each title. Off-white/charcoal surfaces and terracotta accents share coordinated light and dark palettes. Article and PS-note pages retain a focused reading shell.
-- Body text and list titles use IBM Plex Sans KR (400/500/600); the wordmark, article titles, and article section headings use Noto Serif KR (400/600). Both are self-hosted through `next/font/google`, use `display: swap`, and disable eager preloading of Korean font subsets. The initial build requires access to Google Fonts; readers load the generated font assets from the blog itself.
+- Home, PS, and article pages share a slim top header with the site name, 글/PS navigation, and theme controls. Archives use horizontally scrollable underline tabs, fine separators, and title-first rows with excerpts and metadata beneath. Home and PS have a separate right-hand profile sidebar on desktop; below 1024px it moves underneath the archive, never covering the posts. Article pages retain their focused reading layout.
+- Body text, branding, and list titles use IBM Plex Sans KR (400/500/600); article titles and section headings use Noto Serif KR (400/600). Both are self-hosted through `next/font/google`, use `display: swap`, and disable eager preloading of Korean font subsets. The initial build requires access to Google Fonts; readers load the generated font assets from the blog itself.
 - Search matches titles, excerpts, categories, and tags, ignoring surrounding whitespace and letter case. Clear the field with its clear button, Escape, or the empty-state reset action.
 - Changing the search starts at the first result page. Pagination links retain the query in `q` together with category/tag filters, so linked result pages survive a reload.
-- Categories and tags are collapsed at every screen size. Expanded taxonomy panels scroll independently; post rows show date, category, reading time, title, and a short excerpt without repeated tag badges.
+- Categories are directly accessible as tabs; tags remain collapsible. Expanded tag panels scroll independently. Category changes retain the current search and tag filter while resetting pagination.
 - Removing a selected category or tag preserves the other active filter. Pagination shows nearby pages and endpoints rather than an unbounded row of buttons.
-- Light, dark, and system theme controls live in the footer. The layout supports narrow mobile screens without horizontal page scrolling.
+- Light, dark, and system theme controls live in the shared header. Social links and a back-to-top link live in the footer. Narrow screens scroll the category tabs independently, without horizontal page overflow.
+- `components/ProfileSidebar.tsx` holds the profile and action sections, using the site title/tagline and social links from `config/theme.config.ts`. It includes GitHub, LinkedIn, Medium, and an RSS subscription link; add further profile actions in this component.
+- Social links, RSS, and back-to-top actions use inline SVG icons with accessible names, native title tooltips, visible keyboard focus, and 44px square hit targets. Text labels remain for the 글/PS navigation.
+- PS notes use explicit `language` frontmatter. Existing notes are classified as C++; adding a published note with `language: python` creates its language tab automatically. Language and tag filters compose and survive reloads. See [PS authoring](docs/POST_GUIDE.md#ps-language-archive).
 
 
 ## 🍴 Fork This Blog

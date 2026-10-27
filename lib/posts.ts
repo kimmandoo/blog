@@ -32,6 +32,7 @@ export interface PostData {
   content?: string;
   category?: string;
   tags?: string[];
+  language?: string;
   toc?: TOCItem[];
   draft?: boolean;
   readingTime?: number;

@@ -69,9 +69,9 @@ export function createHomePageMetadata(searchParams: SearchParams): Metadata {
 
 export function createCodingTestPageMetadata(searchParams: SearchParams): Metadata {
   return createPageMetadata({
-    title: 'PS Thread',
-    description: 'PS',
+    title: 'PS',
+    description: '코테 노트',
     canonicalPath: '/coding-test',
-    noIndex: Boolean(getSearchParamValue(searchParams.tag)),
+    noIndex: hasActiveSearchFilter(searchParams, ['language', 'tag']),
   });
 }
