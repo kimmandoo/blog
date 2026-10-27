@@ -38,9 +38,9 @@ test('post graph layout handles empty and single-node graphs', () => {
 
 test('post graph layout is deterministic and leaves graph data unchanged', () => {
   const graph = makeGraph(24, [
-    { source: 'post-0', target: 'post-1' },
-    { source: 'post-1', target: 'post-2' },
-    { source: 'post-4', target: 'post-9' },
+    { source: 'post-0', target: 'post-1', kind: 'link' },
+    { source: 'post-1', target: 'post-2', kind: 'category' },
+    { source: 'post-4', target: 'post-9', kind: 'link' },
   ]);
   for (const node of graph.nodes) Object.freeze(node);
   for (const edge of graph.edges) Object.freeze(edge);
@@ -74,7 +74,7 @@ test('disconnected posts remain visible and repel rather than overlap', () => {
 
 test('a real link attracts its endpoints while repulsion keeps them separate', () => {
   const unlinked = layoutPostGraph(makeGraph(2));
-  const linked = layoutPostGraph(makeGraph(2, [{ source: 'post-0', target: 'post-1' }]));
+  const linked = layoutPostGraph(makeGraph(2, [{ source: 'post-0', target: 'post-1', kind: 'link' }]));
   const linkedDistance = distance(linked[0], linked[1]);
 
   assert.ok(linkedDistance < distance(unlinked[0], unlinked[1]));
@@ -86,6 +86,7 @@ test('larger mixed graphs keep every post finite and inside the viewport', () =>
   const graph = makeGraph(160, Array.from({ length: 35 }, (_, index) => ({
     source: `post-${index}`,
     target: `post-${index + 1}`,
+    kind: index % 2 ? 'category' : 'link',
   })));
   const positions = layoutPostGraph(graph);
 

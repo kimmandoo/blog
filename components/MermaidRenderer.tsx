@@ -12,6 +12,10 @@ const PAN_STEP = 32;
 const BUTTON_FEEDBACK_MS = 1400;
 
 type MermaidApi = typeof import('mermaid').default;
+
+// Mermaid owns global configuration and temporary DOM, including across React mounts.
+let mermaidRenderQueue: Promise<unknown> = Promise.resolve();
+let renderSequence = 0;
 type DiagramAction = 'zoom-in' | 'zoom-out' | 'reset' | 'copy-source' | 'download-svg';
 type FeedbackState = 'idle' | 'success' | 'error';
 
@@ -534,7 +538,8 @@ function attachDiagramControls(container: HTMLElement, wrap: HTMLElement) {
 
 function createDiagramContainer(source: string, diagramIndex: number) {
   const container = document.createElement('div');
-  container.className = 'mermaid';
+  // Article typography changes HTML-label line heights after Mermaid measures them.
+  container.className = 'mermaid not-prose';
   container.dataset.diagramIndex = String(diagramIndex);
   container.dataset.source = source;
   container.setAttribute('role', 'group');
@@ -543,7 +548,8 @@ function createDiagramContainer(source: string, diagramIndex: number) {
   return container;
 }
 
-function replaceMermaidBlocks(containers: HTMLElement[]) {
+function replaceMermaidBlocks() {
+  const replacements: Array<{ container: HTMLElement; original: Element }> = [];
   const blocks = Array.from(document.querySelectorAll<HTMLElement>('pre > code.language-mermaid'));
 
   blocks.forEach((block, index) => {
@@ -558,21 +564,22 @@ function replaceMermaidBlocks(containers: HTMLElement[]) {
     const container = createDiagramContainer(block.textContent || '', index + 1);
 
     replaceTarget.replaceWith(container);
-    containers.push(container);
+    replacements.push({ container, original: replaceTarget });
   });
+
+  return replacements;
 }
 
 export function MermaidRenderer() {
   useEffect(() => {
-    const containers: HTMLElement[] = [];
-    replaceMermaidBlocks(containers);
+    const replacements = replaceMermaidBlocks();
+    const containers = replacements.map(({ container }) => container);
 
     if (containers.length === 0) {
       return;
     }
 
     let disposed = false;
-    let renderSequence = 0;
     let mermaidPromise: Promise<MermaidApi> | null = null;
     const cleanupFns: Array<() => void> = [];
     const controlCleanupMap = new WeakMap<HTMLElement, () => void>();
@@ -595,51 +602,66 @@ export function MermaidRenderer() {
 
       const renderToken = (renderTokenMap.get(container) ?? 0) + 1;
       renderTokenMap.set(container, renderToken);
-      showSkeleton(container);
-      controlCleanupMap.get(container)?.();
-      controlCleanupMap.delete(container);
-      container.querySelector('.mermaid__svg-wrap')?.remove();
-      container.querySelector('.mermaid__fallback')?.remove();
-      container.querySelector('.mermaid__toolbar')?.remove();
+      const isCurrent = () => !disposed && container.isConnected
+        && renderTokenMap.get(container) === renderToken;
+
+      // Keep a rendered diagram (and its height) while replacing its theme.
+      if (!container.querySelector('.mermaid__svg-wrap')) {
+        showSkeleton(container);
+      } else {
+        container.setAttribute('aria-busy', 'true');
+      }
 
       try {
-        const mermaid = await loadMermaid();
-        mermaid.initialize({
-          startOnLoad: false,
-          securityLevel: 'strict',
-          suppressErrorRendering: true,
-          theme: resolveMermaidTheme(),
-          themeVariables: resolveMermaidThemeVariables(),
+        const render = mermaidRenderQueue.then(async () => {
+          if (!isCurrent()) return null;
+          const mermaid = await loadMermaid();
+          if (!isCurrent()) return null;
+
+          mermaid.initialize({
+            startOnLoad: false,
+            securityLevel: 'strict',
+            suppressErrorRendering: true,
+            theme: resolveMermaidTheme(),
+            themeVariables: resolveMermaidThemeVariables(),
+          });
+
+          return mermaid.render(`mermaid-diagram-${renderSequence++}`, source);
         });
+        // A failed diagram must not prevent the next queued diagram from rendering.
+        mermaidRenderQueue = render.catch(() => {});
+        const result = await render;
 
-        const { svg, bindFunctions } = await mermaid.render(`mermaid-diagram-${renderSequence++}`, source);
-
-        if (disposed || renderTokenMap.get(container) !== renderToken) {
+        if (!result || !isCurrent()) {
           return;
         }
 
+        controlCleanupMap.get(container)?.();
+        controlCleanupMap.delete(container);
         clearContainerState(container);
 
         const wrap = document.createElement('div');
         wrap.className = 'mermaid__svg-wrap';
-        wrap.innerHTML = svg;
+        wrap.innerHTML = result.svg;
+        container.appendChild(wrap);
 
         const svgElement = wrap.querySelector<SVGSVGElement>('svg');
         if (svgElement) {
           normalizeSvg(svgElement, wrap, container);
         }
 
-        bindFunctions?.(wrap);
-        container.appendChild(wrap);
+        result.bindFunctions?.(wrap);
         container.classList.add('mermaid--loaded');
 
         const cleanupControls = attachDiagramControls(container, wrap);
         controlCleanupMap.set(container, cleanupControls);
       } catch (error) {
-        if (disposed || renderTokenMap.get(container) !== renderToken) {
+        if (!isCurrent()) {
           return;
         }
 
+        controlCleanupMap.get(container)?.();
+        controlCleanupMap.delete(container);
         clearContainerState(container);
         container.classList.add('mermaid--error');
 
@@ -676,59 +698,64 @@ export function MermaidRenderer() {
       cleanupFns.push(() => observer.disconnect());
     };
 
-    const rerenderVisibleContainers = () => {
+    const rerenderStartedContainers = () => {
       containers.forEach((container) => {
-        if (container.classList.contains('mermaid--loaded') || container.classList.contains('mermaid--error')) {
+        if (renderTokenMap.has(container)) {
           void renderContainer(container);
         }
       });
     };
 
-    let resizeFrame = 0;
-
-    const scheduleRerender = () => {
-      if (disposed || resizeFrame !== 0) {
-        return;
+    const resizeContainer = (container: HTMLElement) => {
+      const wrap = container.querySelector<HTMLElement>('.mermaid__svg-wrap');
+      const svg = wrap?.querySelector<SVGSVGElement>('svg');
+      if (wrap && svg) {
+        normalizeSvg(svg, wrap, container);
       }
-
-      resizeFrame = window.requestAnimationFrame(() => {
-        resizeFrame = 0;
-        rerenderVisibleContainers();
-      });
     };
 
     observeContainers();
 
-    const themeObserver = new MutationObserver((mutations) => {
-      if (mutations.some((mutation) => mutation.attributeName === 'class' || mutation.attributeName === 'data-theme')) {
-        rerenderVisibleContainers();
+    let currentTheme = resolveMermaidTheme();
+    const handleThemeChange = () => {
+      const nextTheme = resolveMermaidTheme();
+      if (nextTheme !== currentTheme) {
+        currentTheme = nextTheme;
+        rerenderStartedContainers();
       }
-    });
+    };
+    const themeObserver = new MutationObserver(handleThemeChange);
 
-    themeObserver.observe(document.documentElement, { attributes: true });
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class', 'data-theme'],
+    });
     cleanupFns.push(() => themeObserver.disconnect());
+    const colorScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    colorScheme.addEventListener('change', handleThemeChange);
+    cleanupFns.push(() => colorScheme.removeEventListener('change', handleThemeChange));
 
     if (typeof ResizeObserver !== 'undefined') {
-      const resizeObserver = new ResizeObserver(() => {
-        scheduleRerender();
+      const widths = new WeakMap<Element, number>();
+      const resizeObserver = new ResizeObserver((entries) => {
+        entries.forEach(({ target, contentRect }) => {
+          if (disposed || widths.get(target) === contentRect.width) return;
+          widths.set(target, contentRect.width);
+          // Only refit the existing SVG. Rendering changes height and must never
+          // feed back into Mermaid or reset the reader's zoom/pan controls.
+          resizeContainer(target as HTMLElement);
+        });
       });
 
       containers.forEach((container) => resizeObserver.observe(container));
-      resizeObserver.observe(document.documentElement);
       cleanupFns.push(() => {
         resizeObserver.disconnect();
       });
     } else {
-      window.addEventListener('resize', scheduleRerender);
-      cleanupFns.push(() => window.removeEventListener('resize', scheduleRerender));
+      const handleResize = () => containers.forEach(resizeContainer);
+      window.addEventListener('resize', handleResize);
+      cleanupFns.push(() => window.removeEventListener('resize', handleResize));
     }
-
-    cleanupFns.push(() => {
-      if (resizeFrame !== 0) {
-        window.cancelAnimationFrame(resizeFrame);
-        resizeFrame = 0;
-      }
-    });
 
     cleanupFns.push(() => {
       containers.forEach((container) => {
@@ -739,6 +766,8 @@ export function MermaidRenderer() {
     return () => {
       disposed = true;
       cleanupFns.forEach((cleanup) => cleanup());
+      // Effect replay (StrictMode) must see the original sources again.
+      replacements.forEach(({ container, original }) => container.replaceWith(original));
     };
   }, []);
 

@@ -353,8 +353,14 @@ code, pre {
 }
 
 .post-graph-svg line {
-  stroke: var(--border);
+  stroke: var(--muted);
   stroke-width: 1.5;
+}
+
+.post-graph-svg line.post-graph-edge-category {
+  stroke-dasharray: 3 4;
+  stroke-width: 1;
+  opacity: 0.35;
 }
 
 .post-graph-dot {
@@ -365,6 +371,10 @@ code, pre {
 .post-graph-svg line.is-active {
   stroke: var(--foreground);
   stroke-width: 2;
+}
+
+.post-graph-svg line.post-graph-edge-category.is-active {
+  opacity: 1;
 }
 
 .post-graph-svg a.is-active .post-graph-dot {

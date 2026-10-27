@@ -8,8 +8,8 @@ import type { Root, RootContent } from 'mdast';
 import { themeConfig } from '../config/theme.config.ts';
 import { getSortedPostsData, getSortedPostsDataByCategory } from './posts.ts';
 
-export type PostGraphNode = { id: string; title: string; href: string };
-export type PostGraphEdge = { source: string; target: string };
+export type PostGraphNode = { id: string; title: string; href: string; category?: string };
+export type PostGraphEdge = { source: string; target: string; kind: 'link' | 'category' };
 export type PostGraph = { nodes: PostGraphNode[]; edges: PostGraphEdge[] };
 
 export type PostGraphSource = {
@@ -46,6 +46,7 @@ function visit(node: Root | RootContent, callback: (node: Root | RootContent) =>
 export function buildPostGraph(posts: readonly PostGraphSource[], siteUrl: string): PostGraph {
   const origin = new URL(siteUrl).origin;
   const sources = posts
+    .map((post) => ({ ...post, category: post.category?.normalize('NFC').trim() || undefined }))
     .filter((post) => !post.draft && post.category !== 'Rust')
     .map((post) => ({ post, document: matter(post.markdown) }))
     .filter(({ document }) => !document.data.draft)
@@ -54,11 +55,31 @@ export function buildPostGraph(posts: readonly PostGraphSource[], siteUrl: strin
     id: post.slug,
     title: post.title,
     href: `/${post.category === 'PS' ? 'coding-test' : 'posts'}/${post.slug.split('/').map(encodeURIComponent).join('/')}`,
+    ...(post.category ? { category: post.category } : {}),
   }));
   const bySlug = new Map(nodes.map((node) => [node.id, node]));
   const byPath = new Map(nodes.map((node) => [decodePath(node.href), node]));
   const edges = new Map<string, PostGraphEdge>();
   const parser = remark().use(remarkGfm).use(remarkMath);
+  const categories = new Map<string, PostGraphNode[]>();
+  for (const node of nodes) {
+    if (!node.category) continue;
+    const group = categories.get(node.category);
+    if (group) group.push(node);
+    else categories.set(node.category, [node]);
+  }
+  for (const group of categories.values()) {
+    for (let source = 0; source < group.length; source++) {
+      for (let target = source + 1; target < group.length; target++) {
+        const edge: PostGraphEdge = {
+          source: group[source].id,
+          target: group[target].id,
+          kind: 'category',
+        };
+        edges.set(JSON.stringify([edge.source, edge.target]), edge);
+      }
+    }
+  }
 
   function resolveTarget(destination: string, source: PostGraphNode): PostGraphNode | undefined {
     if (!destination || destination.startsWith('#') || destination.includes('\\')) return undefined;
@@ -97,9 +118,10 @@ export function buildPostGraph(posts: readonly PostGraphSource[], siteUrl: strin
       if (!destination) return;
       const target = resolveTarget(destination, source);
       if (!target || target.id === source.id) return;
-      const edge = compare(source.id, target.id) < 0
-        ? { source: source.id, target: target.id }
-        : { source: target.id, target: source.id };
+      const edge: PostGraphEdge = compare(source.id, target.id) < 0
+        ? { source: source.id, target: target.id, kind: 'link' }
+        : { source: target.id, target: source.id, kind: 'link' };
+      // Actual Markdown links take precedence over the inferred category relation.
       edges.set(JSON.stringify([edge.source, edge.target]), edge);
     });
   }

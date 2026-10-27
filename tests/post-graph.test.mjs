@@ -39,11 +39,11 @@ test('real inline, reference, collapsed, shortcut, and autolinks form undirected
   ], siteUrl);
 
   assert.deepEqual(graph.edges, [
-    { source: 'notes/auto', target: 'notes/source' },
-    { source: 'notes/collapsed', target: 'notes/source' },
-    { source: 'notes/inline', target: 'notes/source' },
-    { source: 'notes/reference', target: 'notes/source' },
-    { source: 'notes/shortcut', target: 'notes/source' },
+    { source: 'notes/auto', target: 'notes/source', kind: 'link' },
+    { source: 'notes/collapsed', target: 'notes/source', kind: 'link' },
+    { source: 'notes/inline', target: 'notes/source', kind: 'link' },
+    { source: 'notes/reference', target: 'notes/source', kind: 'link' },
+    { source: 'notes/shortcut', target: 'notes/source', kind: 'link' },
   ]);
   assert.equal(graph.nodes.length, 6);
 });
@@ -99,7 +99,7 @@ test('only eligible published normal and PS posts can be destinations or sources
   ], siteUrl);
 
   assert.deepEqual(graph.nodes.map((node) => node.id), ['isolated', 'ps/published', 'source']);
-  assert.deepEqual(graph.edges, [{ source: 'ps/published', target: 'source' }]);
+  assert.deepEqual(graph.edges, [{ source: 'ps/published', target: 'source', kind: 'link' }]);
   assert.equal(graph.nodes[1].href, '/coding-test/ps/published');
 });
 
@@ -120,8 +120,9 @@ test('canonical same-origin URLs strip queries and fragments and preserve encode
   ], `${siteUrl}/`);
 
   assert.deepEqual(graph.edges, [
-    { source: 'ps/two words', target: 'source' },
-    { source: 'source', target: slug },
+    { source: 'ps/only-wrong-route', target: 'ps/two words', kind: 'category' },
+    { source: 'ps/two words', target: 'source', kind: 'link' },
+    { source: 'source', target: slug, kind: 'link' },
   ]);
   assert.deepEqual(graph.nodes.find((node) => node.id === slug), {
     id: slug,
@@ -147,10 +148,10 @@ test('relative markdown files resolve from the source slug directory across norm
   ], siteUrl);
 
   assert.deepEqual(graph.edges, [
-    { source: 'nested/deep/sibling', target: 'nested/deep/source' },
-    { source: 'nested/deep/source', target: 'nested/parent' },
-    { source: 'nested/deep/source', target: 'ps/problem' },
-    { source: 'nested/deep/source', target: '한국어/공백 #100%' },
+    { source: 'nested/deep/sibling', target: 'nested/deep/source', kind: 'link' },
+    { source: 'nested/deep/source', target: 'nested/parent', kind: 'link' },
+    { source: 'nested/deep/source', target: 'ps/problem', kind: 'link' },
+    { source: 'nested/deep/source', target: '한국어/공백 #100%', kind: 'link' },
   ]);
 });
 
@@ -163,21 +164,65 @@ test('cycles, duplicate links and reciprocal links are deterministic without sel
   const graph = buildPostGraph(posts, siteUrl);
 
   assert.deepEqual(graph.edges, [
-    { source: 'a', target: 'b' },
-    { source: 'a', target: 'c' },
-    { source: 'b', target: 'c' },
+    { source: 'a', target: 'b', kind: 'link' },
+    { source: 'a', target: 'c', kind: 'link' },
+    { source: 'b', target: 'c', kind: 'link' },
   ]);
   assert.deepEqual(graph.nodes.map((node) => node.id), ['a', 'b', 'c']);
   assert.deepEqual(buildPostGraph([...posts].reverse(), siteUrl), graph);
 });
 
-test('empty and unlinked graphs retain every isolated node without category-based edges or cutoffs', () => {
+test('empty and uncategorized graphs retain every isolated node without cutoffs', () => {
   assert.deepEqual(buildPostGraph([], siteUrl), { nodes: [], edges: [] });
-  const posts = Array.from({ length: 45 }, (_, index) => post(`isolated/${index}`, 'Plain text.', { category: 'Same category' }));
+  const posts = Array.from({ length: 45 }, (_, index) => post(`isolated/${index}`, 'Plain text.'));
   const graph = buildPostGraph(posts, siteUrl);
 
   assert.equal(graph.nodes.length, posts.length);
   assert.deepEqual(graph.edges, []);
   assert.deepEqual(new Set(graph.nodes.map((node) => node.id)), new Set(posts.map((item) => item.slug)));
+  assert.deepEqual(buildPostGraph([...posts].reverse(), siteUrl), graph);
+});
+
+test('every pair in a normalized category connects, with real links taking precedence', () => {
+  const posts = [
+    post('a', '[b](/posts/b) [b again](/posts/b#part) [self](/posts/a)', { category: ' Café ' }),
+    post('b', '[a](/posts/a)', { category: 'Cafe\u0301' }),
+    post('c', '', { category: 'Café' }),
+    post('other', '', { category: 'Other' }),
+  ];
+  const graph = buildPostGraph(posts, siteUrl);
+  assert.deepEqual(graph.edges, [
+    { source: 'a', target: 'b', kind: 'link' },
+    { source: 'a', target: 'c', kind: 'category' },
+    { source: 'b', target: 'c', kind: 'category' },
+  ]);
+  assert.deepEqual(graph.nodes.map((node) => node.category), ['Café', 'Café', 'Café', 'Other']);
+  assert.deepEqual(buildPostGraph([...posts].reverse(), siteUrl), graph);
+});
+
+test('category groups exclude drafts, excluded categories, and blank or missing categories', () => {
+  const graph = buildPostGraph([
+    post('a', '', { category: 'Topic' }),
+    post('b', '', { category: ' Topic ' }),
+    post('draft', '', { category: 'Topic', draft: true }),
+    post('frontmatter-draft', '---\ndraft: true\n---\n', { category: 'Topic' }),
+    post('rust-a', '', { category: 'Rust' }),
+    post('rust-b', '', { category: ' Rust ' }),
+    post('blank', '', { category: '' }),
+    post('whitespace', '', { category: ' \t\n ' }),
+    post('missing'),
+  ], siteUrl);
+  assert.deepEqual(graph.nodes.map((node) => node.id), ['a', 'b', 'blank', 'missing', 'whitespace']);
+  assert.deepEqual(graph.edges, [{ source: 'a', target: 'b', kind: 'category' }]);
+  for (const node of graph.nodes.slice(2)) assert.equal(node.category, undefined);
+});
+
+test('large same-category groups include every unique pair without a cutoff', () => {
+  const posts = Array.from({ length: 45 }, (_, index) => post(`group/${index}`, '', { category: 'Same category' }));
+  const graph = buildPostGraph(posts, siteUrl);
+  assert.equal(graph.nodes.length, posts.length);
+  assert.equal(graph.edges.length, posts.length * (posts.length - 1) / 2);
+  assert.equal(new Set(graph.edges.map(({ source, target }) => JSON.stringify([source, target]))).size, graph.edges.length);
+  assert.ok(graph.edges.every((edge) => edge.source < edge.target && edge.kind === 'category'));
   assert.deepEqual(buildPostGraph([...posts].reverse(), siteUrl), graph);
 });

@@ -27,7 +27,7 @@ export function PostGraph({ graph, positions }: { graph: PostGraphData; position
             {graph.edges.map(edge => {
               const source = byId.get(edge.source)!;
               const target = byId.get(edge.target)!;
-              return <line key={`${edge.source}:${edge.target}`} x1={source.x} y1={source.y} x2={target.x} y2={target.y} className={active === edge.source || active === edge.target ? 'is-active' : undefined} />;
+              return <line key={JSON.stringify([edge.source, edge.target])} x1={source.x} y1={source.y} x2={target.x} y2={target.y} className={`post-graph-edge-${edge.kind}${active === edge.source || active === edge.target ? ' is-active' : ''}`} />;
             })}
           </g>
           {nodes.map(node => (
@@ -53,13 +53,14 @@ export function PostGraph({ graph, positions }: { graph: PostGraphData; position
       </div>
       <p className="post-graph-caption">{nodes.length}개 글 · {graph.edges.length}개 연결</p>
       {nodes.length ? renderGraph() : <p className="post-graph-selection">아직 공개된 글이 없습니다.</p>}
-      <p className="post-graph-caption">본문 링크 기준</p>
+      <p className="post-graph-caption">실선: 본문 링크 · 점선: 같은 카테고리</p>
       <dialog ref={dialog} className="post-graph-dialog" aria-label="전체 게시글 연결 그래프" onClose={() => setActive(null)}>
         <div className="post-graph-heading">
           <h2>글 연결</h2>
           <button type="button" className="post-graph-expand" aria-label="그래프 닫기" onClick={() => dialog.current?.close()}>×</button>
         </div>
-        <p className="post-graph-caption">본문 링크 기준 · {nodes.length}개 글 · {graph.edges.length}개 연결</p>
+        <p className="post-graph-caption">{nodes.length}개 글 · {graph.edges.length}개 연결</p>
+        <p className="post-graph-caption">실선: 본문 링크 · 점선: 같은 카테고리</p>
         {renderGraph()}
       </dialog>
     </section>
