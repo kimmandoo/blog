@@ -28,6 +28,7 @@ export interface PostData {
   slug: string;
   title: string;
   date: string;
+  updated?: string;
   excerpt?: string;
   content?: string;
   category?: string;
@@ -154,6 +155,7 @@ function getAllPostsData(): PostData[] {
         readingTime,
         ...(matterResult.data as Omit<PostData, 'slug' | 'title' | 'date' | 'excerpt' | 'category' | 'tags' | 'draft' | 'readingTime'>),
         excerpt: trimExcerpt(matterResult.data.excerpt || createExcerptFromContent(matterResult.content)),
+        ...(matterResult.data.updated && { updated: normalizeFrontmatterDate(matterResult.data.updated) }),
       };
     })
     .filter(post => !post.draft);
@@ -175,6 +177,72 @@ export function getSortedPostsDataByCategory(category: string): PostData[] {
 
 export function getAllPostSlugs() {
   return getSortedPostsData().map((post) => ({ slug: post.slug }));
+}
+
+type HastNode = {
+  type: string;
+  tagName?: string;
+  properties?: Record<string, unknown>;
+  children?: HastNode[];
+};
+
+function walkElements(node: HastNode, visit: (element: HastNode) => void) {
+  if (node.type === 'element') visit(node);
+  node.children?.forEach((child) => walkElements(child, visit));
+}
+
+const pngSizeCache = new Map<string, { width: number; height: number } | null>();
+
+function readLocalPngSize(src: string) {
+  if (pngSizeCache.has(src)) return pngSizeCache.get(src)!;
+  let size: { width: number; height: number } | null = null;
+  try {
+    const filePath = path.join(process.cwd(), 'public', decodeURIComponent(src.split(/[?#]/)[0]));
+    const header = Buffer.alloc(24);
+    const fd = fs.openSync(filePath, 'r');
+    fs.readSync(fd, header, 0, 24, 0);
+    fs.closeSync(fd);
+    // PNG signature followed by the IHDR chunk, whose first fields are width and height.
+    if (header.readUInt32BE(0) === 0x89504e47 && header.toString('ascii', 12, 16) === 'IHDR') {
+      size = { width: header.readUInt32BE(16), height: header.readUInt32BE(20) };
+    }
+  } catch {
+    size = null;
+  }
+  pngSizeCache.set(src, size);
+  return size;
+}
+
+// The page title is the only h1, so posts that use `#` for sections are shifted down one level.
+// Images get lazy loading and, for local PNGs, intrinsic dimensions to reserve layout space.
+function rehypeArticleElements() {
+  return (tree: HastNode) => {
+    let hasH1 = false;
+    walkElements(tree, (element) => {
+      if (element.tagName === 'h1') hasH1 = true;
+    });
+
+    walkElements(tree, (element) => {
+      const headingLevel = element.tagName?.match(/^h([1-5])$/)?.[1];
+      if (hasH1 && headingLevel) {
+        element.tagName = `h${Number(headingLevel) + 1}`;
+        return;
+      }
+
+      if (element.tagName !== 'img') return;
+      const properties = (element.properties ??= {});
+      properties.loading ??= 'lazy';
+      properties.decoding ??= 'async';
+      const src = typeof properties.src === 'string' ? properties.src : '';
+      if (src.startsWith('/') && properties.width === undefined && properties.height === undefined) {
+        const size = readLocalPngSize(src);
+        if (size) {
+          properties.width = size.width;
+          properties.height = size.height;
+        }
+      }
+    });
+  };
 }
 
 export async function getPostData(slug: string): Promise<PostData> {
@@ -211,6 +279,7 @@ export async function getPostData(slug: string): Promise<PostData> {
     .use(rehypeSlug)
     .use(rehypeHighlight)
     .use(rehypeKatex)
+    .use(rehypeArticleElements)
     .use(rehypeStringify, { allowDangerousHtml: true })
     .process(matterResult.content);
   const contentHtml = processedContent.toString();
@@ -229,6 +298,7 @@ export async function getPostData(slug: string): Promise<PostData> {
     firstImage,
     ...(matterResult.data as Omit<PostData, 'slug' | 'title' | 'date' | 'content' | 'excerpt' | 'category' | 'tags' | 'draft' | 'toc' | 'readingTime' | 'firstImage'>),
     excerpt: trimExcerpt(matterResult.data.excerpt || createExcerptFromContent(matterResult.content)),
+    ...(matterResult.data.updated && { updated: normalizeFrontmatterDate(matterResult.data.updated) }),
   };
 }
 

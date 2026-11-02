@@ -1,6 +1,7 @@
 ---
 title: llvm 입문하기(3)
 date: 2026-05-10
+excerpt: "LLVM IR의 구조와 SSA 개념을 정리하고, Kaleidoscope의 표현식과 함수를 LLVM IR로 코드 생성하는 과정을 따라간다."
 category: LLVM
 tags: [cpp, llvm]
 ---

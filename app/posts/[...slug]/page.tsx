@@ -67,13 +67,13 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
         description={post.excerpt || post.title}
         url={postUrl}
         datePublished={toMetadataDate(post.date) ?? undefined}
+        dateModified={toMetadataDate(post.updated)}
         tags={post.tags}
         image={jsonLdImage}
       />
       <BreadcrumbJsonLd
         items={[
           { name: 'Home', url: baseUrl },
-          ...(post.category ? [{ name: post.category, url: `${baseUrl}?category=${encodeURIComponent(post.category)}` }] : []),
           { name: post.title, url: postUrl },
         ]}
       />

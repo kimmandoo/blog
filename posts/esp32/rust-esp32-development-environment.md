@@ -1,6 +1,7 @@
 ---
 title: "Rust로 ESP32 개발환경 세팅하기"
 date: "2026-08-09"
+excerpt: "rustup으로 Rust toolchain을 구성하고, espflash로 보드 칩을 확인한 뒤 Xtensa용 toolchain과 esp-generate로 ESP32 프로젝트를 만들어 플래시하는 과정을 정리했다."
 category: "ESP32"
 tags: ["esp32", "rust", "embedded"]
 ---

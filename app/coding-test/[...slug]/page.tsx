@@ -55,6 +55,7 @@ export default async function CodingTestPostPage({ params }: { params: Promise<{
         description={post.excerpt || post.title}
         url={postUrl}
         datePublished={toMetadataDate(post.date)}
+        dateModified={toMetadataDate(post.updated)}
         tags={post.tags}
         image={getArticleImageUrl(post, postPath)}
       />

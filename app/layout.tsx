@@ -39,8 +39,8 @@ export const metadata: Metadata = {
   },
   description: site.description,
   keywords: ['blog', 'developer', 'programming', 'tech'],
-  authors: [{ name: site.title }],
-  creator: site.title,
+  authors: [{ name: site.author }],
+  creator: site.author,
   openGraph: {
     type: seo.openGraph.type as 'website',
     locale: seo.openGraph.locale,

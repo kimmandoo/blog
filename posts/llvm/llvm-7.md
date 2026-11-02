@@ -1,6 +1,7 @@
 ---
 title: llvm 입문하기(7)
 date: 2026-05-26
+excerpt: "SSA 형태의 LLVM IR에서 alloca, load/store와 mem2reg pass로 변경 가능한 변수, 대입 연산자, 지역 변수를 구현한다."
 category: LLVM
 tags: [cpp, llvm]
 ---

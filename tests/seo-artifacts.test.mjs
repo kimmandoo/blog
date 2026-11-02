@@ -69,11 +69,12 @@ function extractJsonLd(html) {
     .map((match) => JSON.parse(match[1]));
 }
 
-test('robots.txt advertises the sitemap and blocks framework internals', async () => {
+test('robots.txt advertises the sitemap and leaves rendering assets crawlable', async () => {
   const body = await getRouteBody(getBuildArtifactPath('server/app/robots.txt/route.js'));
 
   assert.match(body, /^User-Agent: \*$/m);
-  assert.match(body, /^Disallow: \/_next\/$/m);
+  assert.match(body, /^Disallow: \/api\/$/m);
+  assert.doesNotMatch(body, /_next/);
   assert.match(body, /^Sitemap: https:\/\/kimmandoo\.vercel\.app\/sitemap\.xml$/m);
 });
 

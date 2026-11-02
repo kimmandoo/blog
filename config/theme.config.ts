@@ -9,6 +9,7 @@ export const themeConfig = {
     title: 'mandoo.log',
     description: 'SWE로 살아남기',
     tagline: '발버둥치는 중',
+    author: 'kimmandoo',
   },
 
   // Color scheme

@@ -23,10 +23,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       .map((segment) => encodeURIComponent(segment))
       .join('/');
 
-  const getLastModified = (items: { date?: string }[], fallback: Date = now) => {
+  const getLastModified = (items: { date?: string; updated?: string }[], fallback: Date = now) => {
     let latest: Date | null = null;
     for (const item of items) {
-      const parsed = parseDateValue(item?.date);
+      const parsed = parseDateValue(item?.updated ?? item?.date);
       if (parsed && (!latest || parsed.getTime() > latest.getTime())) {
         latest = parsed;
       }
@@ -37,14 +37,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const postUrls = posts.map((post) => ({
     url: toAbsoluteUrl(`/posts/${encodeSlugPath(post.slug)}`),
-    lastModified: parseDateValue(post.date) ?? siteLastModified,
+    lastModified: parseDateValue(post.updated ?? post.date) ?? siteLastModified,
     changeFrequency: 'weekly' as const,
     priority: 0.8,
   }));
 
   const codingTestUrls = codingTestPosts.map((post) => ({
     url: toAbsoluteUrl(`/coding-test/${encodeSlugPath(post.slug)}`),
-    lastModified: parseDateValue(post.date) ?? siteLastModified,
+    lastModified: parseDateValue(post.updated ?? post.date) ?? siteLastModified,
     changeFrequency: 'weekly' as const,
     priority: 0.6,
   }));

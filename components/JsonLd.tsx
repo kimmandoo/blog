@@ -1,7 +1,8 @@
 import { themeConfig } from '../config/theme.config.ts';
 
-const { seo, site } = themeConfig;
+const { seo, site, socialLinks } = themeConfig;
 const baseUrl = seo.siteUrl.replace(/\/+$/, '');
+const authorProfiles = Object.values(socialLinks).filter(Boolean);
 
 type ArticleJsonLdProps = {
   title: string;
@@ -40,8 +41,9 @@ export function ArticleJsonLd({
     }),
     author: {
       '@type': 'Person',
-      name: author || site.title,
+      name: author || site.author,
       url: baseUrl,
+      ...(authorProfiles.length > 0 && { sameAs: authorProfiles }),
     },
     publisher: {
       '@type': 'Organization',

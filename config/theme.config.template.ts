@@ -13,6 +13,7 @@ export const themeConfig = {
     title: 'Your Blog Name',                    // Your blog's name
     description: 'Your blog description',       // Brief description (for SEO)
     tagline: 'Your tagline or subtitle',        // Subtitle shown on homepage
+    author: 'Your Name',                        // Article author in structured data
   },
 
   // ============================================================================

@@ -41,8 +41,14 @@ draft: false
 - **`excerpt`** (string, optional): Short description of the post
   - Displayed on the homepage post list
   - Used in meta description for SEO
-  - Recommended length: 150-200 characters
+  - Longer text is trimmed to 110 characters, so say what the reader will learn up front
+  - Without it, the first paragraph is used, which is often too short for a search snippet
   - Example: `"Learn how to build a modern blog with Next.js and deploy it to Vercel"`
+
+- **`updated`** (date, optional): When the post's content last changed meaningfully
+  - Emitted as `dateModified` in Article JSON-LD, `article:modified_time`, and the sitemap `lastmod`
+  - Omit it for typo fixes; it is never derived from the publication date or git history
+  - Example: `updated: "2026-11-02"`
 
 - **`category`** (string, optional): Single category for the post
   - Used for organizing and filtering posts
@@ -187,6 +193,8 @@ This blog supports GitHub Flavored Markdown (GFM) and additional features:
 ##### H5 Heading
 ###### H6 Heading
 ```
+
+The post title is the page's only `<h1>`. Start sections at `##`; if a post uses `#` anyway, every heading in it is shifted down one level when rendered.
 
 ### Lists
 
@@ -368,6 +376,8 @@ Save images in `public/images/` and reference them:
 ![Description](/images/my-photo.jpg)
 ```
 
+Write alt text that says what the image shows (not `image` or a file name). Images are lazy-loaded, and local PNGs get their intrinsic `width`/`height` automatically.
+
 **Recommended structure:**
 ```
 public/
@@ -399,7 +409,7 @@ Use full URLs:
 ### Front Matter
 
 1. **Always include required fields** (`title`, `date`)
-2. **Write descriptive excerpts** (150-200 characters)
+2. **Write descriptive excerpts** (up to 110 characters)
 3. **Use meaningful categories** (2-3 words max)
 4. **Add relevant tags** (3-7 tags recommended)
 5. **Use `draft: true`** for unpublished posts

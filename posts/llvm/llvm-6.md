@@ -1,6 +1,7 @@
 ---
 title: llvm 입문하기(6)
 date: 2026-05-25
+excerpt: "Kaleidoscope에서 사용자가 직접 이항·단항 연산자와 우선순위를 정의할 수 있도록 parser와 코드 생성을 확장한다."
 category: LLVM
 tags: [cpp, llvm]
 ---

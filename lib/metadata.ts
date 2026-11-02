@@ -101,7 +101,7 @@ export function createCodingTestPageMetadata(searchParams: SearchParams): Metada
   });
 }
 
-type ArticleMetadataPost = Pick<PostData, 'title' | 'excerpt' | 'date' | 'category' | 'tags' | 'firstImage'>;
+type ArticleMetadataPost = Pick<PostData, 'title' | 'excerpt' | 'date' | 'updated' | 'category' | 'tags' | 'firstImage'>;
 
 export function getArticleImageUrl(post: ArticleMetadataPost, canonicalPath: string) {
   const params = new URLSearchParams({
@@ -120,6 +120,7 @@ export function createArticleMetadata(post: ArticleMetadataPost, canonicalPath: 
   const description = post.excerpt || post.title;
   const imageUrl = getArticleImageUrl(post, canonicalPath);
   const publishedTime = toMetadataDate(post.date);
+  const modifiedTime = toMetadataDate(post.updated);
 
   return {
     ...createPageMetadata({ title: post.title, description, canonicalPath }),
@@ -132,7 +133,8 @@ export function createArticleMetadata(post: ArticleMetadataPost, canonicalPath: 
       title: post.title,
       description,
       ...(publishedTime && { publishedTime }),
-      authors: [themeConfig.site.title],
+      ...(modifiedTime && { modifiedTime }),
+      authors: [themeConfig.site.author],
       tags: post.tags,
       images: [{
         url: imageUrl,

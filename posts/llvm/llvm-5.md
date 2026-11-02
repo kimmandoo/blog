@@ -1,6 +1,7 @@
 ---
 title: llvm 입문하기(5)
 date: 2026-05-24
+excerpt: "Kaleidoscope에 if/then/else와 for 루프를 추가하면서 lexer, parser, AST를 확장하고 분기와 phi 노드로 IR을 생성한다."
 category: LLVM
 tags: [cpp, llvm]
 ---
