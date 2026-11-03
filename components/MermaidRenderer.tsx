@@ -8,7 +8,7 @@ const VIEWPORT_MARGIN = '200px';
 const MIN_SCALE = 0.5;
 const MAX_SCALE = 4;
 const ZOOM_STEP = 0.25;
-const DIAGRAM_FONT_FAMILY = 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+const getDiagramFontFamily = () => getComputedStyle(document.body).fontFamily;
 const BUTTON_FEEDBACK_MS = 1400;
 
 type MermaidApi = typeof import('mermaid').default;
@@ -85,7 +85,7 @@ function resolveMermaidThemeVariables() {
   if (isDarkTheme()) {
     return {
       background: '#1f2937',
-      fontFamily: DIAGRAM_FONT_FAMILY,
+      fontFamily: getDiagramFontFamily(),
       lineColor: '#94a3b8',
       mainBkg: '#111827',
       nodeBorder: '#475569',
@@ -98,7 +98,7 @@ function resolveMermaidThemeVariables() {
 
   return {
     background: '#f9fafb',
-    fontFamily: DIAGRAM_FONT_FAMILY,
+    fontFamily: getDiagramFontFamily(),
     lineColor: '#64748b',
     mainBkg: '#ffffff',
     nodeBorder: '#cbd5e1',
@@ -448,13 +448,16 @@ export function MermaidRenderer() {
         const render = mermaidRenderQueue.then(async () => {
           if (!isCurrent()) return null;
           const mermaid = await loadMermaid();
+          const fontFamily = getDiagramFontFamily();
+          // Measure SVG labels only after their IBM font subsets are available.
+          await document.fonts.load(`400 16px ${fontFamily.split(',')[0]}`, source);
           if (!isCurrent()) return null;
 
           mermaid.initialize({
             startOnLoad: false,
             securityLevel: 'strict',
             htmlLabels: false,
-            fontFamily: DIAGRAM_FONT_FAMILY,
+            fontFamily,
             suppressErrorRendering: true,
             theme: resolveMermaidTheme(),
             themeVariables: resolveMermaidThemeVariables(),

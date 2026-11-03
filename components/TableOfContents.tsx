@@ -65,8 +65,6 @@ export function TableOfContents({ items, compact = false }: TOCProps) {
   const links = (
     <ul className={compact ? 'space-y-1' : 'space-y-1.5 max-h-[calc(100vh-200px)] overflow-y-auto'}>
       {items.map((item) => {
-        const isActive = activeId === item.id;
-
         return (
           <li
             key={item.id}
@@ -75,11 +73,7 @@ export function TableOfContents({ items, compact = false }: TOCProps) {
             <a
               href={`#${encodeURIComponent(item.id)}`}
               aria-current={activeId === item.id ? 'location' : undefined}
-              className={`mandoo-toc-link block break-words py-2 text-sm leading-relaxed ${themeConfig.animations.transition} ${
-                isActive
-                  ? `${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} font-semibold border-l-2 border-[var(--foreground)] pl-3 -ml-3`
-                  : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:underline`
-              }`}
+              className="mandoo-toc-link block break-words py-2 text-sm font-medium leading-relaxed"
             >
               {item.text}
             </a>

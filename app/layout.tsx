@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans_KR, Noto_Serif_KR } from "next/font/google";
+import { IBM_Plex_Mono, IBM_Plex_Sans_KR } from "next/font/google";
 import "./globals.css";
 import "katex/dist/katex.min.css";
 import { themeConfig } from "@/config/theme.config";
@@ -18,10 +18,10 @@ const bodyFont = IBM_Plex_Sans_KR({
   display: "swap",
   preload: false,
 });
-const editorialFont = Noto_Serif_KR({
-  weight: ["400", "600"],
+const codeFont = IBM_Plex_Mono({
+  weight: ["400", "500", "600"],
   subsets: ["latin"],
-  variable: "--font-editorial",
+  variable: "--font-code",
   display: "swap",
   preload: false,
 });
@@ -93,7 +93,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" suppressHydrationWarning>
-      <body className={`${bodyFont.variable} ${editorialFont.variable} antialiased`}>
+      <body className={`${bodyFont.variable} ${codeFont.variable} antialiased`}>
         <a href="#main-content" className="skip-link">본문으로 바로가기</a>
         <ThemeProvider>
           <GoogleAnalytics />
