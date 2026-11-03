@@ -3,6 +3,7 @@ import type { PostData } from './posts';
 export type PsFilters = {
   language?: string;
   tag?: string;
+  q?: string;
 };
 
 const languageLabels: Record<string, string> = {
@@ -33,10 +34,11 @@ export function getPsLanguageLabel(language?: string): string {
   return Object.hasOwn(languageLabels, normalized) ? languageLabels[normalized] : normalized;
 }
 
-export function getPsArchiveHref({ language, tag }: PsFilters = {}): string {
+export function getPsArchiveHref({ language, tag, q }: PsFilters = {}): string {
   const params = new URLSearchParams();
   if (language?.trim()) params.set('language', normalizePsLanguage(language));
   if (tag?.trim()) params.set('tag', tag.trim());
+  if (q?.trim()) params.set('q', q);
   const query = params.toString();
   return query ? `/coding-test?${query}` : '/coding-test';
 }
@@ -45,6 +47,7 @@ export function getPsArchive(posts: PostData[], filters: PsFilters = {}) {
   const publishedPosts = posts.filter((post) => post.category === 'PS' && !post.draft);
   const selectedLanguage = filters.language?.trim() ? normalizePsLanguage(filters.language) : '';
   const selectedTag = filters.tag?.trim() ?? '';
+  const query = filters.q?.trim().toLowerCase() ?? '';
   const languageCounts = new Map<string, number>();
   const tagCounts = new Map<string, number>();
 
@@ -71,6 +74,11 @@ export function getPsArchive(posts: PostData[], filters: PsFilters = {}) {
     posts: publishedPosts.filter((post) => (
       (!selectedLanguage || normalizePsLanguage(post.language) === selectedLanguage)
       && (!selectedTag || post.tags?.includes(selectedTag))
+      && (!query
+        || post.title.toLowerCase().includes(query)
+        || post.excerpt?.toLowerCase().includes(query)
+        || post.tags?.some(tag => tag.toLowerCase().includes(query))
+        || getPsLanguageLabel(post.language).toLowerCase().includes(query))
     )),
   };
 }

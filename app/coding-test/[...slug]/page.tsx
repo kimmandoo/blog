@@ -66,7 +66,7 @@ export default async function CodingTestPostPage({ params }: { params: Promise<{
           { name: post.title, url: postUrl },
         ]}
       />
-      <main className="reading-shell">
+      <main id="main-content" tabIndex={-1} className="reading-shell">
         <div className="mb-6">
           <Link
             href={getPsArchiveHref({ language: normalizePsLanguage(post.language) })}
@@ -81,7 +81,7 @@ export default async function CodingTestPostPage({ params }: { params: Promise<{
 
         <article>
           <header className="reading-header">
-            <h1 className="text-2xl sm:text-3xl font-semibold leading-tight">{post.title}</h1>
+            <h1 className="break-words text-2xl sm:text-3xl font-semibold leading-tight">{post.title}</h1>
             <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
               <time dateTime={toMetadataDate(post.date) ?? post.date}>{formatDisplayDate(post.date)}</time>
               <Link href={getPsArchiveHref({ language: normalizePsLanguage(post.language) })}>

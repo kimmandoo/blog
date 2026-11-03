@@ -20,21 +20,21 @@ export function PostNavigation({ previousPost, nextPost, basePath = '/posts' }: 
   if (!previousPost && !nextPost) return null;
 
   return (
-    <nav className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
-      {/* Previous Post */}
-      <div className={previousPost ? '' : 'sm:col-start-2'}>
-        {previousPost && (
+    <nav aria-label="이전 글과 다음 글" className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
+      {previousPost && (
+        <div className="min-w-0">
           <Link 
             href={`${basePath}/${previousPost.slug}`}
+            rel="prev"
             className="group flex flex-col py-4 border-t border-[var(--border)]"
           >
             <span className="text-xs text-gray-500 dark:text-gray-400 mb-1 flex items-center gap-1">
-              <svg className="w-3 h-3" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+              <svg aria-hidden="true" focusable="false" className="w-3 h-3" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
                 <path d="M15 19l-7-7 7-7" />
               </svg>
               이전 글
             </span>
-            <span className="text-sm font-medium group-hover:underline underline-offset-4 line-clamp-2">
+            <span className="break-words text-sm font-medium group-hover:underline underline-offset-4 line-clamp-2">
               {previousPost.title}
             </span>
             {(previousPost.category || previousPost.readingTime) && (
@@ -44,23 +44,23 @@ export function PostNavigation({ previousPost, nextPost, basePath = '/posts' }: 
               </span>
             )}
           </Link>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Next Post */}
-      <div className="text-right">
-        {nextPost && (
+      {nextPost && (
+        <div className="min-w-0 text-right sm:col-start-2">
           <Link 
             href={`${basePath}/${nextPost.slug}`}
+            rel="next"
             className="group flex flex-col py-4 border-t border-[var(--border)] items-end"
           >
             <span className="text-xs text-gray-500 dark:text-gray-400 mb-1 flex items-center gap-1">
               다음 글
-              <svg className="w-3 h-3" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+              <svg aria-hidden="true" focusable="false" className="w-3 h-3" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
                 <path d="M9 5l7 7-7 7" />
               </svg>
             </span>
-            <span className="text-sm font-medium group-hover:underline underline-offset-4 line-clamp-2 text-right">
+            <span className="break-words text-sm font-medium group-hover:underline underline-offset-4 line-clamp-2 text-right">
               {nextPost.title}
             </span>
             {(nextPost.category || nextPost.readingTime) && (
@@ -70,8 +70,8 @@ export function PostNavigation({ previousPost, nextPost, basePath = '/posts' }: 
               </span>
             )}
           </Link>
-        )}
-      </div>
+        </div>
+      )}
     </nav>
   );
 }

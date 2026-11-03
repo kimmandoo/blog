@@ -22,19 +22,19 @@ test('getMermaidSizing does not upscale portrait diagrams to container width', (
       heightAttr: '960',
       containerWidth: 900,
     }),
-    { isPortrait: true, targetWidth: 240 },
+    { targetWidth: 240 },
   );
 });
 
-test('getMermaidSizing still shrinks wide diagrams to fit the container', () => {
+test('getMermaidSizing fits diagrams when their labels remain readable', () => {
   assert.deepEqual(
     getMermaidSizing({
-      viewBox: '0 0 1400 500',
-      widthAttr: '1400',
+      viewBox: '0 0 1000 500',
+      widthAttr: '1000',
       heightAttr: '500',
       containerWidth: 900,
     }),
-    { isPortrait: false, targetWidth: 868 },
+    { targetWidth: 900 },
   );
 });
 
@@ -46,11 +46,11 @@ test('getMermaidSizing falls back to available width when geometry is missing', 
       heightAttr: null,
       containerWidth: 720,
     }),
-    { isPortrait: false, targetWidth: 688 },
+    { targetWidth: 720 },
   );
 });
 
-test('getMermaidSizing shrinks portrait diagrams on narrow mobile containers', () => {
+test('getMermaidSizing preserves readable labels on narrow mobile containers', () => {
   assert.deepEqual(
     getMermaidSizing({
       viewBox: '0 0 480 960',
@@ -58,8 +58,18 @@ test('getMermaidSizing shrinks portrait diagrams on narrow mobile containers', (
       heightAttr: '960',
       containerWidth: 320,
     }),
-    { isPortrait: true, targetWidth: 288 },
+    { targetWidth: 360 },
   );
+});
+
+test('getMermaidSizing keeps wide mobile diagrams scrollable instead of crushing text', () => {
+  const { targetWidth } = getMermaidSizing({
+    viewBox: '4 4 1128 64',
+    containerWidth: 324,
+  });
+  assert.equal(targetWidth, 846);
+  assert.ok(16 * targetWidth / 1128 >= 12);
+  assert.ok(targetWidth > 324);
 });
 
 test('readSvgGeometry ignores non-numeric width and height attributes without a viewBox', () => {

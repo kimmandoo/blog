@@ -13,7 +13,6 @@ import rehypeSlug from 'rehype-slug';
 import rehypeKatex from 'rehype-katex';
 import { calculateReadingTime } from './readingTime';
 import { normalizeFrontmatterDate, parseDateValue } from './date';
-import GithubSlugger from 'github-slugger';
 
 const postsDirectory = path.join(process.cwd(), 'posts');
 const MAX_EXCERPT_LENGTH = 110;
@@ -181,6 +180,7 @@ export function getAllPostSlugs() {
 
 type HastNode = {
   type: string;
+  value?: string;
   tagName?: string;
   properties?: Record<string, unknown>;
   children?: HastNode[];
@@ -189,6 +189,14 @@ type HastNode = {
 function walkElements(node: HastNode, visit: (element: HastNode) => void) {
   if (node.type === 'element') visit(node);
   node.children?.forEach((child) => walkElements(child, visit));
+}
+
+function headingText(node: HastNode): string {
+  if (node.type === 'text') return node.value ?? '';
+  if (node.tagName === 'img') return String(node.properties?.alt ?? '');
+  let text = '';
+  for (const child of node.children ?? []) text += headingText(child);
+  return text;
 }
 
 const pngSizeCache = new Map<string, { width: number; height: number } | null>();
@@ -215,18 +223,25 @@ function readLocalPngSize(src: string) {
 
 // The page title is the only h1, so posts that use `#` for sections are shifted down one level.
 // Images get lazy loading and, for local PNGs, intrinsic dimensions to reserve layout space.
-function rehypeArticleElements() {
+function rehypeArticleElements({ toc }: { toc: TOCItem[] }) {
   return (tree: HastNode) => {
     let hasH1 = false;
+    const tables: HastNode[] = [];
     walkElements(tree, (element) => {
       if (element.tagName === 'h1') hasH1 = true;
     });
 
     walkElements(tree, (element) => {
-      const headingLevel = element.tagName?.match(/^h([1-5])$/)?.[1];
-      if (hasH1 && headingLevel) {
-        element.tagName = `h${Number(headingLevel) + 1}`;
-        return;
+      if (element.tagName === 'table') tables.push(element);
+      const headingLevel = element.tagName?.match(/^h([1-6])$/)?.[1];
+      if (headingLevel) {
+        const level = Math.min(Number(headingLevel) + Number(hasH1), 6);
+        element.tagName = `h${level}`;
+        const properties = (element.properties ??= {});
+        properties.tabIndex = -1;
+        if (typeof properties.id === 'string') {
+          toc.push({ id: properties.id, text: headingText(element), level });
+        }
       }
 
       if (element.tagName !== 'img') return;
@@ -242,6 +257,18 @@ function rehypeArticleElements() {
         }
       }
     });
+    // Keep the table semantics while giving wide tables a keyboard/touch viewport.
+    for (const table of tables) {
+      const content = { ...table };
+      table.tagName = 'div';
+      table.properties = {
+        className: ['table-scroll'],
+        tabIndex: 0,
+        role: 'region',
+        ariaLabel: '표. 좌우 방향키 또는 스크롤로 이동',
+      };
+      table.children = [content];
+    }
   };
 }
 
@@ -258,8 +285,7 @@ export async function getPostData(slug: string): Promise<PostData> {
     throw new Error('Post not found');
   }
 
-  // Extract TOC items from markdown content
-  const toc = extractTOC(matterResult.content);
+  const toc: TOCItem[] = [];
   
   // Extract first image from markdown content
   const firstImage = extractFirstImage(matterResult.content);
@@ -279,7 +305,7 @@ export async function getPostData(slug: string): Promise<PostData> {
     .use(rehypeSlug)
     .use(rehypeHighlight)
     .use(rehypeKatex)
-    .use(rehypeArticleElements)
+    .use(rehypeArticleElements, { toc })
     .use(rehypeStringify, { allowDangerousHtml: true })
     .process(matterResult.content);
   const contentHtml = processedContent.toString();
@@ -302,55 +328,6 @@ export async function getPostData(slug: string): Promise<PostData> {
   };
 }
 
-// Helper function to extract TOC from markdown content
-function extractTOC(content: string): TOCItem[] {
-  const toc: TOCItem[] = [];
-  const lines = content.split('\n');
-  let codeBlockFence: string | null = null;
-  const slugger = new GithubSlugger();
-  
-  for (const line of lines) {
-    const normalizedLine = line.replace(/\r$/, '');
-    // Check for code block fence (``` or ~~~) at start of line
-    const backtickMatch = normalizedLine.match(/^(`{3,})/);
-    const tildeMatch = normalizedLine.match(/^(~{3,})/);
-    
-    if (backtickMatch) {
-      if (codeBlockFence === null) {
-        codeBlockFence = backtickMatch[1];
-      } else if (codeBlockFence[0] === '`' && backtickMatch[1].length >= codeBlockFence.length) {
-        codeBlockFence = null;
-      }
-      continue;
-    }
-    
-    if (tildeMatch) {
-      if (codeBlockFence === null) {
-        codeBlockFence = tildeMatch[1];
-      } else if (codeBlockFence[0] === '~' && tildeMatch[1].length >= codeBlockFence.length) {
-        codeBlockFence = null;
-      }
-      continue;
-    }
-    
-    // Skip headings inside code blocks
-    if (codeBlockFence !== null) {
-      continue;
-    }
-    
-    const match = normalizedLine.match(/^(#{1,6})\s+(.+)$/);
-    if (match) {
-      const level = match[1].length;
-      const text = match[2].trim();
-      // Use github-slugger to match rehype-slug's ID generation
-      const id = slugger.slug(text);
-      
-      toc.push({ id, text, level });
-    }
-  }
-  
-  return toc;
-}
 
 // Helper function to extract the first image from markdown content
 // Regex patterns declared as constants for better performance

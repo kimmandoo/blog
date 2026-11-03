@@ -5,7 +5,7 @@ import { useTheme } from './ThemeProvider';
 const themeOptions = [
   {
     value: 'light',
-    label: 'Light',
+    label: '밝은 테마',
     icon: (
       <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="3.5" />
@@ -15,7 +15,7 @@ const themeOptions = [
   },
   {
     value: 'dark',
-    label: 'Dark',
+    label: '어두운 테마',
     icon: (
       <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M20.2 14.4A7.7 7.7 0 0 1 9.6 3.8 8.2 8.2 0 1 0 20.2 14.4Z" />
@@ -25,7 +25,7 @@ const themeOptions = [
   },
   {
     value: 'system',
-    label: 'System',
+    label: '기기 설정에 맞추기',
     icon: (
       <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect x="5" y="6" width="14" height="10" rx="3" />
@@ -40,7 +40,7 @@ export function ThemeToggle() {
   const { theme, setTheme, resolvedTheme } = useTheme();
 
   return (
-    <div className="theme-toggle" role="group" aria-label={`Theme: ${theme}, resolved ${resolvedTheme}`}>
+    <div className="theme-toggle" role="group" aria-label={`화면 테마 (현재 ${resolvedTheme === 'dark' ? '어두운 화면' : '밝은 화면'})`}>
       {themeOptions.map((option) => {
         return (
           <button

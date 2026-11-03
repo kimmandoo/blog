@@ -60,23 +60,44 @@ test('unclassified notes remain reachable and unfiltered archives have no hidden
   assert.equal(normalizePsLanguage(' C# '), 'csharp');
 });
 
-test('PS filter URLs round-trip languages and tags without losing punctuation', () => {
-  const href = getPsArchiveHref({ language: 'C++', tag: 'queue & heap' });
+test('PS search composes with language and tag filters without changing taxonomy counts', () => {
+  const posts = [
+    note('ps/first', { title: 'Priority Queue', language: 'cpp', tags: ['heap'] }),
+    note('ps/second', { title: 'Queue', language: 'python', tags: ['heap'] }),
+    note('ps/third', { excerpt: 'Queue traversal', language: 'cpp', tags: ['graph'] }),
+  ];
+  const archive = getPsArchive(posts, { language: 'C++', tag: 'heap', q: ' QUEUE ' });
+
+  assert.deepEqual(archive.posts.map(post => post.slug), ['ps/first']);
+  assert.equal(archive.total, 3);
+  assert.deepEqual(archive.languages, [{ language: 'cpp', count: 2 }, { language: 'python', count: 1 }]);
+  assert.deepEqual(archive.tags, [{ tag: 'graph', count: 1 }, { tag: 'heap', count: 2 }]);
+  assert.deepEqual(getPsArchive(posts, { q: 'queue traversal' }).posts.map(post => post.slug), ['ps/third']);
+  assert.deepEqual(getPsArchive(posts, { q: 'HEAP' }).posts.map(post => post.slug), ['ps/first', 'ps/second']);
+  assert.deepEqual(getPsArchive(posts, { q: 'c++' }).posts.map(post => post.slug), ['ps/first', 'ps/third']);
+  assert.deepEqual(getPsArchive(posts, { q: 'missing' }).posts, []);
+  assert.equal(getPsArchive(posts, { q: ' ' }).posts.length, 3);
+});
+
+test('PS filter URLs round-trip languages, tags and queries without losing punctuation', () => {
+  const href = getPsArchiveHref({ language: 'C++', tag: 'queue & heap', q: 'queue & heap ' });
   const params = new URL(href, 'https://example.com').searchParams;
   const archive = getPsArchive([
     note('ps/heap', { language: 'cpp', tags: ['queue & heap'] }),
-  ], { language: params.get('language'), tag: params.get('tag') });
+  ], { language: params.get('language'), tag: params.get('tag'), q: params.get('q') });
 
   assert.equal(params.get('language'), 'cpp');
   assert.equal(params.get('tag'), 'queue & heap');
+  assert.equal(params.get('q'), 'queue & heap ');
   assert.equal(archive.posts.length, 1);
   assert.equal(getPsArchiveHref(), '/coding-test');
   assert.equal(getPsArchiveHref({ language: 'cpp' }), '/coding-test?language=cpp');
   assert.equal(getPsArchiveHref({ tag: 'heap' }), '/coding-test?tag=heap');
+  assert.equal(getPsArchiveHref({ q: ' ' }), '/coding-test');
   assert.equal(getSearchParamValue(['cpp', 'python']), 'cpp');
 });
 
-test('language and tag filters are noindex, follow with an unfiltered PS canonical', () => {
+test('language, tag and search filters are noindex, follow with an unfiltered PS canonical', () => {
   for (const params of [
     { language: 'cpp' },
     { language: 'unknown' },
@@ -84,6 +105,8 @@ test('language and tag filters are noindex, follow with an unfiltered PS canonic
     { language: ['cpp', 'python'] },
     { tag: 'heap' },
     { language: 'cpp', tag: 'heap' },
+    { q: 'queue' },
+    { language: 'cpp', tag: 'heap', q: 'queue' },
   ]) {
     const metadata = createCodingTestPageMetadata(params);
     assert.equal(metadata.robots?.index, false);
@@ -92,7 +115,7 @@ test('language and tag filters are noindex, follow with an unfiltered PS canonic
     assert.equal(metadata.alternates?.canonical, 'https://kimmandoo.vercel.app/coding-test');
   }
 
-  for (const params of [{}, { language: ' ', tag: '' }, { language: [], tag: [] }]) {
+  for (const params of [{}, { language: ' ', tag: '', q: ' ' }, { language: [], tag: [], q: [] }]) {
     const metadata = createCodingTestPageMetadata(params);
     assert.equal(metadata.robots, undefined);
     assert.equal(metadata.alternates?.canonical, 'https://kimmandoo.vercel.app/coding-test');

@@ -97,7 +97,7 @@ export function createCodingTestPageMetadata(searchParams: SearchParams): Metada
     title: 'PS',
     description: '코테 노트',
     canonicalPath: '/coding-test',
-    noIndex: hasActiveSearchFilter(searchParams, ['language', 'tag']),
+    noIndex: hasActiveSearchFilter(searchParams, ['language', 'tag', 'q']),
   });
 }
 

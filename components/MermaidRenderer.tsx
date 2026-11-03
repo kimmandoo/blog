@@ -2,13 +2,13 @@
 
 import { useEffect } from 'react';
 
-import { getMermaidSizing } from '@/lib/mermaidSizing.mjs';
+import { getMermaidSizing, readSvgGeometry } from '@/lib/mermaidSizing.mjs';
 
 const VIEWPORT_MARGIN = '200px';
 const MIN_SCALE = 0.5;
 const MAX_SCALE = 4;
-const ZOOM_STEP = 0.15;
-const PAN_STEP = 32;
+const ZOOM_STEP = 0.25;
+const DIAGRAM_FONT_FAMILY = 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
 const BUTTON_FEEDBACK_MS = 1400;
 
 type MermaidApi = typeof import('mermaid').default;
@@ -18,10 +18,11 @@ let mermaidRenderQueue: Promise<unknown> = Promise.resolve();
 let renderSequence = 0;
 type DiagramAction = 'zoom-in' | 'zoom-out' | 'reset' | 'copy-source' | 'download-svg';
 type FeedbackState = 'idle' | 'success' | 'error';
+type DiagramControls = { resize: () => void; cleanup: () => void };
 
 const ACTION_BUTTONS: Record<DiagramAction, { label: string; icon: string }> = {
   'zoom-in': {
-    label: 'Zoom in',
+    label: '확대',
     icon: [
       '<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">',
       '<path d="M5 12h14"></path>',
@@ -30,7 +31,7 @@ const ACTION_BUTTONS: Record<DiagramAction, { label: string; icon: string }> = {
     ].join(''),
   },
   'zoom-out': {
-    label: 'Zoom out',
+    label: '축소',
     icon: [
       '<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">',
       '<path d="M5 12h14"></path>',
@@ -38,7 +39,7 @@ const ACTION_BUTTONS: Record<DiagramAction, { label: string; icon: string }> = {
     ].join(''),
   },
   reset: {
-    label: 'Reset view',
+    label: '초기화',
     icon: [
       '<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">',
       '<path d="M3 12a9 9 0 1 0 3-6.7"></path>',
@@ -47,7 +48,7 @@ const ACTION_BUTTONS: Record<DiagramAction, { label: string; icon: string }> = {
     ].join(''),
   },
   'copy-source': {
-    label: 'Copy Mermaid source',
+    label: 'Mermaid 원본 복사',
     icon: [
       '<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">',
       '<rect x="9" y="9" width="13" height="13" rx="2"></rect>',
@@ -56,7 +57,7 @@ const ACTION_BUTTONS: Record<DiagramAction, { label: string; icon: string }> = {
     ].join(''),
   },
   'download-svg': {
-    label: 'Download SVG',
+    label: 'SVG 저장',
     icon: [
       '<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">',
       '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>',
@@ -84,7 +85,7 @@ function resolveMermaidThemeVariables() {
   if (isDarkTheme()) {
     return {
       background: '#1f2937',
-      fontFamily: 'inherit',
+      fontFamily: DIAGRAM_FONT_FAMILY,
       lineColor: '#94a3b8',
       mainBkg: '#111827',
       nodeBorder: '#475569',
@@ -97,7 +98,7 @@ function resolveMermaidThemeVariables() {
 
   return {
     background: '#f9fafb',
-    fontFamily: 'inherit',
+    fontFamily: DIAGRAM_FONT_FAMILY,
     lineColor: '#64748b',
     mainBkg: '#ffffff',
     nodeBorder: '#cbd5e1',
@@ -129,38 +130,17 @@ function showSkeleton(container: HTMLElement) {
 }
 
 function clearContainerState(container: HTMLElement) {
-  container.classList.remove('mermaid--loading', 'mermaid--loaded', 'mermaid--error', 'mermaid--zoomed');
+  container.classList.remove('mermaid--loading', 'mermaid--loaded', 'mermaid--error');
   container.setAttribute('aria-busy', 'false');
   container.querySelector('.mermaid__skeleton')?.remove();
   container.querySelector('.mermaid__svg-wrap')?.remove();
   container.querySelector('.mermaid__fallback')?.remove();
   container.querySelector('.mermaid__toolbar')?.remove();
-}
-
-function normalizeSvg(svg: SVGSVGElement, wrap: HTMLElement, container: HTMLElement) {
-  const { isPortrait, targetWidth } = getMermaidSizing({
-    viewBox: svg.getAttribute('viewBox'),
-    widthAttr: svg.getAttribute('width'),
-    heightAttr: svg.getAttribute('height'),
-    containerWidth: container.clientWidth,
-  });
-
-  svg.removeAttribute('width');
-  svg.removeAttribute('height');
-  svg.style.width = targetWidth > 0 ? `${targetWidth}px` : '100%';
-  svg.style.maxWidth = '100%';
-  svg.style.height = 'auto';
-  svg.style.display = 'block';
-  svg.style.transformOrigin = '0 0';
-  wrap.classList.toggle('mermaid__svg-wrap--portrait', isPortrait);
+  container.querySelector('.mermaid__hint')?.remove();
 }
 
 function clampScale(scale: number) {
   return Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale));
-}
-
-function shouldCapturePointerGesture(state: { scale: number; panX: number; panY: number }) {
-  return state.scale > 1 || state.panX !== 0 || state.panY !== 0;
 }
 
 function createToolbarButton(action: DiagramAction) {
@@ -172,7 +152,7 @@ function createToolbarButton(action: DiagramAction) {
   button.dataset.action = action;
   button.setAttribute('aria-label', content.label);
   button.title = content.label;
-  button.innerHTML = `${content.icon}<span class="mermaid__button-label">${content.label}</span>`;
+  button.innerHTML = `${content.icon}<span class="${action === 'reset' ? 'mermaid__reset-label' : 'mermaid__button-label'}">${content.label}</span>`;
 
   return button;
 }
@@ -184,8 +164,18 @@ function setButtonFeedback(button: HTMLElement, state: FeedbackState) {
 
 function serializeSvg(svg: SVGSVGElement) {
   const clone = svg.cloneNode(true) as SVGSVGElement;
-  clone.style.removeProperty('transform');
-  clone.style.removeProperty('transition');
+  const geometry = readSvgGeometry({
+    viewBox: clone.getAttribute('viewBox'),
+    widthAttr: clone.getAttribute('width'),
+    heightAttr: clone.getAttribute('height'),
+  });
+  if (geometry) {
+    clone.setAttribute('width', String(geometry.width));
+    clone.setAttribute('height', String(geometry.height));
+  }
+  clone.style.removeProperty('width');
+  clone.style.removeProperty('height');
+  clone.style.removeProperty('max-width');
 
   if (!clone.getAttribute('xmlns')) {
     clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
@@ -210,138 +200,131 @@ function downloadSvg(svg: SVGSVGElement, container: HTMLElement) {
   window.setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 
-function attachDiagramControls(container: HTMLElement, wrap: HTMLElement) {
+function attachDiagramControls(container: HTMLElement, wrap: HTMLElement): DiagramControls {
   const svg = wrap.querySelector<SVGSVGElement>('svg');
-
-  if (!svg) {
-    return () => {};
+  const geometry = svg && readSvgGeometry({
+    viewBox: svg.getAttribute('viewBox'),
+    widthAttr: svg.getAttribute('width'),
+    heightAttr: svg.getAttribute('height'),
+  });
+  if (!svg || !geometry) {
+    throw new Error('Mermaid returned an SVG without valid dimensions.');
   }
 
-  const state = { scale: 1, panX: 0, panY: 0 };
-  const feedbackTimers = new Map<HTMLElement, number>();
-  let dragging = false;
-  let startX = 0;
-  let startY = 0;
-  let startPanX = 0;
-  let startPanY = 0;
-  let lastTouchDistance = 0;
-
+  let userScale: number | null = null;
+  let currentScale = 1;
+  const feedbackTimers = new Map<HTMLButtonElement, number>();
   wrap.tabIndex = 0;
-  wrap.setAttribute('aria-label', 'Interactive Mermaid diagram');
+  wrap.setAttribute('role', 'region');
+  wrap.setAttribute('aria-label', '다이어그램. 스크롤 또는 방향키로 이동, 더하기와 빼기로 확대 및 축소');
 
   const toolbar = document.createElement('div');
   toolbar.className = 'mermaid__toolbar';
-  toolbar.setAttribute('aria-label', 'Mermaid diagram controls');
-  toolbar.append(
-    createToolbarButton('zoom-in'),
-    createToolbarButton('zoom-out'),
-    createToolbarButton('reset'),
-    createToolbarButton('copy-source'),
-    createToolbarButton('download-svg'),
-  );
+  toolbar.setAttribute('role', 'group');
+  toolbar.setAttribute('aria-label', '다이어그램 보기 설정');
+  const zoomControls = document.createElement('div');
+  zoomControls.className = 'mermaid__zoom-controls';
+  const zoomOut = createToolbarButton('zoom-out');
+  const zoomIn = createToolbarButton('zoom-in');
+  const zoomLevel = document.createElement('output');
+  zoomLevel.className = 'mermaid__zoom-level';
+  zoomLevel.setAttribute('aria-label', '도표 배율');
+  zoomLevel.setAttribute('aria-live', 'polite');
+  zoomControls.append(zoomOut, zoomLevel, zoomIn, createToolbarButton('reset'));
+  const actions = document.createElement('div');
+  actions.className = 'mermaid__actions';
+  actions.append(createToolbarButton('copy-source'), createToolbarButton('download-svg'));
+  toolbar.append(zoomControls, actions);
   container.insertBefore(toolbar, wrap);
 
-  const showButtonFeedback = (button: HTMLElement, feedback: Exclude<FeedbackState, 'idle'>) => {
-    const timer = feedbackTimers.get(button);
-    if (timer) {
-      window.clearTimeout(timer);
-    }
+  const hint = document.createElement('p');
+  hint.className = 'mermaid__hint';
+  hint.textContent = '도표 안에서 스크롤해 이동할 수 있습니다.';
+  container.appendChild(hint);
 
+  const resize = () => {
+    const { targetWidth } = getMermaidSizing({
+      viewBox: svg.getAttribute('viewBox'),
+      widthAttr: String(geometry.width),
+      heightAttr: String(geometry.height),
+      containerWidth: wrap.clientWidth,
+    });
+    currentScale = userScale ?? targetWidth / geometry.width;
+    const width = geometry.width * currentScale;
+    const height = geometry.height * currentScale;
+    // Resize the SVG viewport, never its compositing layer. Shapes, text and
+    // markers share the viewBox transform, and native scroll bounds stay valid.
+    svg.setAttribute('width', String(width));
+    svg.setAttribute('height', String(height));
+    svg.style.width = `${width}px`;
+    svg.style.height = `${height}px`;
+    svg.style.maxWidth = 'none';
+    zoomLevel.textContent = `${Math.round(currentScale * 100)}%`;
+    zoomOut.disabled = currentScale <= MIN_SCALE;
+    zoomIn.disabled = currentScale >= MAX_SCALE;
+    hint.hidden = width <= wrap.clientWidth && height <= wrap.clientHeight;
+  };
+
+  const setScale = (scale: number) => {
+    const nextScale = clampScale(scale);
+    if (nextScale === currentScale) return;
+    const viewport = wrap.getBoundingClientRect();
+    const before = svg.getBoundingClientRect();
+    const centerX = viewport.left + wrap.clientWidth / 2;
+    const centerY = viewport.top + wrap.clientHeight / 2;
+    const x = (centerX - before.left) / before.width;
+    const y = (centerY - before.top) / before.height;
+    userScale = nextScale;
+    resize();
+    const after = svg.getBoundingClientRect();
+    wrap.scrollLeft += after.left + x * after.width - centerX;
+    wrap.scrollTop += after.top + y * after.height - centerY;
+  };
+
+  const resetZoom = () => {
+    userScale = null;
+    resize();
+    wrap.scrollLeft = 0;
+    wrap.scrollTop = 0;
+  };
+
+  const showButtonFeedback = (button: HTMLButtonElement, feedback: Exclude<FeedbackState, 'idle'>) => {
+    const timer = feedbackTimers.get(button);
+    if (timer) window.clearTimeout(timer);
     setButtonFeedback(button, feedback);
+    const label = feedback === 'success' ? '완료' : '실패';
+    button.setAttribute('aria-label', label);
+    button.title = label;
     feedbackTimers.set(button, window.setTimeout(() => {
       setButtonFeedback(button, 'idle');
+      const originalLabel = ACTION_BUTTONS[button.dataset.action as DiagramAction].label;
+      button.setAttribute('aria-label', originalLabel);
+      button.title = originalLabel;
       feedbackTimers.delete(button);
     }, BUTTON_FEEDBACK_MS));
   };
 
-  const applyTransform = (smooth: boolean) => {
-    svg.style.transition = smooth ? 'transform 150ms ease-out' : 'none';
-    svg.style.transform = `translate(${state.panX}px, ${state.panY}px) scale(${state.scale})`;
-    container.classList.toggle('mermaid--zoomed', shouldCapturePointerGesture(state));
-  };
-
-  const zoomAt = (delta: number, clientX: number, clientY: number) => {
-    const rect = wrap.getBoundingClientRect();
-    const offsetX = clientX - rect.left + wrap.scrollLeft;
-    const offsetY = clientY - rect.top + wrap.scrollTop;
-    const previousScale = state.scale;
-    const nextScale = clampScale(previousScale + delta);
-
-    if (nextScale === previousScale) {
-      return;
-    }
-
-    const ratio = nextScale / previousScale;
-    state.panX = offsetX - ratio * (offsetX - state.panX);
-    state.panY = offsetY - ratio * (offsetY - state.panY);
-    state.scale = nextScale;
-    applyTransform(false);
-  };
-
-  const resetZoom = () => {
-    state.scale = 1;
-    state.panX = 0;
-    state.panY = 0;
-    applyTransform(true);
-  };
-
-  const panBy = (deltaX: number, deltaY: number) => {
-    if (!shouldCapturePointerGesture(state)) {
-      return;
-    }
-
-    state.panX += deltaX;
-    state.panY += deltaY;
-    applyTransform(false);
-  };
-
   const handleToolbarClick = (event: Event) => {
     const button = event.target instanceof Element
-      ? event.target.closest<HTMLElement>('[data-action]')
+      ? event.target.closest<HTMLButtonElement>('[data-action]')
       : null;
-
-    if (!button) {
-      return;
-    }
-
-    const action = button.dataset.action as DiagramAction | undefined;
-    const rect = wrap.getBoundingClientRect();
-    const centerX = rect.left + (rect.width / 2);
-    const centerY = rect.top + (rect.height / 2);
-
+    if (!button) return;
+    const action = button.dataset.action as DiagramAction;
     if (action === 'zoom-in') {
-      zoomAt(ZOOM_STEP, centerX, centerY);
-      return;
-    }
-
-    if (action === 'zoom-out') {
-      zoomAt(-ZOOM_STEP, centerX, centerY);
-      return;
-    }
-
-    if (action === 'reset') {
+      setScale(currentScale + ZOOM_STEP);
+    } else if (action === 'zoom-out') {
+      setScale(currentScale - ZOOM_STEP);
+    } else if (action === 'reset') {
       resetZoom();
-      return;
-    }
-
-    if (action === 'copy-source') {
+    } else if (action === 'copy-source') {
       void Promise.resolve()
-        .then(() => {
-          if (!navigator.clipboard?.writeText) {
-            throw new Error('Clipboard API is unavailable.');
-          }
-
-          return navigator.clipboard.writeText(container.dataset.source ?? '');
-        })
+        .then(() => navigator.clipboard.writeText(container.dataset.source ?? ''))
         .then(() => showButtonFeedback(button, 'success'))
         .catch((error) => {
           showButtonFeedback(button, 'error');
           console.error('Failed to copy Mermaid source.', error);
         });
-      return;
-    }
-
-    if (action === 'download-svg') {
+    } else if (action === 'download-svg') {
       try {
         downloadSvg(svg, container);
         showButtonFeedback(button, 'success');
@@ -352,193 +335,42 @@ function attachDiagramControls(container: HTMLElement, wrap: HTMLElement) {
     }
   };
 
-  const handleWheel = (event: WheelEvent) => {
-    if (!event.ctrlKey && !shouldCapturePointerGesture(state)) {
-      return;
-    }
-
-    event.preventDefault();
-    zoomAt(event.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP, event.clientX, event.clientY);
-  };
-
-  const handleMouseDown = (event: MouseEvent) => {
-    if (event.button !== 0 || !shouldCapturePointerGesture(state)) {
-      return;
-    }
-
-    dragging = true;
-    startX = event.clientX;
-    startY = event.clientY;
-    startPanX = state.panX;
-    startPanY = state.panY;
-    wrap.classList.add('grabbing');
-    container.classList.add('mermaid--panning');
-    event.preventDefault();
-  };
-
-  const handleMouseMove = (event: MouseEvent) => {
-    if (!dragging) {
-      return;
-    }
-
-    state.panX = startPanX + (event.clientX - startX);
-    state.panY = startPanY + (event.clientY - startY);
-    applyTransform(false);
-  };
-
-  const handleMouseUp = () => {
-    if (!dragging) {
-      return;
-    }
-
-    dragging = false;
-    wrap.classList.remove('grabbing');
-    container.classList.remove('mermaid--panning');
-  };
-
-  const handleTouchStart = (event: TouchEvent) => {
-    if (event.touches.length === 2) {
-      event.preventDefault();
-      lastTouchDistance = Math.hypot(
-        event.touches[0].clientX - event.touches[1].clientX,
-        event.touches[0].clientY - event.touches[1].clientY,
-      );
-      return;
-    }
-
-    if (event.touches.length === 1 && state.scale > 1) {
-      dragging = true;
-      startX = event.touches[0].clientX;
-      startY = event.touches[0].clientY;
-      startPanX = state.panX;
-      startPanY = state.panY;
-      wrap.classList.add('grabbing');
-      container.classList.add('mermaid--panning');
-    }
-  };
-
-  const handleTouchMove = (event: TouchEvent) => {
-    if (event.touches.length === 2 && lastTouchDistance > 0) {
-      event.preventDefault();
-
-      const distance = Math.hypot(
-        event.touches[0].clientX - event.touches[1].clientX,
-        event.touches[0].clientY - event.touches[1].clientY,
-      );
-      const centerX = (event.touches[0].clientX + event.touches[1].clientX) / 2;
-      const centerY = (event.touches[0].clientY + event.touches[1].clientY) / 2;
-
-      zoomAt((distance - lastTouchDistance) * 0.005, centerX, centerY);
-      lastTouchDistance = distance;
-      return;
-    }
-
-    if (event.touches.length === 1 && dragging) {
-      event.preventDefault();
-      state.panX = startPanX + (event.touches[0].clientX - startX);
-      state.panY = startPanY + (event.touches[0].clientY - startY);
-      applyTransform(false);
-    }
-  };
-
-  const handleTouchEnd = () => {
-    dragging = false;
-    lastTouchDistance = 0;
-    wrap.classList.remove('grabbing');
-    container.classList.remove('mermaid--panning');
-  };
-
-  const handleDoubleClick = (event: MouseEvent) => {
-    event.preventDefault();
-    resetZoom();
-  };
-
   const handleKeyDown = (event: KeyboardEvent) => {
-    const rect = wrap.getBoundingClientRect();
-    const centerX = rect.left + (rect.width / 2);
-    const centerY = rect.top + (rect.height / 2);
-
     if (event.key === '+' || event.key === '=') {
       event.preventDefault();
-      zoomAt(ZOOM_STEP, centerX, centerY);
-      return;
-    }
-
-    if (event.key === '-' || event.key === '_') {
+      setScale(currentScale + ZOOM_STEP);
+    } else if (event.key === '-' || event.key === '_') {
       event.preventDefault();
-      zoomAt(-ZOOM_STEP, centerX, centerY);
-      return;
-    }
-
-    if (event.key === '0' || event.key === 'Escape') {
+      setScale(currentScale - ZOOM_STEP);
+    } else if (event.key === '0' || event.key === 'Escape') {
       event.preventDefault();
       resetZoom();
-      return;
     }
-
-    if (event.key === 'ArrowLeft') {
-      event.preventDefault();
-      panBy(PAN_STEP, 0);
-      return;
-    }
-
-    if (event.key === 'ArrowRight') {
-      event.preventDefault();
-      panBy(-PAN_STEP, 0);
-      return;
-    }
-
-    if (event.key === 'ArrowUp') {
-      event.preventDefault();
-      panBy(0, PAN_STEP);
-      return;
-    }
-
-    if (event.key === 'ArrowDown') {
-      event.preventDefault();
-      panBy(0, -PAN_STEP);
-    }
+    // Direction keys, wheel and touch retain the browser's native scrolling.
   };
 
+  resize();
   toolbar.addEventListener('click', handleToolbarClick);
-  wrap.addEventListener('wheel', handleWheel, { passive: false });
-  wrap.addEventListener('mousedown', handleMouseDown);
-  wrap.addEventListener('touchstart', handleTouchStart, { passive: false });
-  wrap.addEventListener('touchmove', handleTouchMove, { passive: false });
-  wrap.addEventListener('touchend', handleTouchEnd);
-  wrap.addEventListener('touchcancel', handleTouchEnd);
-  wrap.addEventListener('dblclick', handleDoubleClick);
   wrap.addEventListener('keydown', handleKeyDown);
-  document.addEventListener('mousemove', handleMouseMove);
-  document.addEventListener('mouseup', handleMouseUp);
-
-  return () => {
-    toolbar.removeEventListener('click', handleToolbarClick);
-    wrap.removeEventListener('wheel', handleWheel);
-    wrap.removeEventListener('mousedown', handleMouseDown);
-    wrap.removeEventListener('touchstart', handleTouchStart);
-    wrap.removeEventListener('touchmove', handleTouchMove);
-    wrap.removeEventListener('touchend', handleTouchEnd);
-    wrap.removeEventListener('touchcancel', handleTouchEnd);
-    wrap.removeEventListener('dblclick', handleDoubleClick);
-    wrap.removeEventListener('keydown', handleKeyDown);
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', handleMouseUp);
-    feedbackTimers.forEach((timer) => window.clearTimeout(timer));
-    feedbackTimers.clear();
-    wrap.classList.remove('grabbing');
-    wrap.removeAttribute('tabindex');
-    wrap.removeAttribute('aria-label');
-    container.classList.remove('mermaid--panning', 'mermaid--zoomed');
-    toolbar.remove();
-    svg.style.removeProperty('transition');
-    svg.style.removeProperty('transform');
+  return {
+    resize,
+    cleanup: () => {
+      toolbar.removeEventListener('click', handleToolbarClick);
+      wrap.removeEventListener('keydown', handleKeyDown);
+      feedbackTimers.forEach((timer) => window.clearTimeout(timer));
+      feedbackTimers.clear();
+      wrap.removeAttribute('tabindex');
+      wrap.removeAttribute('role');
+      wrap.removeAttribute('aria-label');
+      toolbar.remove();
+      hint.remove();
+    },
   };
 }
 
 function createDiagramContainer(source: string, diagramIndex: number) {
   const container = document.createElement('div');
-  // Article typography changes HTML-label line heights after Mermaid measures them.
+  // Keep article typography out of the diagram's own SVG text styling.
   container.className = 'mermaid not-prose';
   container.dataset.diagramIndex = String(diagramIndex);
   container.dataset.source = source;
@@ -582,7 +414,7 @@ export function MermaidRenderer() {
     let disposed = false;
     let mermaidPromise: Promise<MermaidApi> | null = null;
     const cleanupFns: Array<() => void> = [];
-    const controlCleanupMap = new WeakMap<HTMLElement, () => void>();
+    const controlsMap = new WeakMap<HTMLElement, DiagramControls>();
     const renderTokenMap = new WeakMap<HTMLElement, number>();
 
     const loadMermaid = async () => {
@@ -621,6 +453,8 @@ export function MermaidRenderer() {
           mermaid.initialize({
             startOnLoad: false,
             securityLevel: 'strict',
+            htmlLabels: false,
+            fontFamily: DIAGRAM_FONT_FAMILY,
             suppressErrorRendering: true,
             theme: resolveMermaidTheme(),
             themeVariables: resolveMermaidThemeVariables(),
@@ -636,8 +470,8 @@ export function MermaidRenderer() {
           return;
         }
 
-        controlCleanupMap.get(container)?.();
-        controlCleanupMap.delete(container);
+        controlsMap.get(container)?.cleanup();
+        controlsMap.delete(container);
         clearContainerState(container);
 
         const wrap = document.createElement('div');
@@ -645,23 +479,17 @@ export function MermaidRenderer() {
         wrap.innerHTML = result.svg;
         container.appendChild(wrap);
 
-        const svgElement = wrap.querySelector<SVGSVGElement>('svg');
-        if (svgElement) {
-          normalizeSvg(svgElement, wrap, container);
-        }
-
         result.bindFunctions?.(wrap);
         container.classList.add('mermaid--loaded');
 
-        const cleanupControls = attachDiagramControls(container, wrap);
-        controlCleanupMap.set(container, cleanupControls);
+        controlsMap.set(container, attachDiagramControls(container, wrap));
       } catch (error) {
         if (!isCurrent()) {
           return;
         }
 
-        controlCleanupMap.get(container)?.();
-        controlCleanupMap.delete(container);
+        controlsMap.get(container)?.cleanup();
+        controlsMap.delete(container);
         clearContainerState(container);
         container.classList.add('mermaid--error');
 
@@ -707,11 +535,7 @@ export function MermaidRenderer() {
     };
 
     const resizeContainer = (container: HTMLElement) => {
-      const wrap = container.querySelector<HTMLElement>('.mermaid__svg-wrap');
-      const svg = wrap?.querySelector<SVGSVGElement>('svg');
-      if (wrap && svg) {
-        normalizeSvg(svg, wrap, container);
-      }
+      controlsMap.get(container)?.resize();
     };
 
     observeContainers();
@@ -742,7 +566,7 @@ export function MermaidRenderer() {
           if (disposed || widths.get(target) === contentRect.width) return;
           widths.set(target, contentRect.width);
           // Only refit the existing SVG. Rendering changes height and must never
-          // feed back into Mermaid or reset the reader's zoom/pan controls.
+          // feed back into Mermaid or reset the reader's zoom/scroll position.
           resizeContainer(target as HTMLElement);
         });
       });
@@ -759,7 +583,7 @@ export function MermaidRenderer() {
 
     cleanupFns.push(() => {
       containers.forEach((container) => {
-        controlCleanupMap.get(container)?.();
+        controlsMap.get(container)?.cleanup();
       });
     });
 

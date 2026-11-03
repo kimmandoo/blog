@@ -18,28 +18,49 @@ export function TableOfContents({ items, compact = false }: TOCProps) {
   const [activeId, setActiveId] = useState<string>('');
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveId(entry.target.id);
-          }
-        });
-      },
-      { rootMargin: '-100px 0px -80% 0px' }
-    );
+    const headings = items
+      .map((item) => document.getElementById(item.id))
+      .filter((heading): heading is HTMLElement => heading !== null);
+    let frame = 0;
 
-    const headings = document.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]');
-    headings.forEach((heading) => observer.observe(heading));
+    const updateActiveHeading = () => {
+      frame = 0;
+      let currentId = '';
+
+      for (const heading of headings) {
+        const margin = Number.parseFloat(getComputedStyle(heading).scrollMarginTop) || 0;
+        if (heading.getBoundingClientRect().top > margin + 1) break;
+        currentId = heading.id;
+      }
+
+      setActiveId(currentId);
+    };
+    const scheduleUpdate = () => {
+      if (!frame) frame = window.requestAnimationFrame(updateActiveHeading);
+    };
+
+    window.addEventListener('scroll', scheduleUpdate, { passive: true });
+    window.addEventListener('resize', scheduleUpdate);
+    window.addEventListener('hashchange', scheduleUpdate);
+    const observer = new ResizeObserver(scheduleUpdate);
+    const content = document.getElementById('article-content');
+    if (content) observer.observe(content);
+    scheduleUpdate();
 
     return () => {
-      headings.forEach((heading) => observer.unobserve(heading));
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', scheduleUpdate);
+      window.removeEventListener('resize', scheduleUpdate);
+      window.removeEventListener('hashchange', scheduleUpdate);
+      observer.disconnect();
     };
-  }, []);
+  }, [items]);
 
   if (items.length === 0) {
     return null;
   }
+
+  const baseLevel = Math.min(...items.map((item) => item.level));
 
   const links = (
     <ul className={compact ? 'space-y-1' : 'space-y-1.5 max-h-[calc(100vh-200px)] overflow-y-auto'}>
@@ -49,31 +70,16 @@ export function TableOfContents({ items, compact = false }: TOCProps) {
         return (
           <li
             key={item.id}
-            style={{ paddingLeft: `${(item.level - 1) * 0.75}rem` }}
+            style={{ paddingLeft: `${Math.max(0, item.level - baseLevel) * 0.75}rem` }}
           >
             <a
-              href={`#${item.id}`}
+              href={`#${encodeURIComponent(item.id)}`}
               aria-current={activeId === item.id ? 'location' : undefined}
-              className={`mandoo-toc-link block py-1 text-sm leading-relaxed ${themeConfig.animations.transition} ${
+              className={`mandoo-toc-link block break-words py-2 text-sm leading-relaxed ${themeConfig.animations.transition} ${
                 isActive
                   ? `${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} font-semibold border-l-2 border-[var(--foreground)] pl-3 -ml-3`
                   : `${themeConfig.colors.light.text.secondary} ${themeConfig.colors.dark.text.secondary} hover:underline`
               }`}
-              onClick={(e) => {
-                e.preventDefault();
-                setActiveId(item.id);
-
-                const element = document.getElementById(item.id);
-                if (element) {
-                  const offset = 80;
-                  const elementPosition = element.getBoundingClientRect().top;
-                  const offsetPosition = elementPosition + window.scrollY - offset;
-                  window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth',
-                  });
-                }
-              }}
             >
               {item.text}
             </a>
@@ -92,7 +98,7 @@ export function TableOfContents({ items, compact = false }: TOCProps) {
   }
 
   return (
-    <nav className="sticky top-24">
+    <nav className="sticky top-24" aria-label="글 목차">
       <div className={`${themeConfig.colors.light.background.card} ${themeConfig.colors.dark.background.card} border ${themeConfig.colors.light.border.primary} ${themeConfig.colors.dark.border.primary} p-5`}>
         <h3 className={`text-xs font-semibold ${themeConfig.colors.light.text.primary} ${themeConfig.colors.dark.text.primary} mb-4 pb-2 border-b ${themeConfig.colors.light.border.secondary} ${themeConfig.colors.dark.border.secondary}`}>
           목차

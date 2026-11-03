@@ -94,6 +94,7 @@ export default function RootLayout({
   return (
     <html lang="ko" suppressHydrationWarning>
       <body className={`${bodyFont.variable} ${editorialFont.variable} antialiased`}>
+        <a href="#main-content" className="skip-link">본문으로 바로가기</a>
         <ThemeProvider>
           <GoogleAnalytics />
           <GoogleAdsense />

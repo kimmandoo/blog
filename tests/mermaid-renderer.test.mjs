@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import ts from 'typescript';
 
-import { getMermaidSizing } from '../lib/mermaidSizing.mjs';
+import { getMermaidSizing, readSvgGeometry } from '../lib/mermaidSizing.mjs';
 
 const compiled = ts.transpileModule(
   fs.readFileSync(new URL('../components/MermaidRenderer.tsx', import.meta.url), 'utf8'),
@@ -22,6 +22,9 @@ class Element extends EventTarget {
     this.attributes = new Map();
     this.className = '';
     this.clientWidth = 800;
+    this.clientHeight = 500;
+    this.scrollLeft = 0;
+    this.scrollTop = 0;
     this.style = { removeProperty(name) { delete this[name]; } };
     this.classList = {
       contains: (name) => this.className.split(' ').includes(name),
@@ -43,6 +46,14 @@ class Element extends EventTarget {
   setAttribute(name, value) { this.attributes.set(name, value); }
   getAttribute(name) { return this.attributes.get(name) ?? null; }
   removeAttribute(name) { this.attributes.delete(name); }
+  getBoundingClientRect() {
+    return {
+      left: -this.parentElement?.scrollLeft || 0,
+      top: -this.parentElement?.scrollTop || 0,
+      width: Number.parseFloat(this.style.width) || this.clientWidth,
+      height: Number.parseFloat(this.style.height) || this.clientHeight,
+    };
+  }
   append(...children) { children.forEach((child) => this.appendChild(child)); }
   appendChild(child) {
     child.remove();
@@ -118,7 +129,7 @@ function setup(count = 1, renderResult = () => Promise.resolve({ svg: '<svg></sv
     exports, document, window, Element, IntersectionObserver, ResizeObserver, MutationObserver, console,
     require(specifier) {
       if (specifier === 'react') return { useEffect: (effect) => { cleanup = effect(); } };
-      if (specifier === '@/lib/mermaidSizing.mjs') return { getMermaidSizing };
+      if (specifier === '@/lib/mermaidSizing.mjs') return { getMermaidSizing, readSvgGeometry };
       if (specifier === 'mermaid') {
         imports++;
         return { default: {
@@ -153,7 +164,13 @@ test('lazy diagrams retain their SVG and controls through height and width chang
   assert.equal(env.calls.length, 1);
   const svg = container.querySelector('svg');
   const toolbar = container.querySelector('.mermaid__toolbar');
-  svg.style.transform = 'translate(20px, 10px) scale(2)';
+  const wrap = container.querySelector('.mermaid__svg-wrap');
+  const zoom = new Event('keydown', { cancelable: true });
+  zoom.key = '+';
+  wrap.dispatchEvent(zoom);
+  const zoomedWidth = svg.style.width;
+  wrap.scrollLeft = 20;
+  wrap.scrollTop = 10;
   const resize = env.observers.resize[0];
   assert.equal(resize.targets.has(env.document.documentElement), false);
   for (const height of [160, 400, 160, 400]) {
@@ -165,8 +182,9 @@ test('lazy diagrams retain their SVG and controls through height and width chang
   assert.equal(env.calls.length, 1, 'resizes must not invoke Mermaid rendering');
   assert.equal(container.querySelector('svg'), svg);
   assert.equal(container.querySelector('.mermaid__toolbar'), toolbar);
-  assert.equal(svg.style.width, '328px');
-  assert.equal(svg.style.transform, 'translate(20px, 10px) scale(2)');
+  assert.equal(svg.style.width, zoomedWidth, 'viewport resizing preserves explicit zoom');
+  assert.equal(wrap.scrollLeft, 20);
+  assert.equal(wrap.scrollTop, 10);
   env.theme('dark');
   assert.equal(container.querySelector('svg'), svg, 'keep the old diagram while rendering its theme');
   await settle();

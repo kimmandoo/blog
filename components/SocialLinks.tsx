@@ -53,8 +53,8 @@ export function SocialLinks() {
           target="_blank"
           rel="noopener noreferrer"
           className="social-link"
-          title={link.name}
-          aria-label={link.name}
+          title={`${link.name} (새 탭)`}
+          aria-label={`${link.name} (새 탭에서 열기)`}
         >
           {link.icon}
         </a>

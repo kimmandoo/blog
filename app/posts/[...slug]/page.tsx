@@ -79,9 +79,9 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
       />
 
       {/* Reading Progress Bar */}
-      <ReadingProgressBar readingTime={post.readingTime} />
+      <ReadingProgressBar />
       
-      <main className="reading-shell">
+      <main id="main-content" tabIndex={-1} className="reading-shell">
         <div className="mb-12">
           <Link 
             href="/"
@@ -143,9 +143,9 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
           </header>
 
           {post.toc && post.toc.length > 0 && (
-            <details className="mb-8 border-y border-[var(--border)] py-4 xl:hidden">
-              <summary className="cursor-pointer list-none text-sm font-semibold text-gray-700 dark:text-gray-200 [&::-webkit-details-marker]:hidden">
-                목차 보기
+            <details className="reading-toc-mobile mb-8 border-y border-[var(--border)] py-2">
+              <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-gray-700 dark:text-gray-200">
+                목차
               </summary>
               <TableOfContents items={post.toc} compact />
             </details>
@@ -155,7 +155,8 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
             <CodeBlockEnhancer />
             <MermaidRenderer />
             
-            <div 
+            <div
+              id="article-content"
               className={`prose ${themeConfig.prose.size} dark:prose-invert max-w-none
                 prose-headings:break-words prose-headings:font-semibold prose-headings:text-black dark:prose-headings:text-white prose-headings:scroll-mt-20
                 prose-h1:${themeConfig.prose.h1} prose-h1:mb-6 prose-h1:mt-12
@@ -194,7 +195,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
 
         {/* Table of Contents Sidebar - Fixed position to not affect content width */}
         {post.toc && post.toc.length > 0 && (
-          <aside className="hidden xl:block fixed right-8 top-24 w-56">
+          <aside className="reading-toc-sidebar fixed right-8 top-24 w-56">
             <TableOfContents items={post.toc} />
           </aside>
         )}

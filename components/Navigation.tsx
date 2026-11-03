@@ -8,15 +8,16 @@ import { SocialLinks } from '@/components/SocialLinks';
 
 export function Navigation() {
   const pathname = usePathname();
-  const isPs = pathname.startsWith('/coding-test');
+  const isPs = pathname === '/coding-test' || pathname.startsWith('/coding-test/');
+  const isPosts = pathname === '/' || pathname.startsWith('/posts/');
 
   return (
-    <header id="top" className="site-header">
+    <header id="top" tabIndex={-1} className="site-header">
       <div className="site-header-inner">
         <Link className="site-brand" href="/">{themeConfig.site.title}</Link>
         <nav aria-label="주요 메뉴" className="site-nav">
-          <Link href="/" aria-current={!isPs ? 'page' : undefined}>글</Link>
-          <Link href="/coding-test" aria-current={isPs ? 'page' : undefined}>PS</Link>
+          <Link href="/" aria-current={pathname === '/' ? 'page' : isPosts ? 'location' : undefined}>글</Link>
+          <Link href="/coding-test" aria-current={pathname === '/coding-test' ? 'page' : isPs ? 'location' : undefined}>PS</Link>
         </nav>
         <div className="header-actions" role="group" aria-label="소셜 링크 및 화면 설정">
           <SocialLinks />

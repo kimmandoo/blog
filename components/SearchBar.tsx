@@ -1,21 +1,50 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 interface SearchBarProps {
   query: string;
   onSearch: (query: string) => void;
   placeholder?: string;
+  inputId?: string;
+  statusId?: string;
+  onSearchEnd?: () => void;
 }
 
-export function SearchBar({ query, onSearch, placeholder = "제목, 내용, 태그로 검색" }: SearchBarProps) {
+export function SearchBar({
+  query,
+  onSearch,
+  placeholder = "제목, 요약, 태그로 검색",
+  inputId = 'archive-search',
+  statusId,
+  onSearchEnd,
+}: SearchBarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const composing = useRef(false);
+  const [draft, setDraft] = useState({ source: query, value: query });
+  if (draft.source !== query) {
+    setDraft({ source: query, value: query });
+  }
+
+  const clearSearch = () => {
+    setDraft({ source: query, value: '' });
+    onSearch('');
+    inputRef.current?.focus();
+  };
 
   return (
-    <div className="mandoo-search relative">
+    <form
+      className="mandoo-search relative"
+      role="search"
+      onSubmit={event => {
+        event.preventDefault();
+        if (!composing.current) onSearchEnd?.();
+      }}
+    >
       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
         <svg 
           className="mandoo-search__icon w-4 h-4"
+          aria-hidden="true"
           fill="none" 
           strokeWidth="2" 
           stroke="currentColor" 
@@ -26,31 +55,45 @@ export function SearchBar({ query, onSearch, placeholder = "제목, 내용, 태�
       </div>
       <input
         ref={inputRef}
+        id={inputId}
         type="search"
         aria-label="글 검색"
-        value={query}
-        onChange={(e) => onSearch(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === 'Escape') onSearch('');
+        aria-describedby={statusId}
+        value={draft.value}
+        onChange={event => {
+          const value = event.target.value;
+          setDraft({ source: query, value });
+          if (!composing.current) onSearch(value);
+        }}
+        onCompositionStart={() => { composing.current = true; }}
+        onCompositionEnd={event => {
+          composing.current = false;
+          const value = event.currentTarget.value;
+          setDraft({ source: query, value });
+          onSearch(value);
+        }}
+        onBlur={onSearchEnd}
+        onKeyDown={event => {
+          if (event.key === 'Escape' && !composing.current && !event.nativeEvent.isComposing && event.nativeEvent.keyCode !== 229) {
+            event.preventDefault();
+            clearSearch();
+          }
         }}
         placeholder={placeholder}
         className="w-full pl-10 pr-12"
       />
-      {query && (
+      {draft.value && (
         <button
           type="button"
-          onClick={() => {
-            onSearch('');
-            inputRef.current?.focus();
-          }}
+          onClick={clearSearch}
           aria-label="검색어 지우기"
           className="absolute inset-y-0 right-0 flex items-center"
         >
-          <svg className="w-4 h-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+          <svg aria-hidden="true" className="w-4 h-4" fill="none" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
             <path d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       )}
-    </div>
+    </form>
   );
 }

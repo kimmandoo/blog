@@ -7,6 +7,7 @@ import type { PositionedPostGraphNode } from '@/lib/postGraphLayout';
 export function PostGraph({ graph, positions }: { graph: PostGraphData; positions: PositionedPostGraphNode[] }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [active, setActive] = useState<string | null>(null);
+  const [pointerType, setPointerType] = useState('');
   // Reuse server positions: force calculations can differ slightly between JS engines.
   const { nodes, byId, neighbors, links, groups } = useMemo(() => {
     const nodes = positions;
@@ -35,8 +36,11 @@ export function PostGraph({ graph, positions }: { graph: PostGraphData; position
 
   function renderGraph(labels: boolean) {
     return (
-      <>
-        <svg className="post-graph-svg" viewBox="0 0 320 280" role="group" aria-label="게시글 연결 그래프" onMouseLeave={() => setActive(null)}>
+      <div
+        onPointerLeave={event => { if (event.pointerType === 'mouse') setActive(null); }}
+        onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setActive(null); }}
+      >
+        <svg className="post-graph-svg" viewBox="0 0 320 280" role="group" aria-label="게시글 연결 그래프">
           <g aria-hidden="true">
             {groups.map(group => {
               const isActive = activeNode?.category === group.name;
@@ -58,7 +62,15 @@ export function PostGraph({ graph, positions }: { graph: PostGraphData; position
             })}
           </g>
           {nodes.map(node => (
-            <a key={node.id} href={node.href} aria-label={node.title} onMouseEnter={() => setActive(node.id)} onFocus={() => setActive(node.id)} onBlur={() => setActive(null)} className={active === node.id || (active && neighbors.get(active)?.has(node.id)) ? 'is-active' : undefined}>
+            <a key={node.id} href={node.href} aria-label={node.title}
+              onPointerDown={event => setPointerType(event.pointerType)}
+              onClick={event => {
+                if (pointerType !== 'touch' || event.detail === 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                event.preventDefault();
+                setActive(node.id);
+              }}
+              onMouseEnter={() => setActive(node.id)} onFocus={() => setActive(node.id)}
+              className={active === node.id || (active && neighbors.get(active)?.has(node.id)) ? 'is-active' : undefined}>
               <title>{node.title}</title>
               <circle cx={node.x} cy={node.y} r="11" fill="transparent" />
               <circle className={`post-graph-dot${linked.has(node.id) ? ' is-linked' : ''}`} cx={node.x} cy={node.y} r={linked.has(node.id) ? 4 : 3.25} />
@@ -66,9 +78,11 @@ export function PostGraph({ graph, positions }: { graph: PostGraphData; position
           ))}
         </svg>
         <p className="post-graph-selection">
-          {activeNode ? <>{activeNode.category && <span className="post-graph-selection-category">{activeNode.category}</span>}{activeNode.title}</> : '노드를 선택해 글로 이동'}
+          {activeNode
+            ? <a href={activeNode.href}>{activeNode.category && <span className="post-graph-selection-category">{activeNode.category}</span>}{activeNode.title} <span aria-hidden="true">→</span></a>
+            : '노드를 선택해 제목을 확인한 뒤 글로 이동하세요.'}
         </p>
-      </>
+      </div>
     );
   }
 
@@ -83,7 +97,14 @@ export function PostGraph({ graph, positions }: { graph: PostGraphData; position
       <p className="post-graph-caption">{nodes.length}개 글 · {graph.edges.length}개 연결</p>
       {nodes.length ? renderGraph(false) : <p className="post-graph-selection">아직 공개된 글이 없습니다.</p>}
       <p className="post-graph-caption">곡선: 본문 링크 · 묶음: 같은 카테고리</p>
-      <dialog ref={dialog} className="post-graph-dialog" aria-label="전체 게시글 연결 그래프" onClose={() => setActive(null)}>
+      <dialog ref={dialog} className="post-graph-dialog" aria-label="전체 게시글 연결 그래프" onClose={() => setActive(null)}
+        onClick={event => {
+          if (event.target !== event.currentTarget) return;
+          const rect = event.currentTarget.getBoundingClientRect();
+          if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) {
+            event.currentTarget.close();
+          }
+        }}>
         <div className="post-graph-heading">
           <h2>글 연결</h2>
           <button type="button" className="post-graph-expand" aria-label="그래프 닫기" onClick={() => dialog.current?.close()}>×</button>

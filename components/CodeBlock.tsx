@@ -27,6 +27,8 @@ export function CodeBlockEnhancer() {
 
       // Set data attribute for CSS ::before content
       codeElement.setAttribute('data-language', language);
+      codeElement.setAttribute('tabindex', '0');
+      codeElement.setAttribute('aria-label', `${language} 코드. 좌우 방향키로 스크롤`);
 
       // Create wrapper
       const wrapper = document.createElement('div');
@@ -49,11 +51,6 @@ export function CodeBlockEnhancer() {
 
       wrapper.appendChild(pre);
 
-      const scrollHint = document.createElement('span');
-      scrollHint.className = 'code-block-scroll-hint';
-      scrollHint.setAttribute('aria-hidden', 'true');
-      wrapper.appendChild(scrollHint);
-
       // Add line numbers if enabled
       if (codeBlock.showLineNumbers) {
         addLineNumbers(codeElement, codeBlock.startLineNumber);
@@ -64,6 +61,7 @@ export function CodeBlockEnhancer() {
       if (codeBlock.showCopyButton) {
         const button = document.createElement('button');
         button.className = 'copy-button';
+        button.type = 'button';
         setCopyButtonState(button, 'copy');
         
         button.addEventListener('click', async () => {
@@ -111,8 +109,8 @@ type CopyButtonState = 'copy' | 'copied' | 'error';
 
 const copyButtonContent: Record<CopyButtonState, { label: string; ariaLabel: string; icon: string }> = {
   copy: {
-    label: 'Copy',
-    ariaLabel: 'Copy code to clipboard',
+    label: '복사',
+    ariaLabel: '코드 복사',
     icon: [
       '<svg class="copy-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">',
       '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>',
@@ -121,8 +119,8 @@ const copyButtonContent: Record<CopyButtonState, { label: string; ariaLabel: str
     ].join(''),
   },
   copied: {
-    label: 'Copied',
-    ariaLabel: 'Copied code to clipboard',
+    label: '복사됨',
+    ariaLabel: '코드를 복사했습니다',
     icon: [
       '<svg class="copy-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">',
       '<path d="m20 6-11 11-5-5"></path>',
@@ -130,8 +128,8 @@ const copyButtonContent: Record<CopyButtonState, { label: string; ariaLabel: str
     ].join(''),
   },
   error: {
-    label: 'Copy failed',
-    ariaLabel: 'Copy failed',
+    label: '복사 실패',
+    ariaLabel: '코드를 복사하지 못했습니다. 다시 시도하세요',
     icon: [
       '<svg class="copy-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">',
       '<circle cx="12" cy="12" r="10"></circle>',
@@ -146,6 +144,7 @@ function setCopyButtonState(button: HTMLButtonElement, state: CopyButtonState) {
   const content = copyButtonContent[state];
 
   button.setAttribute('aria-label', content.ariaLabel);
+  button.title = content.ariaLabel;
   button.innerHTML = `${content.icon}<span class="copy-button-label">${content.label}</span>`;
   button.classList.toggle('copied', state === 'copied');
   button.classList.toggle('error', state === 'error');
