@@ -11,7 +11,7 @@ tags: ["n8n", "automation"]
 
 ## n8n 서비스도 host에 붙여야된다
 
-[이전 글](https://kimmandoo.vercel.app/posts/automation/intro-n8n)에서 cloudflare만 host에 묶고, n8n은 묶지않았다. 이러면 webhook을 호출하려고 할 때 IPv4만 찾아서 나가려고하기 때문에, 통신이 안되는 문제가 발생한다.
+[이전 글](https://mandoo.men/posts/automation/intro-n8n)에서 cloudflare만 host에 묶고, n8n은 묶지않았다. 이러면 webhook을 호출하려고 할 때 IPv4만 찾아서 나가려고하기 때문에, 통신이 안되는 문제가 발생한다.
 
 ```bash
 (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/posthog-node@3.2.1/node_modules/node_modules/tslib/tslib.es6.js:83:53) n8n  |     at rejected (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/posthog-node@3.2.1/node_modules/node_modules/tslib/tslib.es6.js:74:65) { n8n  |   error: DOMException [TimeoutError]: The operation was aborted due to timeout n8n  |       at node:internal/deps/undici/undici:14900:13, n8n  |   [cause]: DOMException [TimeoutError]: The operation was aborted due to timeout n8n  |       at node:internal/deps/undici/undici:14900:13 n8n  | } n8n  | Error fetching feature flags Error [PostHogFetchNetworkError]: Network error while fetching PostHog n8n  |     at new PostHogFetchNetworkE

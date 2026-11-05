@@ -86,7 +86,7 @@ test('sitemap homepage lastmod tracks actual latest published content', async ()
     lastmod: extractTagValue(block, 'lastmod'),
   }));
 
-  const homepage = entries.find((entry) => entry.loc?.replace(/\/$/, '') === 'https://kimmandoo.vercel.app');
+  const homepage = entries.find((entry) => entry.loc?.replace(/\/$/, '') === 'https://mandoo.men');
   const latestLastmod = entries.reduce((latest, entry) => {
     if (!entry.lastmod) {
       return latest;
@@ -192,7 +192,7 @@ test('home filters and search results are noindex with a root canonical', async 
     assert.equal(metadata.robots?.index, false);
     assert.equal(metadata.robots?.follow, true);
     assert.equal(metadata.robots?.googleBot?.index, false);
-    assert.equal(metadata.alternates?.canonical, 'https://kimmandoo.vercel.app/');
+    assert.equal(metadata.alternates?.canonical, 'https://mandoo.men/');
     assert.equal(metadata.openGraph?.url, metadata.alternates?.canonical);
   }
 
@@ -224,7 +224,7 @@ test('article metadata uses the article URL and image for normal posts and PS no
 
   for (const articlePath of ['/posts/cs/queue', '/coding-test/ps/cpp/queue']) {
     const metadata = createArticleMetadata(post, articlePath);
-    const expectedUrl = `https://kimmandoo.vercel.app${articlePath}`;
+    const expectedUrl = `https://mandoo.men${articlePath}`;
     assert.equal(metadata.alternates?.canonical, expectedUrl);
     assert.equal(metadata.openGraph?.url, expectedUrl);
     assert.equal(metadata.openGraph?.type, 'article');
@@ -254,17 +254,17 @@ test('article metadata uses the article URL and image for normal posts and PS no
 test('server-rendered structured data safely preserves text without closing its script', () => {
   const { ArticleJsonLd, BreadcrumbJsonLd } = loadJsonLdComponents();
   const text = '</script><script>alert("escaped")</script> & <정보>';
-  const articleUrl = 'https://kimmandoo.vercel.app/coding-test/ps/queue';
+  const articleUrl = 'https://mandoo.men/coding-test/ps/queue';
   const articleHtml = renderToStaticMarkup(createElement(ArticleJsonLd, {
     title: text,
     description: text,
     url: articleUrl,
     tags: [text],
     datePublished: '2026-04-19T12:00:00.000Z',
-    image: 'https://kimmandoo.vercel.app/media/queue.png',
+    image: 'https://mandoo.men/media/queue.png',
   }));
   const breadcrumbHtml = renderToStaticMarkup(createElement(BreadcrumbJsonLd, {
-    items: [{ name: 'Home', url: 'https://kimmandoo.vercel.app/' }, { name: text, url: articleUrl }],
+    items: [{ name: 'Home', url: 'https://mandoo.men/' }, { name: text, url: articleUrl }],
   }));
 
   for (const html of [articleHtml, breadcrumbHtml]) {
@@ -306,7 +306,7 @@ test('prerendered PS detail includes article and breadcrumb structured data at i
   const data = extractJsonLd(html);
   const article = data.find((item) => item['@type'] === 'Article');
   const breadcrumbs = data.find((item) => item['@type'] === 'BreadcrumbList');
-  const canonical = `https://kimmandoo.vercel.app${routePath}`;
+  const canonical = `https://mandoo.men${routePath}`;
 
   assert.ok(article);
   assert.equal(article.url, canonical);
@@ -315,8 +315,8 @@ test('prerendered PS detail includes article and breadcrumb structured data at i
   assert.ok(article.description);
   assert.ok(article.image.url.startsWith('https://'));
   assert.deepEqual(breadcrumbs.itemListElement.map((item) => item.item), [
-    'https://kimmandoo.vercel.app/',
-    'https://kimmandoo.vercel.app/coding-test',
+    'https://mandoo.men/',
+    'https://mandoo.men/coding-test',
     canonical,
   ]);
   assert.ok(html.includes(`<link rel="canonical" href="${canonical}"`));

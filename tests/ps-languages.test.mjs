@@ -112,13 +112,13 @@ test('language, tag and search filters are noindex, follow with an unfiltered PS
     assert.equal(metadata.robots?.index, false);
     assert.equal(metadata.robots?.follow, true);
     assert.equal(metadata.robots?.googleBot?.index, false);
-    assert.equal(metadata.alternates?.canonical, 'https://kimmandoo.vercel.app/coding-test');
+    assert.equal(metadata.alternates?.canonical, 'https://mandoo.men/coding-test');
   }
 
   for (const params of [{}, { language: ' ', tag: '', q: ' ' }, { language: [], tag: [], q: [] }]) {
     const metadata = createCodingTestPageMetadata(params);
     assert.equal(metadata.robots, undefined);
-    assert.equal(metadata.alternates?.canonical, 'https://kimmandoo.vercel.app/coding-test');
+    assert.equal(metadata.alternates?.canonical, 'https://mandoo.men/coding-test');
   }
 });
 

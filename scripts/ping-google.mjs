@@ -12,7 +12,7 @@
  * @see https://developers.google.com/search/blog/2023/06/sitemaps-lastmod-ping
  */
 
-const SITE_URL = 'https://kimmandoo.vercel.app';
+const SITE_URL = 'https://mandoo.men';
 const SITEMAP_URL = `${SITE_URL}/sitemap.xml`;
 
 let hasErrors = false;

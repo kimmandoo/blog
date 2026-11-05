@@ -249,7 +249,8 @@ export const themeConfig = {
   // SEO configuration
   seo: {
     // Site URL (required for sitemap, canonical URLs, and Open Graph)
-    siteUrl: 'https://kimmandoo.vercel.app',
+    // siteUrl: 'https://kimmandoo.vercel.app',
+    siteUrl: 'https://mandoo.men',
     
     // Google Analytics (GA4)
     // Get your Measurement ID from: https://analytics.google.com/
