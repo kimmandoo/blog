@@ -15,6 +15,16 @@
 
 **끝!** 🎉 2-3분 후 블로그가 배포됩니다.
 
+### 방문 시 서버 CPU를 사용하지 않는 배포
+
+- `next.config.ts`의 `output: "export"`로 페이지·공유 이미지·사이트맵·RSS를 빌드할 때 생성합니다.
+- `vercel.json`이 Framework Preset을 **Other**, Build Command를 `npm run build`, Output Directory를 **out**으로 지정합니다. `.next`로 덮어쓰지 마세요.
+- 방문 요청은 정적 파일만 받습니다. 목록 검색·필터는 브라우저에서 처리하며 SSR·ISR·실시간 OG 이미지 생성은 사용하지 않습니다.
+- 코드 변경을 배포해야 적용됩니다. 새 배포의 Functions 목록이 비어 있는지 확인하세요.
+- 배포 빌드 CPU와 CDN 요청·전송량은 남습니다. 과거 누적 사용량은 사라지지 않으며, 예전 배포 URL은 기존 함수를 계속 실행할 수 있습니다.
+- 글·설정 변경은 재배포해야 반영됩니다.
+- 로컬 배포 결과 확인: `npm run build && npm start`. Vercel 전용 헤더와 HTTP 리디렉션은 `vercel.json`에서 관리합니다.
+
 ## ✍️ 새 글 작성하기
 
 ### 1. `posts/` 폴더에 마크다운 파일 생성

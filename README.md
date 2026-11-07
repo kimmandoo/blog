@@ -41,11 +41,11 @@ A clean, minimal blog built with Next.js, Tailwind CSS, and deployed on Vercel. 
 
 ### Search metadata
 
-- Search (`q`), category, tag, and pagination variants remain crawlable but use `noindex, follow` and canonicalize to the unfiltered archive. Blank searches remain indexable. PS language/tag/search filters follow the same policy.
-- Home, PS, and article pages emit their own canonical and Open Graph/Twitter metadata. All article sharing images use the themed 1200×630 `/og` card rather than inline screenshots. Home and PS archives pass their own titles and descriptions to the same renderer; `seo.openGraph.defaultImage` can still override the archive image.
-- Sharing cards match the light blog palette: off-white background, charcoal typography, fine dividers, category, date, and up to three tags. Long Korean/Latin titles and descriptions are width-bounded with ellipses. OG images use a bundled [IBM Plex Sans KR Medium](https://github.com/google/fonts/tree/main/ofl/ibmplexsanskr) font, loaded once on the server without a Korean-font CDN dependency; its OFL license is included in `public/fonts/OFL.txt`.
-- Website search structured data targets `?q=`. Both normal articles and PS details render Article and Breadcrumb JSON-LD on the server, escaping `<` so post text cannot terminate the script. Modification dates are not fabricated from publication dates.
-- Duplicate PS URLs under `/posts/` permanently redirect to their canonical `/coding-test/` URLs; those redirects are pre-rendered. The sitemap includes canonical pages only. `robots.txt`, the sitemap, and RSS remain publicly fetchable.
+- Pages are exported as static files. Search (`q`), category, tag, pagination, and PS language filters are applied in the browser, including direct query links and Back/Forward. Filtered views add `noindex, follow` after hydration; the initial HTML always contains the default archive with its unfiltered canonical. Crawlers without JavaScript see that default archive.
+- Home, PS, and article pages emit their own canonical and Open Graph/Twitter metadata. Sharing cards are 1200×630 PNGs generated at build time under `/og/` (`index.png`, `coding-test.png`, and each canonical article path plus `.png`), never generated per request. `seo.openGraph.defaultImage` can still override the archive image.
+- Sharing cards match the light blog palette: off-white background, charcoal typography, fine dividers, category, date, and up to three tags. Long Korean/Latin titles and descriptions are width-bounded with ellipses. OG images use a bundled [IBM Plex Sans KR Medium](https://github.com/google/fonts/tree/main/ofl/ibmplexsanskr) font, loaded at build time without a Korean-font CDN dependency; its OFL license is included in `public/fonts/OFL.txt`.
+- Website search structured data targets `?q=`. Both normal articles and PS details render Article and Breadcrumb JSON-LD at build time, escaping `<` so post text cannot terminate the script. Modification dates are not fabricated from publication dates.
+- Duplicate PS URLs under `/posts/ps/` permanently redirect to `/coding-test/ps/` through Vercel's static routing; exported HTML also supports browser redirects. The sitemap includes canonical pages only. `robots.txt`, sitemap, and RSS are static files updated on deployment, not by ISR.
 - Changes take effect after deployment and search-engine recrawling. Search Console submission, index inclusion, and ranking are external to the application and are not guaranteed by metadata changes.
 
 
@@ -420,8 +420,8 @@ npm install              # Install dependencies
 npm run dev             # Start dev server (http://localhost:3000)
 
 # Production
-npm run build           # Build for production
-npm start               # Start production server
+npm run build           # Export static pages, feeds, and sharing cards to out/
+npm start               # Preview out/ with a static file server (no Next.js runtime)
 
 # Code Quality
 npm run lint            # Run ESLint

@@ -2,7 +2,6 @@
 
 import { Fragment, useRef, useMemo, useSyncExternalStore, type ReactNode, type ComponentProps } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
 import { TagBadge } from '@/components/TagBadge';
 import { SearchBar } from '@/components/SearchBar';
 import { formatDisplayDate, toMetadataDate } from '@/lib/date';
@@ -47,11 +46,26 @@ function ArchiveLink({
 function navigateArchive(href: string, method: 'pushState' | 'replaceState' = 'pushState') {
   if (`${window.location.pathname}${window.location.search}` !== href) {
     window.history[method](null, '', href);
-    window.dispatchEvent(new Event('archive:navigate'));
   }
 }
 
+let historyObserved = false;
+
 function subscribeArchive(onChange: () => void) {
+  if (!historyObserved) {
+    historyObserved = true;
+    // Next Link navigation also writes history, including when it only clears
+    // the current archive's query. Keep these wrappers installed: Next may
+    // capture them in its own history integration.
+    for (const method of ['pushState', 'replaceState'] as const) {
+      const original = window.history[method];
+      window.history[method] = function (data, unused, url) {
+        original.call(this, data, unused, url);
+        // Next writes history during its React commit; notify after that commit.
+        queueMicrotask(() => window.dispatchEvent(new Event('archive:navigate')));
+      };
+    }
+  }
   window.addEventListener('popstate', onChange);
   window.addEventListener('archive:navigate', onChange);
   return () => {
@@ -61,16 +75,13 @@ function subscribeArchive(onChange: () => void) {
 }
 
 function useArchiveSearch(sectionPath: string) {
-  const serverParams = useSearchParams();
   // Next updates its router in a transition. Read the URL synchronously so a
   // quick filter change cannot resurrect a query that was just cleared.
   const search = useSyncExternalStore(
     subscribeArchive,
     () => window.location.search,
-    () => {
-      const query = serverParams.toString();
-      return query ? `?${query}` : '';
-    },
+    // Export the complete default archive, then apply the browser URL at hydration.
+    () => '',
   );
   const params = useMemo(() => new URLSearchParams(search), [search]);
   const searchSession = useRef<string | null>(null);
@@ -134,6 +145,7 @@ export function PostList({
     new Set([1, pagination.currentPage - 1, pagination.currentPage, pagination.currentPage + 1, pagination.totalPages])
   ).filter(page => page >= 1 && page <= pagination.totalPages).sort((a, b) => a - b);
   const hasActiveFilter = Boolean(selectedCategory || selectedTag);
+  const hasFilteredUrl = hasActiveFilter || hasSearchQuery || Boolean(params.get('page')?.trim());
   const searchStatus = hasSearchQuery
     ? `검색 결과 ${filteredPosts.length} / ${categoryPosts.length}개`
     : `전체 ${filteredPosts.length}개 글`;
@@ -158,6 +170,10 @@ export function PostList({
 
   return (
     <div className="archive-layout">
+      {hasFilteredUrl && <>
+        <meta name="robots" content="noindex, follow" />
+        <meta name="googlebot" content="noindex, follow" />
+      </>}
       <main id="main-content" className="archive-shell" tabIndex={-1}>
       <h1 className="archive-title">{selectedCategory || '전체 글'}</h1>
       <section className="post-tools" aria-label="글 찾기">
@@ -304,11 +320,16 @@ export function PsPostList({
   );
   const hasSearchQuery = Boolean(searchQuery.trim());
   const hasFilter = Boolean(selectedLanguage || selectedTag || hasSearchQuery);
+  const hasFilteredUrl = ['language', 'tag', 'q'].some(key => Boolean(params.get(key)?.trim()));
   const createHref = (nextLanguage = selectedLanguage, nextTag = selectedTag) =>
     getPsArchiveHref({ language: nextLanguage, tag: nextTag, q: searchQuery });
 
   return (
     <div className="archive-layout">
+      {hasFilteredUrl && <>
+        <meta name="robots" content="noindex, follow" />
+        <meta name="googlebot" content="noindex, follow" />
+      </>}
       <main id="main-content" className="archive-shell ps-shell" tabIndex={-1}>
         <header className="archive-intro">
           <h1>PS</h1>

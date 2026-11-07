@@ -3,7 +3,7 @@ import { getSortedPostsData, getSortedPostsDataByCategory } from '@/lib/posts';
 import { themeConfig } from '@/config/theme.config';
 import { parseDateValue } from '@/lib/date';
 
-export const revalidate = 3600;
+export const dynamic = 'force-static';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = themeConfig.seo.siteUrl.replace(/\/+$/, '');

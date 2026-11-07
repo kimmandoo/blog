@@ -9,6 +9,8 @@ import { createArticleMetadata, getArticleImageUrl, toAbsolutePageUrl } from '@/
 import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd';
 import { getPsArchiveHref, getPsLanguageLabel, normalizePsLanguage } from '@/lib/ps';
 
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   const posts = getSortedPostsDataByCategory('PS');
   return posts.map((post) => ({ slug: post.slug.split('/') }));
@@ -57,7 +59,7 @@ export default async function CodingTestPostPage({ params }: { params: Promise<{
         datePublished={toMetadataDate(post.date)}
         dateModified={toMetadataDate(post.updated)}
         tags={post.tags}
-        image={getArticleImageUrl(post, postPath)}
+        image={getArticleImageUrl(postPath)}
       />
       <BreadcrumbJsonLd
         items={[

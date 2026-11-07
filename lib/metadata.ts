@@ -1,23 +1,9 @@
 import type { Metadata } from 'next';
 import { themeConfig } from '../config/theme.config.ts';
-import { formatDisplayDate, toMetadataDate } from './date.ts';
+import { toMetadataDate } from './date.ts';
 import type { PostData } from './posts.ts';
 
-type SearchParamValue = string | string[] | undefined;
-type SearchParams = Record<string, SearchParamValue>;
-
 const baseSiteUrl = themeConfig.seo.siteUrl.replace(/\/+$/, '');
-
-export function getSearchParamValue(value: SearchParamValue) {
-  const firstValue = Array.isArray(value) ? value[0] : value;
-  const trimmedValue = firstValue?.trim();
-
-  return trimmedValue ? trimmedValue : undefined;
-}
-
-export function hasActiveSearchFilter(searchParams: SearchParams, keys: string[]) {
-  return keys.some((key) => getSearchParamValue(searchParams[key]));
-}
 
 export function toAbsolutePageUrl(pathname: string) {
   const normalizedPath = pathname === '/' ? '/' : `/${pathname.replace(/^\/+/, '')}`;
@@ -27,20 +13,18 @@ export function toAbsolutePageUrl(pathname: string) {
 type PageMetadataOptions = {
   canonicalPath: string;
   description?: string;
-  noIndex?: boolean;
   title?: string;
 };
 
 export function createPageMetadata({
   canonicalPath,
   description = themeConfig.site.description,
-  noIndex = false,
   title = themeConfig.site.title,
 }: PageMetadataOptions): Metadata {
   const canonicalUrl = toAbsolutePageUrl(canonicalPath);
   const image = themeConfig.seo.openGraph.defaultImage;
-  const imageUrl = image === '/og'
-    ? toAbsolutePageUrl(`/og?${new URLSearchParams({ title, description, path: canonicalPath })}`)
+  const imageUrl = image === '/og/index.png'
+    ? getArticleImageUrl(canonicalPath)
     : /^https?:\/\//.test(image) ? image : toAbsolutePageUrl(image);
 
   return {
@@ -66,59 +50,34 @@ export function createPageMetadata({
     alternates: {
       canonical: canonicalUrl,
     },
-    ...(noIndex
-      ? {
-          robots: {
-            index: false,
-            follow: true,
-            googleBot: {
-              index: false,
-              follow: true,
-              'max-video-preview': -1,
-              'max-image-preview': 'large',
-              'max-snippet': -1,
-            },
-          },
-        }
-      : {}),
   };
 }
 
-export function createHomePageMetadata(searchParams: SearchParams): Metadata {
+export function createHomePageMetadata(): Metadata {
   return createPageMetadata({
     canonicalPath: '/',
     description: themeConfig.site.description,
-    noIndex: hasActiveSearchFilter(searchParams, ['q', 'category', 'tag', 'page']),
   });
 }
 
-export function createCodingTestPageMetadata(searchParams: SearchParams): Metadata {
+export function createCodingTestPageMetadata(): Metadata {
   return createPageMetadata({
     title: 'PS',
     description: '코테 노트',
     canonicalPath: '/coding-test',
-    noIndex: hasActiveSearchFilter(searchParams, ['language', 'tag', 'q']),
   });
 }
 
-type ArticleMetadataPost = Pick<PostData, 'title' | 'excerpt' | 'date' | 'updated' | 'category' | 'tags' | 'firstImage'>;
+type ArticleMetadataPost = Pick<PostData, 'title' | 'excerpt' | 'date' | 'updated' | 'tags'>;
 
-export function getArticleImageUrl(post: ArticleMetadataPost, canonicalPath: string) {
-  const params = new URLSearchParams({
-    title: post.title,
-    site: new URL(baseSiteUrl).host,
-    path: canonicalPath,
-    ...(post.excerpt && { description: post.excerpt }),
-    ...(post.category && { category: post.category }),
-    ...(post.date && { date: formatDisplayDate(post.date) }),
-    ...(post.tags?.length && { tags: post.tags.join(',') }),
-  });
-  return toAbsolutePageUrl(`/og?${params.toString()}`);
+export function getArticleImageUrl(canonicalPath: string) {
+  const imagePath = canonicalPath === '/' ? '/index' : canonicalPath.replace(/\/+$/, '');
+  return toAbsolutePageUrl(`/og${imagePath}.png`);
 }
 
 export function createArticleMetadata(post: ArticleMetadataPost, canonicalPath: string): Metadata {
   const description = post.excerpt || post.title;
-  const imageUrl = getArticleImageUrl(post, canonicalPath);
+  const imageUrl = getArticleImageUrl(canonicalPath);
   const publishedTime = toMetadataDate(post.date);
   const modifiedTime = toMetadataDate(post.updated);
 

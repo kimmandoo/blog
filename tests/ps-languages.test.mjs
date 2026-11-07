@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import { getPsArchive, getPsArchiveHref, normalizePsLanguage } from '../lib/ps.ts';
-import { createCodingTestPageMetadata, getSearchParamValue } from '../lib/metadata.ts';
+import { createCodingTestPageMetadata } from '../lib/metadata.ts';
 
 function note(slug, fields = {}) {
   return { slug, title: slug, date: '2026-04-19', category: 'PS', ...fields };
@@ -94,31 +94,11 @@ test('PS filter URLs round-trip languages, tags and queries without losing punct
   assert.equal(getPsArchiveHref({ language: 'cpp' }), '/coding-test?language=cpp');
   assert.equal(getPsArchiveHref({ tag: 'heap' }), '/coding-test?tag=heap');
   assert.equal(getPsArchiveHref({ q: ' ' }), '/coding-test');
-  assert.equal(getSearchParamValue(['cpp', 'python']), 'cpp');
 });
 
-test('language, tag and search filters are noindex, follow with an unfiltered PS canonical', () => {
-  for (const params of [
-    { language: 'cpp' },
-    { language: 'unknown' },
-    { language: 'unclassified' },
-    { language: ['cpp', 'python'] },
-    { tag: 'heap' },
-    { language: 'cpp', tag: 'heap' },
-    { q: 'queue' },
-    { language: 'cpp', tag: 'heap', q: 'queue' },
-  ]) {
-    const metadata = createCodingTestPageMetadata(params);
-    assert.equal(metadata.robots?.index, false);
-    assert.equal(metadata.robots?.follow, true);
-    assert.equal(metadata.robots?.googleBot?.index, false);
-    assert.equal(metadata.alternates?.canonical, 'https://mandoo.men/coding-test');
-  }
-
-  for (const params of [{}, { language: ' ', tag: '', q: ' ' }, { language: [], tag: [], q: [] }]) {
-    const metadata = createCodingTestPageMetadata(params);
-    assert.equal(metadata.robots, undefined);
-    assert.equal(metadata.alternates?.canonical, 'https://mandoo.men/coding-test');
-  }
+test('PS metadata is static and canonicalizes to the unfiltered archive', () => {
+  const metadata = createCodingTestPageMetadata();
+  assert.equal(metadata.robots, undefined);
+  assert.equal(metadata.alternates?.canonical, 'https://mandoo.men/coding-test');
 });
 

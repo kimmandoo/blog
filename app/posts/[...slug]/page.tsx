@@ -14,6 +14,8 @@ import { themeConfig } from '@/config/theme.config';
 import { formatDisplayDate, toMetadataDate } from '@/lib/date';
 import { createArticleMetadata, getArticleImageUrl, toAbsolutePageUrl } from '@/lib/metadata';
 
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   // Pre-render legacy PS redirects as well as articles so they are served directly.
   const posts = [...getAllPostSlugs(), ...getSortedPostsDataByCategory('PS')];
@@ -56,7 +58,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
   
   const postPath = `/posts/${slug.map(encodeURIComponent).join('/')}`;
   const postUrl = toAbsolutePageUrl(postPath);
-  const jsonLdImage = getArticleImageUrl(post, postPath);
+  const jsonLdImage = getArticleImageUrl(postPath);
   const baseUrl = toAbsolutePageUrl('/');
 
   return (

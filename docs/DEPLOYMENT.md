@@ -2,6 +2,19 @@
 
 This guide will help you deploy your blog to Vercel in just a few minutes.
 
+The site is a static export (`output: "export"`). `vercel.json` selects the **Other**
+framework preset and deploys only `out/`, so visitor requests do not invoke Next.js
+Functions, image generation, or ISR. Pages, PNG sharing cards, sitemap, and feeds
+are regenerated on deployment. Builds still consume build CPU; CDN requests and
+bandwidth remain billable according to your plan.
+
+After deploying this change, check the new deployment's Functions list is empty.
+Historical usage is not erased, and old deployment URLs can still invoke their old
+functions until those deployments are removed or access is restricted.
+
+For local production preview, run `npm run build && npm start`. This serves files
+only; Vercel-specific headers and HTTP redirects are configured in `vercel.json`.
+
 ## Prerequisites
 
 - A GitHub account with this repository
@@ -43,13 +56,12 @@ For remote failures, inspect the Vercel commit-status link or run
    - If you don't see it, click "Adjust GitHub App Permissions" to grant access
 
 4. **Configure Your Project**
-   - Vercel will auto-detect that this is a Next.js project
-   - The default settings are already configured correctly:
-     - **Framework Preset**: Next.js
+   - Repository settings override framework auto-detection:
+     - **Framework Preset**: Other (`framework: null`)
      - **Build Command**: `npm run build`
-     - **Output Directory**: `.next`
+     - **Output Directory**: `out`
      - **Install Command**: `npm install`
-   - You don't need to change anything!
+   - Do not override the output directory back to `.next` or start a Next.js server.
 
 5. **Deploy**
    - Click "Deploy"
@@ -175,8 +187,8 @@ If you need environment variables:
 
 ## Performance Tips
 
-1. **Image Optimization**: Use Next.js Image component for photos
-2. **Static Generation**: All pages are pre-rendered at build time
+1. **Images**: Serve static images; the default Next.js runtime image optimizer is not used
+2. **Static Generation**: Pages and sharing cards are rendered only at build time
 3. **Edge Network**: Vercel serves your blog from a global CDN
 4. **Automatic Compression**: Vercel automatically compresses assets
 

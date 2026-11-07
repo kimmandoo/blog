@@ -1,10 +1,38 @@
 import { ImageResponse } from 'next/og';
-import { NextRequest } from 'next/server';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { themeConfig } from '@/config/theme.config';
+import { formatDisplayDate } from '@/lib/date';
+import { getSortedPostsData, getSortedPostsDataByCategory } from '@/lib/posts';
 
-// Read once on the server; Korean rendering must not depend on a font CDN.
+export const dynamic = 'force-static';
+export const dynamicParams = false;
+
+type ImageData = {
+  title: string;
+  excerpt?: string;
+  category?: string;
+  date?: string;
+  tags?: string[];
+};
+
+const images = new Map<string, ImageData>([
+  ['index.png', { title: themeConfig.site.title, excerpt: themeConfig.site.description }],
+  ['coding-test.png', { title: 'PS', excerpt: '코테 노트', category: 'PS' }],
+]);
+
+for (const post of getSortedPostsData()) {
+  images.set(`posts/${post.slug}.png`, post);
+}
+for (const post of getSortedPostsDataByCategory('PS')) {
+  images.set(`coding-test/${post.slug}.png`, post);
+}
+
+export function generateStaticParams() {
+  return Array.from(images.keys(), (path) => ({ slug: path.split('/') }));
+}
+
+// Read once at build time; Korean rendering must not depend on a font CDN.
 const font = readFile(join(process.cwd(), 'public/fonts/IBMPlexSansKR-Medium.ttf'));
 const palette = { background: '#fafafa', text: '#202124', muted: '#707278', border: '#e7e7e9', surface: '#f0f0f2' };
 
@@ -26,14 +54,17 @@ function fitText(value: string, limit: number) {
   return `${result.trimEnd()}…`;
 }
 
-export async function GET(request: NextRequest) {
-  const params = request.nextUrl.searchParams;
-  const title = fitText(params.get('title') || themeConfig.site.title, 112);
-  const description = fitText(params.get('description') || (params.has('title') ? '' : themeConfig.site.description), 116);
-  const category = fitText(params.get('category') || (params.get('path')?.startsWith('/coding-test') ? 'PS' : 'DEV JOURNAL'), 28);
-  const date = fitText(params.get('date') || '', 24);
-  const site = fitText((params.get('site') || new URL(themeConfig.seo.siteUrl).host).replace(/^https?:\/\//, '').replace(/\/+$/, ''), 40);
-  const tags = [...new Set((params.get('tags') || '').split(',').map(tag => tag.trim()).filter(Boolean))].slice(0, 3);
+export async function GET(_request: Request, { params }: { params: Promise<{ slug: string[] }> }) {
+  const { slug } = await params;
+  const image = images.get(slug.join('/'));
+  if (!image) return new Response('Not found', { status: 404 });
+
+  const title = fitText(image.title, 112);
+  const description = fitText(image.excerpt || '', 116);
+  const category = fitText(image.category || 'DEV JOURNAL', 28);
+  const date = fitText(image.date ? formatDisplayDate(image.date) : '', 24);
+  const site = fitText(new URL(themeConfig.seo.siteUrl).host, 40);
+  const tags = [...new Set((image.tags || []).map(tag => tag.trim()).filter(Boolean))].slice(0, 3);
   const titleSize = textWidth(title) > 88 ? 46 : textWidth(title) > 56 ? 54 : 64;
 
   return new ImageResponse(

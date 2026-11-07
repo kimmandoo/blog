@@ -277,8 +277,8 @@ export const themeConfig = {
       type: 'website',
       locale: 'ko_KR',
       siteName: 'mandoo.log',
-      // Default site/archive image: themed generator, or a custom image URL.
-      defaultImage: '/og',
+      // Build-generated site/archive cards, or a custom image URL.
+      defaultImage: '/og/index.png',
     },
     
     // Twitter Card settings
