@@ -262,7 +262,7 @@ export const themeConfig = {
     // Get verification code from: https://search.google.com/search-console
     googleSearchConsole: {
       enabled: true,
-      verificationCode: 'k8VrbwUFnj8lxGHtc7y0pXF1UTDdVrz3sgsQdnwtFww', // Just the code, not the full meta tag
+      verificationCode: '7aAk8a1M8fa3jPQkHq9sbc_w_guGqJn_l9PmiXaZ8KQ', // Just the code, not the full meta tag
     },
     // Google AdSense
     // Get your client ID from: https://www.google.com/adsense/
