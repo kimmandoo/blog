@@ -5,7 +5,7 @@ import { getPostData, getSortedPostsDataByCategory } from '@/lib/posts';
 import { CodeBlockEnhancer } from '@/components/CodeBlock';
 import { MermaidRenderer } from '@/components/MermaidRenderer';
 import { formatDisplayDate, toMetadataDate } from '@/lib/date';
-import { createArticleMetadata, getArticleImageUrl, toAbsolutePageUrl } from '@/lib/metadata';
+import { createArticleMetadata, getOgImageUrl, toAbsolutePageUrl } from '@/lib/metadata';
 import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd';
 import { getPsArchiveHref, getPsLanguageLabel, normalizePsLanguage } from '@/lib/ps';
 
@@ -57,7 +57,7 @@ export default async function CodingTestPostPage({ params }: { params: Promise<{
         datePublished={toMetadataDate(post.date)}
         dateModified={toMetadataDate(post.updated)}
         tags={post.tags}
-        image={getArticleImageUrl(post, postPath)}
+        image={getOgImageUrl(postPath)}
       />
       <BreadcrumbJsonLd
         items={[

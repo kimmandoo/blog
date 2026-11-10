@@ -1,4 +1,4 @@
-import { notFound, permanentRedirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { getPostData, getAllPostSlugs, getAdjacentPosts, getSortedPostsDataByCategory } from '@/lib/posts';
@@ -12,7 +12,7 @@ import { PostNavigation } from '@/components/PostNavigation';
 import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/JsonLd';
 import { themeConfig } from '@/config/theme.config';
 import { formatDisplayDate, toMetadataDate } from '@/lib/date';
-import { createArticleMetadata, getArticleImageUrl, toAbsolutePageUrl } from '@/lib/metadata';
+import { createArticleMetadata, getOgImageUrl, toAbsolutePageUrl } from '@/lib/metadata';
 
 export async function generateStaticParams() {
   // Pre-render legacy PS redirects as well as articles so they are served directly.
@@ -48,7 +48,15 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
   }
 
   if (post.category === 'PS') {
-    permanentRedirect(`/coding-test/${slug.map(encodeURIComponent).join('/')}`);
+    // Static hosting has no HTTP redirects: the meta refresh (hoisted into <head>)
+    // moves legacy PS URLs, and the canonical in generateMetadata already points there.
+    const target = `/coding-test/${slug.map(encodeURIComponent).join('/')}/`;
+    return (
+      <main id="main-content">
+        <meta httpEquiv="refresh" content={`0; url=${target}`} />
+        <p>이 글은 <Link href={target}>{target}</Link>로 이동했습니다.</p>
+      </main>
+    );
   }
 
   // Get adjacent posts for navigation
@@ -56,7 +64,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string[
   
   const postPath = `/posts/${slug.map(encodeURIComponent).join('/')}`;
   const postUrl = toAbsolutePageUrl(postPath);
-  const jsonLdImage = getArticleImageUrl(post, postPath);
+  const jsonLdImage = getOgImageUrl(postPath);
   const baseUrl = toAbsolutePageUrl('/');
 
   return (

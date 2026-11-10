@@ -60,7 +60,7 @@ export function generateRssFeed(posts: PostData[], feedPath = '/feed.xml'): stri
   // Generate RSS items for each post
   const rssItems = posts
     .map((post) => {
-      const postUrl = `${seo.siteUrl}/posts/${post.slug}`;
+      const postUrl = `${seo.siteUrl.replace(/\/+$/, '')}/posts/${post.slug}/`;
       const pubDate = (parseDateValue(post.date) ?? new Date()).toUTCString();
 
       const title = escapeXml(post.title);

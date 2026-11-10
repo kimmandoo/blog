@@ -1,20 +1,14 @@
 import { MetadataRoute } from 'next';
 import { getSortedPostsData, getSortedPostsDataByCategory } from '@/lib/posts';
-import { themeConfig } from '@/config/theme.config';
 import { parseDateValue } from '@/lib/date';
+import { toAbsolutePageUrl as toAbsoluteUrl } from '@/lib/metadata';
 
-export const revalidate = 3600;
+export const dynamic = 'force-static';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = themeConfig.seo.siteUrl.replace(/\/+$/, '');
   const posts = getSortedPostsData();
   const codingTestPosts = getSortedPostsDataByCategory('PS');
   const now = new Date();
-
-  const toAbsoluteUrl = (pathname: string) => {
-    const normalizedPath = pathname.startsWith('/') ? pathname : `/${pathname}`;
-    return new URL(normalizedPath, `${baseUrl}/`).toString();
-  };
 
   const encodeSlugPath = (slug: string) =>
     slug

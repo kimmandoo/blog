@@ -249,8 +249,7 @@ export const themeConfig = {
   // SEO configuration
   seo: {
     // Site URL (required for sitemap, canonical URLs, and Open Graph)
-    // siteUrl: 'https://kimmandoo.vercel.app',
-    siteUrl: 'https://mandoo.men',
+    siteUrl: 'https://kimmandoo.github.io',
     
     // Google Analytics (GA4)
     // Get your Measurement ID from: https://analytics.google.com/
@@ -278,7 +277,7 @@ export const themeConfig = {
       locale: 'ko_KR',
       siteName: 'mandoo.log',
       // Default site/archive image: themed generator, or a custom image URL.
-      defaultImage: '/og',
+      defaultImage: '/og/home.png',
     },
     
     // Twitter Card settings

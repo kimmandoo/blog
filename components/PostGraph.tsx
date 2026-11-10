@@ -62,7 +62,7 @@ export function PostGraph({ graph, positions }: { graph: PostGraphData; position
             })}
           </g>
           {nodes.map(node => (
-            <a key={node.id} href={node.href} aria-label={node.title}
+            <a key={node.id} href={`${node.href}/`} aria-label={node.title}
               onPointerDown={event => setPointerType(event.pointerType)}
               onClick={event => {
                 if (pointerType !== 'touch' || event.detail === 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -79,7 +79,7 @@ export function PostGraph({ graph, positions }: { graph: PostGraphData; position
         </svg>
         <p className="post-graph-selection">
           {activeNode
-            ? <a href={activeNode.href}>{activeNode.category && <span className="post-graph-selection-category">{activeNode.category}</span>}{activeNode.title} <span aria-hidden="true">→</span></a>
+            ? <a href={`${activeNode.href}/`}>{activeNode.category && <span className="post-graph-selection-category">{activeNode.category}</span>}{activeNode.title} <span aria-hidden="true">→</span></a>
             : '노드를 선택해 제목을 확인한 뒤 글로 이동하세요.'}
         </p>
       </div>

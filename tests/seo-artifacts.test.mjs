@@ -75,7 +75,7 @@ test('robots.txt advertises the sitemap and leaves rendering assets crawlable', 
   assert.match(body, /^User-Agent: \*$/m);
   assert.match(body, /^Disallow: \/api\/$/m);
   assert.doesNotMatch(body, /_next/);
-  assert.match(body, /^Sitemap: https:\/\/kimmandoo\.vercel\.app\/sitemap\.xml$/m);
+  assert.match(body, /^Sitemap: https:\/\/kimmandoo\.github\.io\/sitemap\.xml$/m);
 });
 
 test('sitemap homepage lastmod tracks actual latest published content', async () => {
@@ -86,7 +86,7 @@ test('sitemap homepage lastmod tracks actual latest published content', async ()
     lastmod: extractTagValue(block, 'lastmod'),
   }));
 
-  const homepage = entries.find((entry) => entry.loc?.replace(/\/$/, '') === 'https://mandoo.men');
+  const homepage = entries.find((entry) => entry.loc?.replace(/\/$/, '') === 'https://kimmandoo.github.io');
   const latestLastmod = entries.reduce((latest, entry) => {
     if (!entry.lastmod) {
       return latest;
@@ -102,23 +102,15 @@ test('sitemap homepage lastmod tracks actual latest published content', async ()
 test('sitemap serves moved Android posts under posts and omits androidcs routes', async () => {
   const xml = await getRouteBody(getBuildArtifactPath('server/app/sitemap.xml/route.js'));
 
-  assert.match(xml, /https:\/\/kimmandoo\.vercel\.app\/posts\/android\/callbackFlow/);
+  assert.match(xml, /https:\/\/kimmandoo\.github\.io\/posts\/android\/callbackFlow/);
   assert.doesNotMatch(xml, /\/androidcs/);
 });
 
 test('sitemap lists indexable pages only, not feed endpoints', async () => {
   const xml = await getRouteBody(getBuildArtifactPath('server/app/sitemap.xml/route.js'));
 
-  assert.doesNotMatch(xml, /https:\/\/kimmandoo\.vercel\.app\/feed\.xml/);
-  assert.doesNotMatch(xml, /https:\/\/kimmandoo\.vercel\.app\/rss/);
-});
-
-test('sitemap headers keep the file fetchable without noindex directives', async () => {
-  const nextConfig = await loadNextConfig();
-  const headers = await nextConfig.headers();
-  const sitemapHeaders = headers.find((entry) => entry.source === '/sitemap.xml')?.headers ?? [];
-
-  assert.equal(sitemapHeaders.some((header) => header.key.toLowerCase() === 'x-robots-tag'), false);
+  assert.doesNotMatch(xml, /https:\/\/kimmandoo\.github\.io\/feed\.xml/);
+  assert.doesNotMatch(xml, /https:\/\/kimmandoo\.github\.io\/rss/);
 });
 
 test('rss feed uses a stable build date based on the newest item date', async () => {
@@ -156,54 +148,35 @@ test('rss alias serves a fetchable RSS feed for Search Console submissions', asy
 
   assert.match(xml, /^<\?xml version="1\.0" encoding="UTF-8"\?>/);
   assert.match(xml, /<rss version="2\.0" xmlns:atom="http:\/\/www\.w3\.org\/2005\/Atom">/);
-  assert.match(xml, /<atom:link href="https:\/\/kimmandoo\.vercel\.app\/rss" rel="self" type="application\/rss\+xml"\/>/);
+  assert.match(xml, /<atom:link href="https:\/\/kimmandoo\.github\.io\/rss" rel="self" type="application\/rss\+xml"\/>/);
   assert.ok(itemBlocks.length > 0);
 });
 
-test('sitemap is configured to revalidate instead of staying permanently static', () => {
-  const sitemapRoute = getPrerenderRoute('/sitemap.xml');
+test('site is configured as a static export for GitHub Pages', async () => {
+  const nextConfig = await loadNextConfig();
 
-  assert.ok(sitemapRoute);
-  assert.equal(typeof sitemapRoute.initialRevalidateSeconds, 'number');
-  assert.ok(sitemapRoute.initialRevalidateSeconds > 0);
-});
-
-test('rss feeds are configured to revalidate instead of staying uncached dynamic routes', () => {
-  for (const routePath of ['/feed.xml', '/rss']) {
+  assert.equal(nextConfig.output, 'export');
+  assert.equal(nextConfig.headers, undefined);
+  for (const routePath of ['/sitemap.xml', '/feed.xml', '/rss']) {
     const route = getPrerenderRoute(routePath);
-
-    assert.ok(route, `${routePath} should be present in the prerender manifest`);
-    assert.equal(typeof route.initialRevalidateSeconds, 'number');
-    assert.ok(route.initialRevalidateSeconds > 0);
+    assert.ok(route, `${routePath} should be prerendered`);
+    assert.equal(route.initialRevalidateSeconds, false);
   }
 });
 
-test('home filters and search results are noindex with a root canonical', async () => {
+test('home metadata uses the root canonical and its prerendered share card', async () => {
   const { createHomePageMetadata } = await loadMetadataHelpers();
-  for (const params of [
-    { q: 'kotlin' },
-    { q: ['코루틴', 'android'] },
-    { q: '  queue & heap  ', category: 'CS' },
-    { category: 'Android' },
-    { tag: 'retrospect' },
-    { page: '2' },
-  ]) {
-    const metadata = createHomePageMetadata(params);
-    assert.equal(metadata.robots?.index, false);
-    assert.equal(metadata.robots?.follow, true);
-    assert.equal(metadata.robots?.googleBot?.index, false);
-    assert.equal(metadata.alternates?.canonical, 'https://mandoo.men/');
-    assert.equal(metadata.openGraph?.url, metadata.alternates?.canonical);
-  }
+  const metadata = createHomePageMetadata();
 
-  for (const params of [{}, { q: '   ' }, { q: [] }, { q: ['', 'ignored'] }]) {
-    assert.equal(createHomePageMetadata(params).robots, undefined);
-  }
+  assert.equal(metadata.robots, undefined);
+  assert.equal(metadata.alternates?.canonical, 'https://kimmandoo.github.io/');
+  assert.equal(metadata.openGraph?.url, metadata.alternates?.canonical);
+  assert.equal(metadata.openGraph?.images[0].url, 'https://kimmandoo.github.io/og/home.png');
 });
 
 test('PS archive shares its own title, description, and canonical rather than home metadata', async () => {
   const { createCodingTestPageMetadata } = await loadMetadataHelpers();
-  const metadata = createCodingTestPageMetadata({});
+  const metadata = createCodingTestPageMetadata();
 
   assert.equal(metadata.openGraph?.url, metadata.alternates?.canonical);
   assert.equal(metadata.openGraph?.title, metadata.title);
@@ -224,7 +197,7 @@ test('article metadata uses the article URL and image for normal posts and PS no
 
   for (const articlePath of ['/posts/cs/queue', '/coding-test/ps/cpp/queue']) {
     const metadata = createArticleMetadata(post, articlePath);
-    const expectedUrl = `https://mandoo.men${articlePath}`;
+    const expectedUrl = `https://kimmandoo.github.io${articlePath}/`;
     assert.equal(metadata.alternates?.canonical, expectedUrl);
     assert.equal(metadata.openGraph?.url, expectedUrl);
     assert.equal(metadata.openGraph?.type, 'article');
@@ -235,8 +208,7 @@ test('article metadata uses the article URL and image for normal posts and PS no
     assert.equal(metadata.openGraph?.publishedTime, '2026-04-19T12:00:00.000Z');
     const image = metadata.openGraph.images[0].url;
     assert.deepEqual(metadata.twitter.images, [image]);
-    assert.equal(new URL(image).searchParams.get('path'), articlePath);
-    assert.equal(new URL(image).searchParams.get('title'), post.title);
+    assert.equal(new URL(image).pathname, `/og${articlePath}.png`);
   }
 
   // Inline article screenshots must not replace the branded sharing card.
@@ -244,8 +216,7 @@ test('article metadata uses the article URL and image for normal posts and PS no
     const metadata = createArticleMetadata({ ...post, firstImage, excerpt: '' }, '/posts/cs/queue');
     assert.equal(metadata.description, post.title);
     const image = new URL(metadata.openGraph.images[0].url);
-    assert.equal(image.pathname, '/og');
-    assert.equal(image.searchParams.get('title'), post.title);
+    assert.equal(image.pathname, '/og/posts/cs/queue.png');
     assert.deepEqual(metadata.twitter.images, [image.toString()]);
     assert.equal(metadata.openGraph.images[0].width, 1200);
   }
@@ -254,17 +225,17 @@ test('article metadata uses the article URL and image for normal posts and PS no
 test('server-rendered structured data safely preserves text without closing its script', () => {
   const { ArticleJsonLd, BreadcrumbJsonLd } = loadJsonLdComponents();
   const text = '</script><script>alert("escaped")</script> & <정보>';
-  const articleUrl = 'https://mandoo.men/coding-test/ps/queue';
+  const articleUrl = 'https://kimmandoo.github.io/coding-test/ps/queue';
   const articleHtml = renderToStaticMarkup(createElement(ArticleJsonLd, {
     title: text,
     description: text,
     url: articleUrl,
     tags: [text],
     datePublished: '2026-04-19T12:00:00.000Z',
-    image: 'https://mandoo.men/media/queue.png',
+    image: 'https://kimmandoo.github.io/media/queue.png',
   }));
   const breadcrumbHtml = renderToStaticMarkup(createElement(BreadcrumbJsonLd, {
-    items: [{ name: 'Home', url: 'https://mandoo.men/' }, { name: text, url: articleUrl }],
+    items: [{ name: 'Home', url: 'https://kimmandoo.github.io/' }, { name: text, url: articleUrl }],
   }));
 
   for (const html of [articleHtml, breadcrumbHtml]) {
@@ -306,7 +277,7 @@ test('prerendered PS detail includes article and breadcrumb structured data at i
   const data = extractJsonLd(html);
   const article = data.find((item) => item['@type'] === 'Article');
   const breadcrumbs = data.find((item) => item['@type'] === 'BreadcrumbList');
-  const canonical = `https://mandoo.men${routePath}`;
+  const canonical = `https://kimmandoo.github.io${routePath}/`;
 
   assert.ok(article);
   assert.equal(article.url, canonical);
@@ -315,8 +286,8 @@ test('prerendered PS detail includes article and breadcrumb structured data at i
   assert.ok(article.description);
   assert.ok(article.image.url.startsWith('https://'));
   assert.deepEqual(breadcrumbs.itemListElement.map((item) => item.item), [
-    'https://mandoo.men/',
-    'https://mandoo.men/coding-test',
+    'https://kimmandoo.github.io/',
+    'https://kimmandoo.github.io/coding-test/',
     canonical,
   ]);
   assert.ok(html.includes(`<link rel="canonical" href="${canonical}"`));

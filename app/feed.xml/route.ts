@@ -3,8 +3,6 @@ import { generateRssFeed } from '@/lib/rss';
 import { themeConfig } from '@/config/theme.config';
 
 export const dynamic = 'force-static';
-// Keep aligned with themeConfig.rss.cacheMaxAge; route config must be statically analyzable.
-export const revalidate = 3600;
 
 export async function GET() {
   // Check if RSS is enabled

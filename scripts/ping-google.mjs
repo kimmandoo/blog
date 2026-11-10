@@ -12,7 +12,7 @@
  * @see https://developers.google.com/search/blog/2023/06/sitemaps-lastmod-ping
  */
 
-const SITE_URL = 'https://mandoo.men';
+const SITE_URL = 'https://kimmandoo.github.io';
 const SITEMAP_URL = `${SITE_URL}/sitemap.xml`;
 
 let hasErrors = false;

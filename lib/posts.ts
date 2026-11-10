@@ -131,7 +131,17 @@ function createExcerptFromContent(content: string): string {
   return trimExcerpt(paragraphs.find(Boolean) ?? '');
 }
 
+// A build reads the same markdown for every page, sitemap, feed and share card; parse it once.
+// Dev keeps reading from disk so edited posts show up without a restart.
+let cachedPostsData: PostData[] | undefined;
+
 function getAllPostsData(): PostData[] {
+  if (process.env.NODE_ENV !== 'production') return readAllPostsData();
+  cachedPostsData ??= readAllPostsData();
+  return cachedPostsData;
+}
+
+function readAllPostsData(): PostData[] {
   const fileNames = fs.existsSync(postsDirectory)
     ? getAllMarkdownFiles(postsDirectory)
     : [];

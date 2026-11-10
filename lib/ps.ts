@@ -40,7 +40,7 @@ export function getPsArchiveHref({ language, tag, q }: PsFilters = {}): string {
   if (tag?.trim()) params.set('tag', tag.trim());
   if (q?.trim()) params.set('q', q);
   const query = params.toString();
-  return query ? `/coding-test?${query}` : '/coding-test';
+  return query ? `/coding-test/?${query}` : '/coding-test/';
 }
 
 export function getPsArchive(posts: PostData[], filters: PsFilters = {}) {

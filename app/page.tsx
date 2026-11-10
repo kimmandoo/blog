@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { connection } from 'next/server';
 import { getSortedPostsData, getAllTags } from '@/lib/posts';
 import { PostList } from '@/components/PostList';
 import { ProfileSidebar } from '@/components/ProfileSidebar';
@@ -9,17 +8,9 @@ import { PostGraph } from '@/components/PostGraph';
 import { getPostGraph } from '@/lib/postGraph';
 import { layoutPostGraph } from '@/lib/postGraphLayout';
 
-export async function generateMetadata({
-  searchParams,
-}: {
-  searchParams: Promise<{ category?: string | string[]; tag?: string | string[]; page?: string | string[]; q?: string | string[] }>;
-}): Promise<Metadata> {
-  return createHomePageMetadata(await searchParams);
-}
+export const metadata: Metadata = createHomePageMetadata();
 
 export default async function Home() {
-  // Direct filter URLs still render their selected results and metadata on the server.
-  await connection();
   const allPosts = getSortedPostsData();
   const categoryCounts = new Map<string, number>();
   for (const post of allPosts) {

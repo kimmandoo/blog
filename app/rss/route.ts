@@ -3,8 +3,6 @@ import { getSortedPostsData } from '@/lib/posts';
 import { generateRssFeed } from '@/lib/rss';
 
 export const dynamic = 'force-static';
-// Keep aligned with themeConfig.rss.cacheMaxAge; route config must be statically analyzable.
-export const revalidate = 3600;
 
 export async function GET() {
   if (!themeConfig.rss.enabled) {

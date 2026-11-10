@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useRef, useMemo, useSyncExternalStore, type ReactNode, type ComponentProps } from 'react';
+import { Fragment, Suspense, useEffect, useRef, useMemo, useSyncExternalStore, type ReactNode, type ComponentProps } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { TagBadge } from '@/components/TagBadge';
@@ -60,17 +60,28 @@ function subscribeArchive(onChange: () => void) {
   };
 }
 
+// The archive is a static file, so the query only exists in the browser. This
+// re-reads it after Next <Link> navigations (e.g. a tag badge pointing at /?tag=x).
+// It sits in its own Suspense boundary so the post list itself stays prerendered.
+function ArchiveRouterSync() {
+  const routerParams = useSearchParams();
+  useEffect(() => {
+    window.dispatchEvent(new Event('archive:navigate'));
+  }, [routerParams]);
+  return null;
+}
+
+function ArchiveSearchSync() {
+  return <Suspense fallback={null}><ArchiveRouterSync /></Suspense>;
+}
+
 function useArchiveSearch(sectionPath: string) {
-  const serverParams = useSearchParams();
-  // Next updates its router in a transition. Read the URL synchronously so a
-  // quick filter change cannot resurrect a query that was just cleared.
+  // Read the URL synchronously so a quick filter change cannot resurrect a
+  // query that was just cleared. The prerendered HTML is the unfiltered list.
   const search = useSyncExternalStore(
     subscribeArchive,
     () => window.location.search,
-    () => {
-      const query = serverParams.toString();
-      return query ? `?${query}` : '';
-    },
+    () => '',
   );
   const params = useMemo(() => new URLSearchParams(search), [search]);
   const searchSession = useRef<string | null>(null);
@@ -158,6 +169,7 @@ export function PostList({
 
   return (
     <div className="archive-layout">
+      <ArchiveSearchSync />
       <main id="main-content" className="archive-shell" tabIndex={-1}>
       <h1 className="archive-title">{selectedCategory || '전체 글'}</h1>
       <section className="post-tools" aria-label="글 찾기">
@@ -295,7 +307,7 @@ export function PsPostList({
   profile,
   graph,
 }: Pick<PostListProps, 'initialPosts' | 'profile' | 'graph'>) {
-  const { params, searchQuery, updateSearch, endSearch } = useArchiveSearch('/coding-test');
+  const { params, searchQuery, updateSearch, endSearch } = useArchiveSearch('/coding-test/');
   const language = params.get('language') ?? '';
   const tag = params.get('tag') ?? '';
   const { posts, languages, tags, selectedLanguage, selectedTag, total } = useMemo(
@@ -309,6 +321,7 @@ export function PsPostList({
 
   return (
     <div className="archive-layout">
+      <ArchiveSearchSync />
       <main id="main-content" className="archive-shell ps-shell" tabIndex={-1}>
         <header className="archive-intro">
           <h1>PS</h1>
@@ -384,7 +397,7 @@ export function PsPostList({
                   #{selectedTag} <span aria-hidden="true">×</span>
                 </ArchiveLink>
               )}
-              <ArchiveLink focusSearch href="/coding-test">모든 조건 초기화</ArchiveLink>
+              <ArchiveLink focusSearch href="/coding-test/">모든 조건 초기화</ArchiveLink>
             </div>
           )}
         </section>
@@ -398,7 +411,7 @@ export function PsPostList({
                 document.getElementById('ps-search')?.focus();
               }}>검색 초기화</button>
             )}
-            {hasFilter && <ArchiveLink focusSearch href="/coding-test">전체 노트 보기</ArchiveLink>}
+            {hasFilter && <ArchiveLink focusSearch href="/coding-test/">전체 노트 보기</ArchiveLink>}
           </div>
         ) : (
           <div className="post-list">

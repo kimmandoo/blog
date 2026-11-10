@@ -1,8 +1,45 @@
 import { ImageResponse } from 'next/og';
-import { NextRequest } from 'next/server';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { themeConfig } from '@/config/theme.config';
+import { getSortedPostsData, getSortedPostsDataByCategory } from '@/lib/posts';
+import { formatDisplayDate } from '@/lib/date';
+import { CODING_TEST_PAGE } from '@/lib/metadata';
+
+// Every card is rendered once at build time into out/og/<page path>.png.
+export const dynamic = 'force-static';
+export const dynamicParams = false;
+
+const toImagePath = (segments: string[]) => [...segments.slice(0, -1), `${segments.at(-1)}.png`];
+
+export function generateStaticParams() {
+  return [
+    { path: ['home.png'] },
+    { path: ['coding-test.png'] },
+    ...getSortedPostsData().map((post) => ({ path: toImagePath(['posts', ...post.slug.split('/')]) })),
+    ...getSortedPostsDataByCategory('PS').map((post) => ({ path: toImagePath(['coding-test', ...post.slug.split('/')]) })),
+  ];
+}
+
+type CardContent = { title?: string; description?: string; category?: string; date?: string; tags?: string[] };
+
+// Cards only need frontmatter, so reuse the list data instead of rendering each post's markdown.
+function getCardContent(segments: string[]): CardContent {
+  const [section, ...slug] = segments;
+  if (section === 'coding-test' && slug.length === 0) return { ...CODING_TEST_PAGE, category: 'PS' };
+  const posts = section === 'posts' ? getSortedPostsData() : section === 'coding-test' ? getSortedPostsDataByCategory('PS') : [];
+  const post = slug.length > 0 ? posts.find((item) => item.slug === slug.join('/')) : undefined;
+  if (post) {
+    return {
+      title: post.title,
+      description: post.excerpt,
+      category: post.category || (section === 'coding-test' ? 'PS' : undefined),
+      date: post.date ? formatDisplayDate(post.date) : undefined,
+      tags: post.tags,
+    };
+  }
+  return {};
+}
 
 // Read once on the server; Korean rendering must not depend on a font CDN.
 const font = readFile(join(process.cwd(), 'public/fonts/IBMPlexSansKR-Medium.ttf'));
@@ -26,14 +63,16 @@ function fitText(value: string, limit: number) {
   return `${result.trimEnd()}…`;
 }
 
-export async function GET(request: NextRequest) {
-  const params = request.nextUrl.searchParams;
-  const title = fitText(params.get('title') || themeConfig.site.title, 112);
-  const description = fitText(params.get('description') || (params.has('title') ? '' : themeConfig.site.description), 116);
-  const category = fitText(params.get('category') || (params.get('path')?.startsWith('/coding-test') ? 'PS' : 'DEV JOURNAL'), 28);
-  const date = fitText(params.get('date') || '', 24);
-  const site = fitText((params.get('site') || new URL(themeConfig.seo.siteUrl).host).replace(/^https?:\/\//, '').replace(/\/+$/, ''), 40);
-  const tags = [...new Set((params.get('tags') || '').split(',').map(tag => tag.trim()).filter(Boolean))].slice(0, 3);
+export async function GET(_request: Request, { params }: { params: Promise<{ path: string[] }> }) {
+  const segments = (await params).path.map(decodeURIComponent);
+  segments[segments.length - 1] = segments[segments.length - 1].replace(/\.png$/, '');
+  const card = getCardContent(segments);
+  const title = fitText(card.title || themeConfig.site.title, 112);
+  const description = fitText(card.description || (card.title ? '' : themeConfig.site.description), 116);
+  const category = fitText(card.category || 'DEV JOURNAL', 28);
+  const date = fitText(card.date || '', 24);
+  const site = fitText(new URL(themeConfig.seo.siteUrl).host, 40);
+  const tags = [...new Set((card.tags || []).map(tag => tag.trim()).filter(Boolean))].slice(0, 3);
   const titleSize = textWidth(title) > 88 ? 46 : textWidth(title) > 56 ? 54 : 64;
 
   return new ImageResponse(

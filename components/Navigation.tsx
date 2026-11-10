@@ -7,7 +7,8 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { SocialLinks } from '@/components/SocialLinks';
 
 export function Navigation() {
-  const pathname = usePathname();
+  // Normalize the exported trailing slash so '/coding-test/' matches '/coding-test'.
+  const pathname = usePathname().replace(/(.)\/+$/, '$1');
   const isPs = pathname === '/coding-test' || pathname.startsWith('/coding-test/');
   const isPosts = pathname === '/' || pathname.startsWith('/posts/');
 
