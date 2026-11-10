@@ -384,9 +384,9 @@ After deploying to Vercel:
 
 This blog can also be deployed to:
 
-- **Netlify**: Connect GitHub repo, build command: `npm run build`, publish directory: `.next`
+- **Netlify**: Connect GitHub repo, build command: `npm run build`, publish directory: `out`
 - **Cloudflare Pages**: Same as Netlify
-- **Self-hosted**: Run `npm run build && npm start`
+- **Self-hosted**: Run `npm run build`, then serve `out/` with a static web server (`npm start` for local preview). Support extensionless HTML URLs; routes are exported as `<route>/index.html` (`trailingSlash: true`).
 
 ### 7. Maintenance and Updates
 

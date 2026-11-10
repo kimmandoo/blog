@@ -1,19 +1,14 @@
 # 블로그 배포 가이드 (한국어)
 
-## 🚀 Vercel로 배포하기
+## 🚀 GitHub Pages로 배포하기 (현재 방식)
 
-### 1단계: Vercel 계정 만들기
-
-1. [vercel.com](https://vercel.com) 방문
-2. GitHub 계정으로 로그인
-
-### 2단계: 프로젝트 배포
-
-1. **"New Project"** 클릭
-2. **GitHub 저장소 선택** (이 저장소)
-3. **"Deploy"** 클릭
-
-**끝!** 🎉 2-3분 후 블로그가 배포됩니다.
+- 주소: https://kimmandoo.github.io (저장소 이름이 `kimmandoo.github.io`여야 루트 주소로 열립니다)
+- `main`에 푸시하면 `.github/workflows/deploy.yml`이 `npm run build`를 실행하고 `out/`을 Pages에 배포합니다.
+- 최초 1회: 저장소 **Settings → Pages → Source**를 **GitHub Actions**로 설정하세요.
+- `next.config.ts`의 `output: "export"`, `trailingSlash: true`로 모든 페이지를 `<경로>/index.html`로 만듭니다. 공유 이미지(`/og/...png`), 사이트맵, RSS도 빌드할 때 생성됩니다.
+- 서버가 없으므로 SSR·ISR·HTTP 헤더·HTTP 리디렉션은 쓰지 않습니다. 목록 검색과 필터는 브라우저에서 처리하고, 예전 `/posts/ps/*` 주소는 meta refresh로 `/coding-test/ps/*`로 이동합니다.
+- 글이나 설정을 바꾸면 푸시해서 다시 배포해야 반영됩니다.
+- 로컬에서 배포 결과 확인: `npm run build && npm start`
 
 ## ✍️ 새 글 작성하기
 

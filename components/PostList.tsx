@@ -145,6 +145,8 @@ export function PostList({
     new Set([1, pagination.currentPage - 1, pagination.currentPage, pagination.currentPage + 1, pagination.totalPages])
   ).filter(page => page >= 1 && page <= pagination.totalPages).sort((a, b) => a - b);
   const hasActiveFilter = Boolean(selectedCategory || selectedTag);
+  // Filters are applied after hydration, so filtered views mark themselves noindex in the browser.
+  const hasFilteredUrl = hasActiveFilter || hasSearchQuery || Boolean(params.get('page')?.trim());
   const searchStatus = hasSearchQuery
     ? `검색 결과 ${filteredPosts.length} / ${categoryPosts.length}개`
     : `전체 ${filteredPosts.length}개 글`;
@@ -170,6 +172,10 @@ export function PostList({
   return (
     <div className="archive-layout">
       <ArchiveSearchSync />
+      {hasFilteredUrl && <>
+        <meta name="robots" content="noindex, follow" />
+        <meta name="googlebot" content="noindex, follow" />
+      </>}
       <main id="main-content" className="archive-shell" tabIndex={-1}>
       <h1 className="archive-title">{selectedCategory || '전체 글'}</h1>
       <section className="post-tools" aria-label="글 찾기">
@@ -316,12 +322,17 @@ export function PsPostList({
   );
   const hasSearchQuery = Boolean(searchQuery.trim());
   const hasFilter = Boolean(selectedLanguage || selectedTag || hasSearchQuery);
+  const hasFilteredUrl = ['language', 'tag', 'q'].some(key => Boolean(params.get(key)?.trim()));
   const createHref = (nextLanguage = selectedLanguage, nextTag = selectedTag) =>
     getPsArchiveHref({ language: nextLanguage, tag: nextTag, q: searchQuery });
 
   return (
     <div className="archive-layout">
       <ArchiveSearchSync />
+      {hasFilteredUrl && <>
+        <meta name="robots" content="noindex, follow" />
+        <meta name="googlebot" content="noindex, follow" />
+      </>}
       <main id="main-content" className="archive-shell ps-shell" tabIndex={-1}>
         <header className="archive-intro">
           <h1>PS</h1>

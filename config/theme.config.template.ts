@@ -290,8 +290,8 @@ export const themeConfig = {
       type: 'website',
       locale: 'en_US',  // Options: en_US, ko_KR, ja_JP, zh_CN, etc.
       siteName: 'Your Blog Name',
-      // Default image for social sharing (if post doesn't have one)
-      defaultImage: '/images/og-default.jpg',
+      // Build-generated site/archive cards, or a custom image URL.
+      defaultImage: '/og/home.png',
     },
     
     // Twitter Card settings

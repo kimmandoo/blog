@@ -1,6 +1,15 @@
 # Vercel Deployment Guide
 
-This guide will help you deploy your blog to Vercel in just a few minutes.
+> **This blog is deployed to GitHub Pages** at https://kimmandoo.github.io.
+> `.github/workflows/deploy.yml` runs `npm run build` on every push to `main` and
+> publishes `out/`. In the repository settings, set **Pages → Source** to **GitHub Actions**;
+> the repository must be named `<user>.github.io` to serve from the domain root.
+> The Vercel steps below are kept for forks that prefer Vercel (set the output directory to `out`).
+
+The site is a static export (`output: "export"`, `trailingSlash: true`): every route is
+`<route>/index.html`, and pages, PNG sharing cards, sitemap, and feeds are regenerated on
+each deployment. There is no server, so no HTTP headers, redirects, ISR, or per-request
+images. For a local preview, run `npm run build && npm start`.
 
 ## Prerequisites
 
@@ -43,13 +52,12 @@ For remote failures, inspect the Vercel commit-status link or run
    - If you don't see it, click "Adjust GitHub App Permissions" to grant access
 
 4. **Configure Your Project**
-   - Vercel will auto-detect that this is a Next.js project
-   - The default settings are already configured correctly:
-     - **Framework Preset**: Next.js
+   - Repository settings override framework auto-detection:
+     - **Framework Preset**: Other (`framework: null`)
      - **Build Command**: `npm run build`
-     - **Output Directory**: `.next`
+     - **Output Directory**: `out`
      - **Install Command**: `npm install`
-   - You don't need to change anything!
+   - Do not override the output directory back to `.next` or start a Next.js server.
 
 5. **Deploy**
    - Click "Deploy"
@@ -175,8 +183,8 @@ If you need environment variables:
 
 ## Performance Tips
 
-1. **Image Optimization**: Use Next.js Image component for photos
-2. **Static Generation**: All pages are pre-rendered at build time
+1. **Images**: Serve static images; the default Next.js runtime image optimizer is not used
+2. **Static Generation**: Pages and sharing cards are rendered only at build time
 3. **Edge Network**: Vercel serves your blog from a global CDN
 4. **Automatic Compression**: Vercel automatically compresses assets
 
